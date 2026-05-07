@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>이현석 포트폴리오</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f0ede8; --surface: #ffffff; --border: #e0dbd4;
+    --accent: #1a1a2e; --accent2: #c8432a;
+    --up: #1a7a4a; --up-bg: #e8f5ee;
+    --down: #c8432a; --down-bg: #fdf0ee;
+    --muted: #8a8070; --gold-bg: #fffdf0; --warning: #c87a20;
+    --text: #1a1a1a; --tv-blue: #2962ff; --ss-green: #00897b;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Noto Sans KR', sans-serif; min-height: 100vh; padding: 24px 20px; }
+  body::before { content: ''; position: fixed; inset: 0; background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none'%3E%3Cg fill='%23c8b89a' fill-opacity='0.08'%3E%3Ccircle cx='30' cy='30' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"); pointer-events: none; z-index: 0; }
+  .container { max-width: 900px; margin: 0 auto; position: relative; z-index: 1; }
+  header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 28px; padding-bottom: 18px; border-bottom: 2px solid var(--accent); }
+  .logo-title { font-size: 26px; font-weight: 900; letter-spacing: -1px; color: var(--accent); }
+  .logo-sub { font-size: 11px; color: var(--muted); margin-top: 5px; font-family: 'DM Mono', monospace; letter-spacing: 1px; }
+  .date-display { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--muted); text-align: right; }
+  .live-badge { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; color: var(--up); font-weight: 700; margin-top: 4px; }
+  .live-badge::before { content: ''; width: 7px; height: 7px; background: var(--up); border-radius: 50%; animation: blink 1.5s ease-in-out infinite; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+  .summary-banner { background: var(--accent); color: white; border-radius: 16px; padding: 22px 26px; margin-bottom: 16px; display: grid; grid-template-columns: repeat(4,1fr); gap: 18px; }
+  .banner-label { font-size: 10px; opacity: 0.55; letter-spacing: 1.5px; text-transform: uppercase; font-family: 'DM Mono', monospace; margin-bottom: 5px; }
+  .banner-value { font-size: 18px; font-weight: 700; font-family: 'DM Mono', monospace; }
+  .banner-value.up { color: #4ade80; }
+  .banner-sub { font-size: 11px; opacity: 0.45; margin-top: 2px; }
+  .service-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+  .service-card { border-radius: 12px; padding: 14px 18px; display: flex; align-items: center; gap: 12px; text-decoration: none; transition: opacity 0.2s; cursor: pointer; }
+  .service-card:hover { opacity: 0.88; transform: translateY(-1px); }
+  .service-ss { background: linear-gradient(135deg, #00695c, #00897b); color: white; }
+  .service-tv { background: linear-gradient(135deg, #1565c0, #2962ff); color: white; }
+  .service-icon { font-size: 26px; flex-shrink: 0; }
+  .service-name { font-size: 13px; font-weight: 700; }
+  .service-desc { font-size: 11px; opacity: 0.75; margin-top: 2px; }
+  .analyze-btn { width: 100%; padding: 14px; background: var(--accent2); color: white; border: none; border-radius: 12px; font-size: 14px; font-family: 'Noto Sans KR', sans-serif; font-weight: 700; cursor: pointer; margin-bottom: 16px; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .analyze-btn:hover { background: #a83520; transform: translateY(-1px); }
+  .analyze-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+  .analysis-box { background: var(--surface); border: 1.5px solid var(--border); border-radius: 14px; padding: 22px; margin-bottom: 20px; display: none; }
+  .analysis-box.visible { display: block; animation: fadeIn 0.4s ease; }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:none} }
+  .analysis-header { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+  .analysis-badge { background: var(--accent); color: white; font-size: 10px; padding: 4px 12px; border-radius: 20px; letter-spacing: 1px; font-weight: 700; font-family: 'DM Mono', monospace; }
+  .analysis-date { font-size: 11px; color: var(--muted); font-family: 'DM Mono', monospace; margin-left: auto; }
+  .analysis-content { font-size: 13.5px; line-height: 1.9; white-space: pre-wrap; }
+  .analysis-content h3 { font-size: 12px; font-weight: 700; color: var(--accent2); margin: 16px 0 8px; padding-left: 10px; border-left: 3px solid var(--accent2); }
+  .loading-wrap { display: flex; align-items: center; gap: 12px; color: var(--muted); font-size: 13px; }
+  .dots { display: flex; gap: 5px; }
+  .dots span { width: 7px; height: 7px; background: var(--accent2); border-radius: 50%; animation: bounce 1.2s ease-in-out infinite; }
+  .dots span:nth-child(2) { animation-delay: 0.2s; }
+  .dots span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes bounce { 0%,80%,100%{transform:translateY(0);opacity:0.4} 40%{transform:translateY(-6px);opacity:1} }
+  .section-label { display: flex; align-items: center; gap: 12px; margin: 8px 0 10px; }
+  .section-title { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); font-family: 'DM Mono', monospace; }
+  .section-line { flex: 1; height: 1px; background: var(--border); }
+  .stock-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 26px; }
+  .stock-card { background: var(--surface); border: 1.5px solid var(--border); border-radius: 12px; padding: 13px 16px; display: grid; grid-template-columns: 1fr 100px 105px 88px 110px; align-items: center; gap: 10px; transition: all 0.15s; position: relative; overflow: hidden; }
+  .stock-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; }
+  .stock-card.up::before { background: var(--up); }
+  .stock-card.down::before { background: var(--down); }
+  .stock-card.warn { border-color: #f0d080; background: var(--gold-bg); }
+  .stock-card.warn::before { background: var(--warning); }
+  .stock-card:hover { border-color: var(--accent); transform: translateX(3px); box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+  .stock-name { font-weight: 700; font-size: 14px; }
+  .stock-meta { font-size: 11px; color: var(--muted); font-family: 'DM Mono', monospace; margin-top: 2px; }
+  .stock-note { font-size: 10px; color: var(--warning); margin-top: 2px; font-weight: 500; }
+  .stock-avg { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--muted); text-align: right; }
+  .stock-avg span { display: block; font-size: 10px; margin-bottom: 2px; }
+  .stock-value { font-family: 'DM Mono', monospace; font-size: 13px; font-weight: 500; text-align: right; }
+  .stock-value span { display: block; font-size: 10px; color: var(--muted); margin-bottom: 2px; }
+  .stock-return { font-family: 'DM Mono', monospace; font-size: 13px; font-weight: 700; text-align: center; padding: 5px 8px; border-radius: 7px; }
+  .stock-return.up { color: var(--up); background: var(--up-bg); }
+  .stock-return.down { color: var(--down); background: var(--down-bg); }
+  .stock-return.warn { color: var(--warning); background: var(--gold-bg); }
+  .chart-btn { display: inline-flex; align-items: center; justify-content: center; gap: 5px; width: 100%; padding: 8px 10px; border-radius: 8px; border: none; font-size: 12px; font-weight: 700; cursor: pointer; text-decoration: none; transition: all 0.15s; font-family: 'Noto Sans KR', sans-serif; white-space: nowrap; }
+  .btn-ss { background: var(--ss-green); color: white; }
+  .btn-ss:hover { background: #00695c; }
+  .btn-tv { background: var(--tv-blue); color: white; }
+  .btn-tv:hover { background: #1a4fd6; }
+  @media (max-width: 660px) {
+    .summary-banner { grid-template-columns: 1fr 1fr; }
+    .stock-card { grid-template-columns: 1fr auto; gap: 8px; }
+    .stock-avg, .stock-value, .stock-return { display: none; }
+    .service-row { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <div>
+      <div class="logo-title">PORTFOLIO</div>
+      <div class="logo-sub">이현석 · KR → 심플리스톡 · US → TradingView</div>
+    </div>
+    <div>
+      <div class="date-display" id="dateDisplay">—</div>
+      <div class="live-badge">LIVE</div>
+    </div>
+  </header>
+  <div class="summary-banner">
+    <div><div class="banner-label">한국 평가금</div><div class="banner-value" id="totalKRW">—</div><div class="banner-sub" id="krGain">—</div></div>
+    <div><div class="banner-label">미국 평가금</div><div class="banner-value" id="totalUSD">—</div><div class="banner-sub" id="usGain">—</div></div>
+    <div><div class="banner-label">최고 수익</div><div class="banner-value up" id="bestStock">—</div><div class="banner-sub" id="bestReturn">—</div></div>
+    <div><div class="banner-label">주목</div><div class="banner-value" style="font-size:13px;color:#fbbf24">디바이스이온</div><div class="banner-sub">무상증자 후 반등</div></div>
+  </div>
+  <div class="service-row">
+    <a href="https://simplystock.co.kr" target="_blank" class="service-card service-ss">
+      <div class="service-icon">📈</div>
+      <div><div class="service-name">심플리스톡</div><div class="service-desc">회귀채널 · 수급분석 · 한국주 특화</div></div>
+    </a>
+    <a href="https://kr.tradingview.com" target="_blank" class="service-card service-tv">
+      <div class="service-icon">📊</div>
+      <div><div class="service-name">TradingView</div><div class="service-desc">Ultimate · 미국주 · 인디케이터</div></div>
+    </a>
+  </div>
+  <button class="analyze-btn" id="analyzeBtn" onclick="runAnalysis()">🤖 AI 포트폴리오 분석 (오늘 시황 반영)</button>
+  <div class="analysis-box" id="analysisBox">
+    <div class="analysis-header">
+      <div class="analysis-badge">AI ANALYSIS</div>
+      <div class="analysis-date" id="analysisDate">—</div>
+    </div>
+    <div class="analysis-content" id="analysisContent"></div>
+  </div>
+  <div class="section-label"><div class="section-title">🇰🇷 한국 — 심플리스톡 연동</div><div class="section-line"></div></div>
+  <div class="stock-list" id="krList"></div>
+  <div class="section-label"><div class="section-title">🇺🇸 미국 — TradingView 연동</div><div class="section-line"></div></div>
+  <div class="stock-list" id="usList"></div>
+</div>
+<script>
+const KR = [
+  { name:'LS ELECTRIC', ticker:'010120', shares:62, avg:186582, val:19747000, ret:70.70 },
+  { name:'산일전기', ticker:'062870', shares:40, avg:214125, val:12960000, ret:51.31 },
+  { name:'한국금융지주', ticker:'071050', shares:35, avg:249071, val:9730000, ret:11.61 },
+  { name:'퀄리타스반도체', ticker:'432720', shares:303, avg:20556, val:8044650, ret:29.15 },
+  { name:'파미셀', ticker:'005690', shares:385, avg:18510, val:7376600, ret:3.50 },
+  { name:'SK이노베이션', ticker:'096770', shares:50, avg:129600, val:6897500, ret:6.44 },
+  { name:'세미파이브', ticker:'440320', shares:144, avg:36827, val:6235200, ret:17.57 },
+  { name:'디바이스이온', ticker:'347770', shares:200, avg:37900, val:4060000, ret:-46.43, warn:true, note:'⚡ 무상증자(1:1) 반영 — 실질손실 아님 · 반도체/디스플레이 세척, 실적 우상향' },
+  { name:'LS머트리얼즈', ticker:'417200', shares:141, avg:20000, val:3792900, ret:31.46 },
+];
+const US = [
+  { name:'GDXU', ticker:'GDXU', tvSymbol:'NASDAQ:GDXU', shares:35, avg:179.49, val:6688.15, ret:6.45, note:'금 3배 레버리지' },
+  { name:'이튼 ETN', ticker:'ETN', tvSymbol:'NYSE:ETN', shares:13, avg:417.41, val:5486.00, ret:1.09 },
+  { name:'코닝 GLW', ticker:'GLW', tvSymbol:'NYSE:GLW', shares:25, avg:164.34, val:4657.25, ret:13.35 },
+  { name:'버티브홀딩스 VRT', ticker:'VRT', tvSymbol:'NYSE:VRT', shares:12, avg:299.22, val:4314.12, ret:20.14 },
+  { name:'NVE NVEC', ticker:'NVEC', tvSymbol:'NASDAQ:NVEC', shares:40, avg:84.55, val:3451.20, ret:2.04 },
+  { name:'암페놀 APH', ticker:'APH', tvSymbol:'NYSE:APH', shares:20, avg:139.93, val:2786.40, ret:-0.43 },
+];
+function ssURL(t){ return `https://simplystock.co.kr/stock/${t}/`; }
+function tvURL(s){ return `https://kr.tradingview.com/chart/?symbol=${encodeURIComponent(s)}`; }
+function fmtKRW(v){ if(v>=1e8) return (v/1e8).toFixed(2)+'억'; if(v>=1e4) return Math.round(v/1e4)+'만원'; return v.toLocaleString()+'원'; }
+function render(){
+  const now=new Date();
+  document.getElementById('dateDisplay').textContent=now.toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric',weekday:'short'})+' '+now.toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'});
+  const tKRW=KR.reduce((s,x)=>s+x.val,0), tUSD=US.reduce((s,x)=>s+x.val,0);
+  const kG=KR.filter(x=>!x.warn).reduce((s,x)=>s+(x.val-x.avg*x.shares),0);
+  const uG=US.reduce((s,x)=>s+(x.val-x.avg*x.shares),0);
+  document.getElementById('totalKRW').textContent=fmtKRW(tKRW);
+  document.getElementById('krGain').textContent=(kG>=0?'+':'')+fmtKRW(kG);
+  document.getElementById('totalUSD').textContent='$'+tUSD.toFixed(0);
+  document.getElementById('usGain').textContent=(uG>=0?'+$':'-$')+Math.abs(uG).toFixed(0);
+  const best=[...KR,...US].filter(x=>!x.warn).reduce((a,b)=>a.ret>b.ret?a:b);
+  document.getElementById('bestStock').textContent=best.name;
+  document.getElementById('bestReturn').textContent='+'+best.ret.toFixed(2)+'%';
+  document.getElementById('krList').innerHTML=KR.map(s=>{
+    const cls=s.warn?'warn':(s.ret>=0?'up':'down');
+    const rCls=s.warn?'warn':(s.ret>=0?'up':'down');
+    const rStr=s.warn?'※무증':(s.ret>=0?'+':'')+s.ret.toFixed(2)+'%';
+    return `<div class="stock-card ${cls}"><div><div class="stock-name">${s.name}</div><div class="stock-meta">${s.ticker} · ${s.shares}주</div>${s.note?`<div class="stock-note">${s.note}</div>`:''}</div><div class="stock-avg"><span>평균가</span>${s.avg.toLocaleString()}원</div><div class="stock-value"><span>평가금액</span>${fmtKRW(s.val)}</div><div class="stock-return ${rCls}">${rStr}</div><a href="${ssURL(s.ticker)}" target="_blank" class="chart-btn btn-ss">📈 심플리스톡</a></div>`;
+  }).join('');
+  document.getElementById('usList').innerHTML=US.map(s=>{
+    const cls=s.ret>=0?'up':'down';
+    return `<div class="stock-card ${cls}"><div><div class="stock-name">${s.name}</div><div class="stock-meta">${s.ticker} · ${s.shares}주</div>${s.note?`<div class="stock-note">${s.note}</div>`:''}</div><div class="stock-avg"><span>평균가</span>$${s.avg}</div><div class="stock-value"><span>평가금액</span>$${s.val.toFixed(0)}</div><div class="stock-return ${cls}">${s.ret>=0?'+':''}${s.ret.toFixed(2)}%</div><a href="${tvURL(s.tvSymbol)}" target="_blank" class="chart-btn btn-tv">📊 TradingView</a></div>`;
+  }).join('');
+}
+async function runAnalysis(){
+  const btn=document.getElementById('analyzeBtn'), box=document.getElementById('analysisBox');
+  const content=document.getElementById('analysisContent'), dateEl=document.getElementById('analysisDate');
+  btn.disabled=true; btn.innerHTML='⏳ 분석 중...';
+  box.className='analysis-box visible';
+  content.innerHTML='<div class="loading-wrap"><div class="dots"><span></span><span></span><span></span></div>오늘 시황 수집 중...</div>';
+  const today=new Date().toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric',weekday:'short'});
+  dateEl.textContent=today;
+  const ptf=`[한국]\n${KR.map(s=>`- ${s.name}(${s.ticker}): ${s.shares}주, 평균 ${s.avg.toLocaleString()}원, 수익 ${s.ret}%${s.warn?' [무상증자]':''}`).join('\n')}\n[미국]\n${US.map(s=>`- ${s.name}(${s.ticker}): ${s.shares}주, 평균 $${s.avg}, 수익 ${s.ret}%`).join('\n')}`;
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,tools:[{type:'web_search_20250305',name:'web_search'}],messages:[{role:'user',content:`전문 주식 포트폴리오 분석가로서 오늘(${today}) 시황을 검색하고 아래 포트폴리오를 분석해주세요.\n${ptf}\n\n형식:\n📊 오늘 시황 요약\n⚡ 주목 종목 TOP 3\n💡 포트 조절 제안\n📌 오늘의 액션 아이템\n⚠️ 리스크 체크\n\n간결하고 실용적으로 한국어로.`}]})});
+    const data=await res.json();
+    const text=data.content.filter(b=>b.type==='text').map(b=>b.text).join('\n');
+    content.innerHTML=text.replace(/^(📊|⚡|💡|📌|⚠️).+$/gm,m=>`<h3>${m}</h3>`).replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');
+  }catch(e){ content.textContent='오류: '+e.message; }
+  finally{ btn.disabled=false; btn.innerHTML='🔄 다시 분석'; }
+}
+render();
+</script>
+</body>
+</html>
