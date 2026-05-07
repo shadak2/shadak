@@ -49,26 +49,17 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
 .sec-t{font-size:14px;font-weight:700}
 .sec-b{font-size:11px;color:var(--muted);background:var(--bg);padding:2px 9px;border-radius:20px;border:1px solid var(--border)}
 .tbl{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:12px}
-.th{display:none}
-.tr{padding:12px 14px;border-bottom:1px solid var(--border);cursor:pointer;display:flex;flex-direction:column;gap:8px}
+.th{display:grid;grid-template-columns:1fr 80px 90px 75px 110px;padding:8px 14px;background:var(--bg);border-bottom:1px solid var(--border);font-size:11px;font-weight:600;color:var(--muted)}
+.tr{display:grid;grid-template-columns:1fr 80px 90px 75px 110px;padding:10px 14px;border-bottom:1px solid var(--border);align-items:center;cursor:pointer}
 .tr:last-child{border-bottom:none}
 .tr.w{background:var(--warn-bg)}
-.tr-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
-.tr-name{flex:1;min-width:0}
-.rn{font-weight:700;font-size:14px;color:var(--text)}
+.rn{font-weight:600;font-size:13px}
 .rc{font-size:11px;color:var(--muted);margin-top:1px}
-.rno{font-size:10px;color:var(--warn);margin-top:3px;font-weight:600}
-.tr-rt-box{text-align:right;flex-shrink:0}
-.tr-rt{font-size:16px;font-weight:800;line-height:1.1}
-.tr-rt.up{color:var(--up)}.tr-rt.dn{color:var(--down)}.tr-rt.wt{color:var(--warn);font-size:12px}
-.tr-rt-sub{font-size:10px;font-weight:600;color:var(--muted);margin-top:2px}
-.tr-rt-sub.up{color:var(--up)}.tr-rt-sub.dn{color:var(--down)}
-.tr-prices{display:flex;gap:6px;align-items:center;padding:7px 10px;background:var(--bg);border-radius:8px;flex-wrap:wrap;font-size:11px;border:1px solid var(--border)}
-.tp-grp{display:flex;align-items:baseline;gap:3px}
-.tp-l{color:var(--muted);font-size:10px;font-weight:500}
-.tp-v{color:var(--text);font-weight:700;font-size:12px}
-.tp-v.loading{color:var(--muted);font-style:italic}
-.tp-arr{color:var(--muted);font-weight:bold;margin:0 2px}
+.rno{font-size:10px;color:var(--warn);margin-top:2px}
+.ra{font-size:12px;color:var(--text2);text-align:right}
+.rv{font-size:13px;font-weight:600;text-align:right}
+.rr{font-size:13px;font-weight:700;text-align:right}
+.rr.up{color:var(--up)}.rr.dn{color:var(--down)}.rr.wt{color:var(--warn);font-size:11px}
 .rbs{display:flex;gap:4px;justify-content:flex-end}
 .rb{padding:4px 8px;border-radius:6px;border:none;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;text-decoration:none;display:inline-flex;align-items:center;white-space:nowrap}
 .rb-c{background:var(--accent-bg);color:var(--accent)}
@@ -192,6 +183,8 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
 @media(min-width:640px){.bnav{display:none}body{padding-bottom:0}}
 @media(max-width:639px){
 .sg{grid-template-columns:1fr 1fr}
+.th,.tr{grid-template-columns:1fr auto}
+.th .hA,.th .hV,.tr .ra,.tr .rv{display:none}
 }
 </style>
 </head>
@@ -216,10 +209,6 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
 </div>
 
 <div class="main">
-<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:11px;color:var(--muted);padding:0 2px">
-<span id="updateTime">⏳ 가격 갱신 중...</span>
-<button id="refreshBtn" onclick="updateAllPrices()" style="background:var(--surface);border:1px solid var(--border2);border-radius:6px;padding:4px 10px;font-size:11px;color:var(--text2);cursor:pointer;font-family:inherit;font-weight:600">🔄 새로고침</button>
-</div>
 <div class="ticker-wrap"><div class="ticker-inner" id="tickerEl"></div></div>
 
 <div class="page on" id="page-portfolio">
@@ -316,17 +305,17 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
 <button class="ind" id="iIchi" onclick="togInd('ichi',this)">일목</button>
 </div>
 
-<!-- 단기 회귀선 (20/30/60일) + 장기 회귀선 (OFF/60/120/250일) -->
+<!-- 단기 MA (20/30/60) + 장기 MA (OFF/60/120/250) -->
 <div class="ma-bar">
 <div class="ma-grp">
-<span class="ma-lbl" style="color:#f59f00">📐 단기→</span>
+<span class="ma-lbl">단기→</span>
 <button class="cb on" data-short="20" onclick="setShortMA(this)">20</button>
 <button class="cb" data-short="30" onclick="setShortMA(this)">30</button>
 <button class="cb" data-short="60" onclick="setShortMA(this)">60</button>
 </div>
 <div class="csep"></div>
 <div class="ma-grp">
-<span class="ma-lbl" style="color:#ae3ec9">📐 장기→</span>
+<span class="ma-lbl">장기→</span>
 <button class="cb" data-long="0" onclick="setLongMA(this)">OFF</button>
 <button class="cb on" data-long="60" onclick="setLongMA(this)">60</button>
 <button class="cb" data-long="120" onclick="setLongMA(this)">120</button>
@@ -357,7 +346,7 @@ const KR=[
 {name:'퀄리타스반도체',code:'432720',yf:'432720.KQ',shares:303,avg:20556, val:8044650, ret:29.15},
 {name:'파미셀',        code:'005690',yf:'005690.KS',shares:385,avg:18510, val:7376600, ret:3.50},
 {name:'SK이노베이션',  code:'096770',yf:'096770.KS',shares:50, avg:129600,val:6897500, ret:6.44},
-{name:'세미파이브',    code:'490470',yf:'490470.KQ',shares:144,avg:36827, val:6235200, ret:17.57},
+{name:'세미파이브',    code:'440320',yf:'440320.KQ',shares:144,avg:36827, val:6235200, ret:17.57},
 {name:'디바이스이온',  code:'187870',yf:'187870.KQ',shares:200,avg:37900, val:4060000, ret:-46.43,warn:true,note:'무상증자(1:1)—실질손실 아님'},
 {name:'LS머트리얼즈', code:'417200',yf:'417200.KS',shares:141,avg:20000, val:3792900, ret:31.46},
 ];
@@ -365,7 +354,7 @@ const US=[
 {name:'GDXU',       code:'GDXU',yf:'GDXU',shares:35,avg:179.49,val:6688.15,ret:6.45,note:'금 3배 레버리지'},
 {name:'이튼 ETN',   code:'ETN', yf:'ETN', shares:13,avg:417.41,val:5486.00,ret:1.09},
 {name:'코닝 GLW',   code:'GLW', yf:'GLW', shares:25,avg:164.34,val:4657.25,ret:13.35},
-{name:'버티브 홀딩스', code:'VRT', yf:'VRT', shares:12,avg:299.22,val:4314.12,ret:20.14},
+{name:'버티브 VRT', code:'VRT', yf:'VRT', shares:12,avg:299.22,val:4314.12,ret:20.14},
 {name:'NVE NVEC',   code:'NVEC',yf:'NVEC',shares:40,avg:84.55, val:3451.20,ret:2.04},
 {name:'암페놀 APH', code:'APH', yf:'APH', shares:20,avg:139.93,val:2786.40,ret:-0.43},
 ];
@@ -375,9 +364,7 @@ let showBS=true,showLog=false,showMA=true,showVol=true,showIchi=false;
 let lineMode=7; // 7 또는 3
 let shortMA=20; // 20/30/60
 let longMA=60; // 0/60/120/250
-let analDays=180; // ⭐ 분석 기간: 30/60/90/180/365/0(전체) — 회귀선 계산용
 let curData=null; // 현재 차트 데이터 (호버용)
-let priceUpdating=false; // 가격 갱신 중 플래그
 
 function fK(v){return v>=1e8?(v/1e8).toFixed(1)+'억':v>=1e4?Math.round(v/1e4)+'만원':v.toLocaleString()+'원'}
 function fU(v){return '$'+v.toLocaleString('en',{maximumFractionDigits:0})}
@@ -416,40 +403,13 @@ function row(s,isKR){
 const wc=s.warn?'w':'';
 const rc=s.warn?'wt':(s.ret>=0?'up':'dn');
 const rs=s.warn?'※무증':(s.ret>=0?'+':'')+s.ret.toFixed(2)+'%';
-// 평단가
-const avgStr=isKR?s.avg.toLocaleString()+'원':'$'+s.avg.toFixed(2);
-// 현재가 (가져왔으면 표시, 아직이면 ...)
-let curStr='<span class="loading">로딩...</span>';
-if(s.cur!=null){
-curStr=isKR?Math.round(s.cur).toLocaleString()+'원':'$'+s.cur.toFixed(2);
-}
-// 손익 금액 (수익률 아래 작게)
-let gainStr='';
-if(!s.warn && s.cur!=null){
-const gain=(s.cur-s.avg)*s.shares;
-const gC=gain>=0?'up':'dn';
-const gAbs=Math.abs(gain);
-const gFmt=isKR?(gAbs>=1e8?(gAbs/1e8).toFixed(1)+'억':gAbs>=1e4?Math.round(gAbs/1e4)+'만':Math.round(gAbs).toLocaleString()+'원'):'$'+gAbs.toFixed(0);
-gainStr=`<div class="tr-rt-sub ${gC}">${gain>=0?'+':'-'}${gFmt}</div>`;
-}
+const aS=isKR?s.avg.toLocaleString()+'원':'$'+s.avg;
+const vS=isKR?fK(s.val):fU(s.val);
 const j=JSON.stringify(s);
 return `<div class="tr ${wc}" onclick='openSheet(${j})'>
-<div class="tr-top">
-<div class="tr-name">
-<div class="rn">${s.name}</div>
-<div class="rc">${s.code} · ${s.shares}주</div>
-${s.note?`<div class="rno">⚡ ${s.note}</div>`:''}
-</div>
-<div class="tr-rt-box">
-<div class="tr-rt ${rc}">${rs}</div>
-${gainStr}
-</div>
-</div>
-<div class="tr-prices">
-<div class="tp-grp"><span class="tp-l">평단</span><span class="tp-v">${avgStr}</span></div>
-<span class="tp-arr">→</span>
-<div class="tp-grp"><span class="tp-l">현재</span><span class="tp-v">${curStr}</span></div>
-</div>
+<div><div class="rn">${s.name}</div><div class="rc">${s.code} · ${s.shares}주</div>${s.note?`<div class="rno">⚡ ${s.note}</div>`:''}</div>
+<div class="ra">${aS}</div><div class="rv">${vS}</div>
+<div class="rr ${rc}">${rs}</div>
 <div class="rbs">
 <button class="rb rb-c" onclick="event.stopPropagation();openSheet(${j})">📈 차트</button>
 <button class="rb rb-e" onclick="event.stopPropagation();goVal('${s.code}','${s.name}','${isKR?'kr':'us'}')">📐 밸류</button>
@@ -474,62 +434,6 @@ function doSearch(){
 const q=prompt('종목명 또는 코드:');if(!q)return;
 const f=[...KR,...US].find(s=>s.name.includes(q)||s.code.toLowerCase()===q.toLowerCase());
 if(f)openSheet(f);else alert('종목 없음');
-}
-
-// ⭐ 종목별 최신 종가 가져오기 (7일치만 가져와서 마지막 종가 추출)
-async function fetchLatestPrice(yfSym){
-const end=Math.floor(Date.now()/1000),start=end-7*86400;
-const yfUrl=`https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(yfSym)}?interval=1d&period1=${start}&period2=${end}`;
-const extract=d=>{
-const res=d.chart?.result?.[0];
-if(!res)return null;
-const closes=(res.indicators.quote[0].close||[]).filter(c=>c!=null);
-return closes.length?closes[closes.length-1]:null;
-};
-try{
-const r=await fetch(`/api/chart?symbol=${encodeURIComponent(yfSym)}&period1=${start}&period2=${end}&interval=1d`,{signal:AbortSignal.timeout(8000)});
-if(r.ok){const d=await r.json();const p=extract(d);if(p!=null)return p;}
-}catch(e){}
-try{
-const r=await fetch(`https://corsproxy.io/?url=${encodeURIComponent(yfUrl)}`,{signal:AbortSignal.timeout(8000)});
-if(r.ok){const d=await r.json();const p=extract(d);if(p!=null)return p;}
-}catch(e){}
-return null;
-}
-
-// ⭐ 모든 종목 가격 자동 갱신
-async function updateAllPrices(){
-if(priceUpdating)return;
-priceUpdating=true;
-const ut=document.getElementById('updateTime');
-const rb=document.getElementById('refreshBtn');
-if(ut)ut.textContent='⏳ 가격 갱신 중...';
-if(rb){rb.disabled=true;rb.style.opacity='0.5';}
-const all=[...KR,...US];
-let success=0,fail=0;
-const results=await Promise.allSettled(all.map(s=>fetchLatestPrice(s.yf)));
-results.forEach((r,i)=>{
-if(r.status==='fulfilled'&&r.value!=null){
-const s=all[i];
-const price=r.value;
-s.cur=price; // ⭐ 현재가 저장
-s.val=price*s.shares;
-// 무증 종목(warn=true)은 수익률 자동 갱신 안 함 (평가금액만 갱신)
-if(!s.warn) s.ret=((price-s.avg)/s.avg)*100;
-success++;
-} else {
-fail++;
-}
-});
-render();
-const t=new Date();
-const ts=`${String(t.getHours()).padStart(2,'0')}:${String(t.getMinutes()).padStart(2,'0')}`;
-if(ut){
-if(success>0) ut.innerHTML=`✅ ${ts} 갱신 완료 <span style="color:var(--up)">(${success}개${fail>0?` · 실패 ${fail}개`:''})</span>`;
-else ut.innerHTML=`<span style="color:var(--down)">❌ 가격 갱신 실패 — 잠시 후 다시 시도</span>`;
-}
-if(rb){rb.disabled=false;rb.style.opacity='1';}
-priceUpdating=false;
 }
 
 async function fetchOHLC(sym,days,iv='1d'){
@@ -583,14 +487,6 @@ const v=sl*i+ic+mult*sd;
 return useLog?Math.exp(v):v;
 }
 
-// ⭐ 분석 기간에 따라 데이터 잘라내기 (회귀선 계산용)
-// analDays=0이면 전체 데이터, 아니면 최근 N일만
-function getAnalysisSlice(data){
-if(analDays<=0||data.length<=analDays) return {slice:data,startIdx:0};
-const startIdx=data.length-analDays;
-return {slice:data.slice(startIdx),startIdx};
-}
-
 function maTrend(ma){
 if(!ma||ma.length<10)return'neu';
 const n=ma.length;let sx=0,sy=0,sxy=0,sxx=0;
@@ -611,17 +507,12 @@ r.push({time:data[i].time,value:+(s/p).toFixed(4)});
 return r;
 }
 
-// 채널 위치 계산 (단기 회귀선 기준, 0% = 하단, 100% = 상단)
+// 채널 위치 계산 (0% = 하단, 100% = 상단)
 function getChannelPos(data,idx){
 const useLog=showLog;
-const slice=data.slice(Math.max(0,data.length-shortMA));
-if(slice.length<5) return {pct:'50',upper:0,lower:0};
-const startIdx=data.length-slice.length;
-if(idx<startIdx) idx=startIdx;
-const localIdx=idx-startIdx;
-const{sl,ic,sd}=linReg(slice,useLog);
-const upper=regVal(sl,ic,sd,localIdx,2,useLog);
-const lower=regVal(sl,ic,sd,localIdx,-2,useLog);
+const{sl,ic,sd}=linReg(data,useLog);
+const upper=regVal(sl,ic,sd,idx,2,useLog);
+const lower=regVal(sl,ic,sd,idx,-2,useLog);
 const close=data[idx].close;
 const pct=((close-lower)/(upper-lower)*100);
 return{pct:Math.max(0,Math.min(100,pct)).toFixed(1),upper,lower};
@@ -633,31 +524,18 @@ const avg=data.slice(-p-1,-1).reduce((s,d)=>s+d.volume,0)/p;
 return avg>0?(data[data.length-1].volume/avg).toFixed(1):null;
 }
 
-// B/S 신호 - 단기 회귀선 기준
 function getBSSignal(data){
 if(data.length<10)return null;
 const useLog=showLog;
-const slice=data.slice(Math.max(0,data.length-shortMA));
-if(slice.length<5)return null;
-const{sl,ic,sd}=linReg(slice,useLog);
-const li=slice.length-1;
-const lastY=useLog?Math.log(slice[li].close):slice[li].close;
+const{sl,ic,sd}=linReg(data,useLog);
+const li=data.length-1;
+const lastY=useLog?Math.log(data[li].close):data[li].close;
 const center=sl*li+ic;
 const sigma=(lastY-center)/sd;
 const trendUp=sl>0.0003,trendDn=sl<-0.0003;
 if(sigma<=-2) return trendDn?{label:'B↑',cls:'ib-up'}:{label:'B■',cls:'ib-buy'};
 if(sigma>=2)  return trendUp?{label:'S↓',cls:'ib-sell'}:{label:'S■',cls:'ib-dn'};
 return null;
-}
-
-// 단기/장기 추세 (회귀선 slope 기반)
-function getTrend(data,days){
-if(days<=0||data.length<5)return 'neu';
-const slice=data.slice(Math.max(0,data.length-days));
-if(slice.length<5)return 'neu';
-const useLog=showLog;
-const{sl}=linReg(slice,useLog);
-return sl>0.0003?'up':sl<-0.0003?'dn':'neu';
 }
 
 function calcIchimoku(data){
@@ -676,9 +554,9 @@ return{tenkan,kijun,spanA,spanB};
 }
 
 function renderInfobar(data){
-const tShort=getTrend(data,shortMA);
-const tLong=longMA>0?getTrend(data,longMA):'neu';
-const trendUp=tShort==='up',trendDn=tShort==='dn';
+const useLog=showLog;
+const{sl}=linReg(data,useLog);
+const trendUp=sl>0.0003,trendDn=sl<-0.0003;
 const li=data.length-1;
 const{pct}=getChannelPos(data,li);
 const vr=volRatio(data);
@@ -686,15 +564,14 @@ const bs=getBSSignal(data);
 const ma20=calcMA(data,20),ma60=calcMA(data,60),ma120=calcMA(data,120);
 const t20=maTrend(ma20),t60=maTrend(ma60),t120=maTrend(ma120);
 let h='';
-const tL=t=>t==='up'?'↑':t==='dn'?'↓':'→';
-// 단기/장기 추세 (회귀선 기반)
-h+=`<div class="ib ${tShort==='up'?'ib-up':tShort==='dn'?'ib-dn':'ib-neu'}">단기${tL(tShort)}${shortMA}일</div>`;
-if(longMA>0){
-h+=`<div class="ib ${tLong==='up'?'ib-up':tLong==='dn'?'ib-dn':'ib-neu'}">장기${tL(tLong)}${longMA}일</div>`;
-}
+h+=`<div class="ib ${trendUp?'ib-up':trendDn?'ib-dn':'ib-neu'}">${trendUp?'↑상승':trendDn?'↓하락':'→횡보'}</div>`;
 h+=`<div class="ib ib-pos">채널 ${pct}%</div>`;
 if(vr){h+=`<div class="ib ib-vol">거래량 ${vr}배</div>`;}
 if(bs) h+=`<div class="ib ${bs.cls}">${bs.label}</div>`;
+const tL=t=>t==='up'?'↑':t==='dn'?'↓':'→';
+h+=`<div class="ib ${t20==='up'?'ib-up':t20==='dn'?'ib-dn':'ib-neu'}">단기${tL(t20)}</div>`;
+h+=`<div class="ib ${t60==='up'?'ib-up':t60==='dn'?'ib-dn':'ib-neu'}">중기${tL(t60)}</div>`;
+h+=`<div class="ib ${t120==='up'?'ib-up':t120==='dn'?'ib-dn':'ib-neu'}">장기${tL(t120)}</div>`;
 document.getElementById('shBar').innerHTML=h;
 }
 
@@ -783,68 +660,50 @@ if(spanA.length){const s=mainChart.addAreaSeries({lineColor:'rgba(34,197,94,0.5)
 if(spanB.length){const s=mainChart.addAreaSeries({lineColor:'rgba(239,68,68,0.5)',topColor:'rgba(239,68,68,0.2)',bottomColor:'rgba(239,68,68,0.0)',lineWidth:1,crosshairMarkerVisible:false,lastValueVisible:false,priceLineVisible:false});s.setData(spanB);}
 }
 
-// ⭐ 회귀채널 — 단기 + 장기 동시 표시
+// ⭐ 회귀채널 — 7선 또는 3선 모드
 if(lineMode>0){
 const useLog=showLog;
-
-// === 단기 회귀선 (주황 계열) ===
-const shortSlice=data.slice(Math.max(0,data.length-shortMA));
-if(shortSlice.length>=5){
-const{sl,ic,sd}=linReg(shortSlice,useLog);
+const{sl,ic,sd}=linReg(data,useLog);
 let lines;
 if(lineMode===7){
+// 7선: 중심 + ±1σ + ±2σ + ±3σ
 lines=[
-[0,'#f59f00',2.5,LightweightCharts.LineStyle.Solid],
-[1,'rgba(250,82,82,0.5)',1,0],[2,'#fa5252',2,0],[3,'rgba(250,82,82,0.2)',1,LightweightCharts.LineStyle.Dotted],
-[-1,'rgba(64,192,87,0.5)',1,0],[-2,'#40c057',2,0],[-3,'rgba(64,192,87,0.2)',1,LightweightCharts.LineStyle.Dotted],
+[0,'#f59f00',2,LightweightCharts.LineStyle.Dashed],
+[1,'rgba(250,82,82,0.4)',1,0],[2,'#fa5252',2,0],[3,'rgba(250,82,82,0.15)',1,LightweightCharts.LineStyle.Dotted],
+[-1,'rgba(64,192,87,0.4)',1,0],[-2,'#40c057',2,0],[-3,'rgba(64,192,87,0.15)',1,LightweightCharts.LineStyle.Dotted],
 ];
 } else {
+// 3선: 중심 + ±2σ만
 lines=[
-[0,'#f59f00',2.5,LightweightCharts.LineStyle.Solid],
+[0,'#f59f00',2,LightweightCharts.LineStyle.Dashed],
 [2,'#fa5252',2,0],
 [-2,'#40c057',2,0],
 ];
 }
 lines.forEach(([m,c,w,ls])=>{
 const s=mainChart.addLineSeries({color:c,lineWidth:w,lineStyle:ls||0,crosshairMarkerVisible:false,lastValueVisible:false,priceLineVisible:false});
-s.setData(shortSlice.map((d,i)=>({time:d.time,value:+regVal(sl,ic,sd,i,m,useLog).toFixed(4)})));
+s.setData(data.map((d,i)=>({time:d.time,value:+regVal(sl,ic,sd,i,m,useLog).toFixed(4)})));
 });
 }
 
-// === 장기 회귀선 (보라 계열, longMA>0일 때만) ===
-if(longMA>0){
-const longSlice=data.slice(Math.max(0,data.length-longMA));
-if(longSlice.length>=10){
-const{sl,ic,sd}=linReg(longSlice,useLog);
-const lines=[
-[0,'#ae3ec9',2,LightweightCharts.LineStyle.Dashed],
-[2,'rgba(174,62,201,0.6)',1.5,LightweightCharts.LineStyle.Dotted],
-[-2,'rgba(174,62,201,0.6)',1.5,LightweightCharts.LineStyle.Dotted],
-];
-lines.forEach(([m,c,w,ls])=>{
-const s=mainChart.addLineSeries({color:c,lineWidth:w,lineStyle:ls||0,crosshairMarkerVisible:false,lastValueVisible:false,priceLineVisible:false});
-s.setData(longSlice.map((d,i)=>({time:d.time,value:+regVal(sl,ic,sd,i,m,useLog).toFixed(4)})));
-});
-}
-}
-}
-
-// ⭐ 이평선 — 토글 ON일 때 MA20+MA60+MA120 고정 표시
+// ⭐ 이평선 - 단기/장기 사용자 선택
 if(showMA){
-const ma20=calcMA(data,20),ma60=calcMA(data,60),ma120=calcMA(data,120);
-[[ma20,'#339af0',1.5],[ma60,'#fab005',1.5],[ma120,'#7950f2',1.5]].forEach(([ma,c,w])=>{
-if(ma.length){const s=mainChart.addLineSeries({color:c,lineWidth:w,crosshairMarkerVisible:false,lastValueVisible:false,priceLineVisible:false});s.setData(ma);}
-});
+// 단기 MA (사용자 선택: 20/30/60)
+const maShort=calcMA(data,shortMA);
+if(maShort.length){const s=mainChart.addLineSeries({color:'#339af0',lineWidth:2,crosshairMarkerVisible:false,lastValueVisible:false,priceLineVisible:false});s.setData(maShort);}
+// 장기 MA (사용자 선택: OFF/60/120/250)
+if(longMA>0){
+const maLong=calcMA(data,longMA);
+if(maLong.length){const s=mainChart.addLineSeries({color:'#ae3ec9',lineWidth:2,crosshairMarkerVisible:false,lastValueVisible:false,priceLineVisible:false});s.setData(maLong);}
+}
 }
 
-// B/S 마커 — 단기 회귀선 기준
+// B/S 마커
 if(showBS){
 const useLog=showLog;
 const markers=[];
-const shortSlice=data.slice(Math.max(0,data.length-shortMA));
-if(shortSlice.length>=5){
-const{sl,ic,sd}=linReg(shortSlice,useLog);
-shortSlice.forEach((d,i)=>{
+const{sl,ic,sd}=linReg(data,useLog);
+data.forEach((d,i)=>{
 const y=useLog?Math.log(d.close):d.close;
 const center=sl*i+ic;
 const sigma=(y-center)/sd;
@@ -856,7 +715,6 @@ markers.push({time:d.time,position:'aboveBar',color:trendUp?'#f97316':'#dc2626',
 }
 });
 cs.setMarkers(markers);
-}
 }
 
 mainChart.timeScale().fitContent();
@@ -953,13 +811,6 @@ if(curStock)drawChart(curStock,curDays,curIv);
 function setLongMA(btn){
 longMA=+btn.dataset.long;
 document.querySelectorAll('[data-long]').forEach(b=>b.classList.toggle('on',b===btn));
-if(curStock)drawChart(curStock,curDays,curIv);
-}
-
-// ⭐ 분석 기간 변경 (회귀선 계산용 데이터 슬라이스)
-function setAnalDays(btn){
-analDays=+btn.dataset.anal;
-document.querySelectorAll('[data-anal]').forEach(b=>b.classList.toggle('on',b===btn));
 if(curStock)drawChart(curStock,curDays,curIv);
 }
 
@@ -1151,8 +1002,6 @@ chart.timeScale().fitContent();
 }
 
 render();
-// 페이지 로드 직후 자동으로 모든 종목의 현재 가격 갱신
-setTimeout(updateAllPrices, 300);
 </script>
 </body>
 </html>
