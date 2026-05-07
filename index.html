@@ -12,8 +12,10 @@
 --bg:#f8f9fa;--surface:#fff;--border:#e9ecef;--border2:#dee2e6;
 --accent:#1971c2;--accent-bg:#e7f5ff;
 --text:#212529;--text2:#495057;--muted:#868e96;
---up:#2f9e44;--up-bg:#ebfbee;--down:#e03131;--down-bg:#fff5f5;
---warn:#e67700;--warn-bg:#fff9db}
+--up:#e03131;--up-bg:#fff5f5;--down:#1971c2;--down-bg:#e7f5ff;
+--warn:#e67700;--warn-bg:#fff9db;
+--chart-bg:#1a1d24;--chart-grid:#252830;--chart-text:#9ca3af;
+--candle-up:#e03131;--candle-dn:#1971c2}
 html,body{height:100%}
 body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-serif;font-size:14px;line-height:1.5;padding-bottom:62px}
 
@@ -79,53 +81,62 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
 .bt.on{color:var(--accent)}
 .bt .ico{font-size:18px}
 
+/* CHART SHEET — DARK MODE */
 .ov{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:none}
 .ov.on{display:block}
-.sheet{position:fixed;top:0;left:0;right:0;bottom:0;background:var(--surface);display:flex;flex-direction:column;animation:fadein .25s ease}
+.sheet{position:fixed;top:0;left:0;right:0;bottom:0;background:var(--chart-bg);display:flex;flex-direction:column;animation:fadein .25s ease;color:#e5e7eb}
 @keyframes fadein{from{opacity:0}to{opacity:1}}
 
-.sh-head{padding:12px 14px;flex-shrink:0;border-bottom:1px solid var(--border)}
+.sh-head{padding:12px 14px;flex-shrink:0;border-bottom:1px solid #2d3139}
 .sh-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
-.sh-name{font-size:17px;font-weight:700}
-.sh-meta{font-size:11px;color:var(--muted);margin-top:2px}
-.sh-price{font-size:21px;font-weight:700;text-align:right}
+.sh-name{font-size:17px;font-weight:700;color:#fff}
+.sh-meta{font-size:11px;color:#9ca3af;margin-top:2px}
+.sh-price{font-size:21px;font-weight:700;text-align:right;color:#fff}
 .sh-chg{font-size:12px;font-weight:600;text-align:right;margin-top:2px}
 .sh-chg.up{color:var(--up)}.sh-chg.dn{color:var(--down)}
 .sh-bar{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}
 .ib{padding:3px 8px;border-radius:20px;font-size:10px;font-weight:700;display:inline-flex;align-items:center;gap:3px;border:1px solid}
-.ib-up{background:var(--up-bg);color:var(--up);border-color:#a9e6b5}
-.ib-dn{background:var(--down-bg);color:var(--down);border-color:#f5c0c0}
-.ib-neu{background:var(--bg);color:var(--muted);border-color:var(--border2)}
-.ib-vol{background:#f3f0ff;color:#7048e8;border-color:#d0bfff}
-.ib-pos{background:#e8f4fd;color:#1971c2;border-color:#a5d8f9}
-.ib-buy{background:#fff0f6;color:#c2255c;border-color:#fcc2d7}
-.ib-sell{background:var(--warn-bg);color:var(--warn);border-color:#ffdeab}
+.ib-up{background:rgba(224,49,49,0.15);color:#f87171;border-color:rgba(224,49,49,0.4)}
+.ib-dn{background:rgba(25,113,194,0.15);color:#60a5fa;border-color:rgba(25,113,194,0.4)}
+.ib-neu{background:rgba(156,163,175,0.15);color:#9ca3af;border-color:rgba(156,163,175,0.3)}
+.ib-vol{background:rgba(167,139,250,0.15);color:#a78bfa;border-color:rgba(167,139,250,0.4)}
+.ib-pos{background:rgba(96,165,250,0.15);color:#60a5fa;border-color:rgba(96,165,250,0.4)}
+.ib-buy{background:rgba(244,63,94,0.15);color:#fb7185;border-color:rgba(244,63,94,0.4)}
+.ib-sell{background:rgba(250,204,21,0.15);color:#facc15;border-color:rgba(250,204,21,0.4)}
 
 .sh-ctrl{display:flex;align-items:center;padding:8px 14px 0;gap:4px;overflow-x:auto;flex-shrink:0;scrollbar-width:none}
 .sh-ctrl::-webkit-scrollbar{display:none}
-.cb{padding:5px 10px;border-radius:6px;border:1px solid var(--border2);font-size:11px;font-weight:600;cursor:pointer;background:var(--surface);color:var(--text2);font-family:inherit;white-space:nowrap;flex-shrink:0}
+.cb{padding:5px 10px;border-radius:6px;border:1px solid #374151;font-size:11px;font-weight:600;cursor:pointer;background:#252830;color:#9ca3af;font-family:inherit;white-space:nowrap;flex-shrink:0}
 .cb.on{background:var(--accent);color:#fff;border-color:var(--accent)}
-.csep{width:1px;height:18px;background:var(--border);margin:0 4px;flex-shrink:0}
+.csep{width:1px;height:18px;background:#374151;margin:0 4px;flex-shrink:0}
+
+/* 단기/중기/장기 분석 탭 */
+.tt-bar{display:flex;gap:6px;padding:8px 14px 0;flex-shrink:0}
+.tt{flex:1;padding:8px 4px;border-radius:8px;border:1px solid #374151;font-size:11px;font-weight:600;cursor:pointer;background:#252830;color:#9ca3af;font-family:inherit;text-align:center}
+.tt.on{background:rgba(25,113,194,0.2);color:#60a5fa;border-color:#60a5fa}
+.tt-sub{font-size:9px;font-weight:400;opacity:.7;display:block;margin-top:2px}
 
 .ind-bar{display:flex;gap:4px;padding:6px 14px 0;overflow-x:auto;flex-shrink:0;scrollbar-width:none}
 .ind-bar::-webkit-scrollbar{display:none}
-.ind{padding:4px 9px;border-radius:6px;border:1px solid var(--border2);font-size:11px;font-weight:600;cursor:pointer;background:var(--surface);color:var(--muted);font-family:inherit;white-space:nowrap;flex-shrink:0}
-.ind.on{border-color:var(--accent);color:var(--accent);background:var(--accent-bg)}
+.ind{padding:4px 9px;border-radius:6px;border:1px solid #374151;font-size:11px;font-weight:600;cursor:pointer;background:#252830;color:#9ca3af;font-family:inherit;white-space:nowrap;flex-shrink:0}
+.ind.on{border-color:var(--accent);color:#60a5fa;background:rgba(25,113,194,0.2)}
 
-.sh-legend{display:flex;gap:8px;padding:6px 14px;flex-wrap:wrap;flex-shrink:0;border-bottom:1px solid var(--border)}
-.leg{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--muted)}
+.sh-legend{display:flex;gap:8px;padding:6px 14px;flex-wrap:wrap;flex-shrink:0;border-bottom:1px solid #2d3139}
+.leg{display:flex;align-items:center;gap:4px;font-size:10px;color:#9ca3af}
 .leg-l{width:14px;height:2px;border-radius:1px}
 
-.sh-charts{flex:1;display:flex;flex-direction:column;min-height:0;overflow:hidden}
+.sh-charts{flex:1;display:flex;flex-direction:column;min-height:0;overflow:hidden;background:var(--chart-bg)}
 .sh-main{flex:5;min-height:300px;width:100%}
-.sh-vol{flex:1;min-height:80px;border-top:1px solid var(--border);width:100%}
+.sh-vol{flex:1;min-height:80px;border-top:1px solid #2d3139;width:100%}
 
-.sh-foot{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-top:1px solid var(--border);flex-shrink:0}
-.sh-info{font-size:10px;color:var(--muted)}
-.sh-close{padding:8px 18px;background:var(--text);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit}
+.sh-foot{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-top:1px solid #2d3139;flex-shrink:0}
+.sh-info{font-size:10px;color:#9ca3af}
+.sh-close{padding:8px 18px;background:#374151;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit}
 
-.cload{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:10px;color:var(--muted);font-size:13px;text-align:center;padding:20px}
+.cload{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:10px;color:#9ca3af;font-size:13px;text-align:center;padding:20px}
 .cload-big{font-size:32px}
+
+.tt-info{padding:6px 14px;background:rgba(25,113,194,0.1);border-bottom:1px solid #2d3139;font-size:10px;color:#9ca3af;text-align:center}
 
 .val-input-row{display:flex;gap:8px;margin-bottom:12px}
 .val-input{flex:1;height:40px;border:1px solid var(--border2);border-radius:8px;padding:0 12px;font-size:13px;font-family:inherit;outline:none}
@@ -151,7 +162,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
 .bs-stat-l{font-size:10px;color:var(--muted);margin-bottom:3px}
 .bs-stat-v{font-size:17px;font-weight:800}
 .bs-stat-s{font-size:10px;font-weight:600;margin-top:2px}
-.pos-low{color:var(--up)}.pos-mid{color:var(--warn)}.pos-high{color:var(--down)}
+.pos-low{color:var(--down)}.pos-mid{color:var(--warn)}.pos-high{color:var(--up)}
 .quick-btns{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px}
 
 .news-item{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:8px;cursor:pointer}
@@ -233,7 +244,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
 
 <div class="page" id="page-val">
 <div class="val-input-row">
-<input class="val-input" id="valInput" placeholder="종목명 또는 코드 (예: AAPL, 010120)" onkeydown="if(event.key==='Enter')runVal()">
+<input class="val-input" id="valInput" placeholder="종목명 또는 코드" onkeydown="if(event.key==='Enter')runVal()">
 <button class="val-btn" onclick="runVal()">분석</button>
 </div>
 <div style="font-size:12px;color:var(--muted);margin-bottom:8px">보유 종목 빠른 선택:</div>
@@ -251,6 +262,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
 <button class="bt" data-p="val"><div class="ico">📐</div>밸류</button>
 </div>
 
+<!-- 차트 풀스크린 모달 (다크모드) -->
 <div class="ov" id="ov" onclick="closeSheet(event)">
 <div class="sheet" onclick="event.stopPropagation()">
 <div class="sh-head">
@@ -261,14 +273,21 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
 <div class="sh-bar" id="shBar"></div>
 </div>
 
+<!-- 단기/중기/장기 분석 탭 -->
+<div class="tt-bar">
+<button class="tt" data-tt="short" onclick="setAnalysis(this)">단기<span class="tt-sub">최근 30일</span></button>
+<button class="tt on" data-tt="mid" onclick="setAnalysis(this)">중기<span class="tt-sub">최근 6개월</span></button>
+<button class="tt" data-tt="long" onclick="setAnalysis(this)">장기<span class="tt-sub">전체 기간</span></button>
+</div>
+
 <div class="sh-ctrl">
 <button class="cb on" data-iv="1d" onclick="setIv(this)">일</button>
 <button class="cb" data-iv="1wk" onclick="setIv(this)">주</button>
 <button class="cb" data-iv="1mo" onclick="setIv(this)">월</button>
 <div class="csep"></div>
 <button class="cb" data-d="30" onclick="setDays(this)">1M</button>
-<button class="cb on" data-d="90" onclick="setDays(this)">3M</button>
-<button class="cb" data-d="180" onclick="setDays(this)">6M</button>
+<button class="cb" data-d="90" onclick="setDays(this)">3M</button>
+<button class="cb on" data-d="180" onclick="setDays(this)">6M</button>
 <button class="cb" data-d="365" onclick="setDays(this)">1Y</button>
 <button class="cb" data-d="730" onclick="setDays(this)">2Y</button>
 <button class="cb" data-d="1825" onclick="setDays(this)">5Y</button>
@@ -284,8 +303,11 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
 <button class="ind" id="iIchi" onclick="togInd('ichi',this)">일목</button>
 </div>
 
+<div class="tt-info" id="ttInfo">📊 중기 분석 — 최근 180일 데이터로 회귀선 계산</div>
+
 <div class="sh-legend">
-<div class="leg"><div class="leg-l" style="background:#2f9e44"></div>캔들</div>
+<div class="leg"><div class="leg-l" style="background:#e03131"></div>양봉</div>
+<div class="leg"><div class="leg-l" style="background:#1971c2"></div>음봉</div>
 <div class="leg"><div class="leg-l" style="background:#f59f00;height:0;border-top:2px dashed #f59f00;width:14px"></div>중심선</div>
 <div class="leg"><div class="leg-l" style="background:#fa5252"></div>+2σ</div>
 <div class="leg"><div class="leg-l" style="background:#40c057"></div>-2σ</div>
@@ -300,7 +322,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
 </div>
 
 <div class="sh-foot">
-<div class="sh-info">Yahoo Finance · 회귀채널 7선 (로그스케일 지원)</div>
+<div class="sh-info">Yahoo Finance · 한국식 다크모드 · 단기/중기/장기 분석</div>
 <button class="sh-close" onclick="closeSheet()">닫기</button>
 </div>
 </div>
@@ -327,8 +349,9 @@ const US=[
 {name:'암페놀 APH', code:'APH', yf:'APH', shares:20,avg:139.93,val:2786.40,ret:-0.43},
 ];
 
-let mainChart=null,volChart=null,curStock=null,curDays=90,curIv='1d';
+let mainChart=null,volChart=null,curStock=null,curDays=180,curIv='1d';
 let showBS=true,showLog=false,show7=true,showMA=true,showVol=true,showIchi=false;
+let analysisMode='mid'; // short/mid/long
 
 function fK(v){return v>=1e8?(v/1e8).toFixed(1)+'억':v>=1e4?Math.round(v/1e4)+'만원':v.toLocaleString()+'원'}
 function fU(v){return '$'+v.toLocaleString('en',{maximumFractionDigits:0})}
@@ -406,15 +429,15 @@ const yfUrl=`https://query1.finance.yahoo.com/v8/finance/chart/${encodeURICompon
 try{
 const r=await fetch(`/api/chart?symbol=${encodeURIComponent(sym)}&period1=${start}&period2=${end}&interval=${iv}`,{signal:AbortSignal.timeout(10000)});
 if(r.ok){const d=await r.json();if(d.chart?.result?.[0])return parseYF(d);}
-}catch(e){console.warn('Vercel:',e);}
+}catch(e){}
 try{
 const r=await fetch(`https://corsproxy.io/?url=${encodeURIComponent(yfUrl)}`,{signal:AbortSignal.timeout(10000)});
 if(r.ok){const d=await r.json();if(d.chart?.result?.[0])return parseYF(d);}
-}catch(e){console.warn('corsproxy:',e);}
+}catch(e){}
 try{
 const r=await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(yfUrl)}`,{signal:AbortSignal.timeout(15000)});
 if(r.ok){const d=await r.json();if(d.chart?.result?.[0])return parseYF(d);}
-}catch(e){console.warn('allorigins:',e);}
+}catch(e){}
 return null;
 }
 
@@ -431,8 +454,14 @@ c.push({time:ts[i],open:+q.open[i].toFixed(4),high:+q.high[i].toFixed(4),low:+q.
 return c.sort((a,b)=>a.time-b.time);
 }
 
-// ⭐ 핵심 수정: 로그 스케일에서 직선이 되도록 log(close) 기반 회귀
-// useLog=true면 log 변환 후 회귀, 결과는 exp(...)로 복원
+// ⭐ 분석 모드별 데이터 슬라이스
+function getAnalysisSlice(data){
+const len=data.length;
+if(analysisMode==='short') return data.slice(Math.max(0,len-30));
+if(analysisMode==='mid') return data.slice(Math.max(0,len-Math.floor(len*0.5)));
+return data; // long: 전체
+}
+
 function linReg(data,useLog){
 const n=data.length;let sx=0,sy=0,sxy=0,sxx=0;
 data.forEach((d,i)=>{
@@ -448,7 +477,6 @@ sq+=(y-(sl*i+ic))**2;
 return{sl,ic,sd:Math.sqrt(sq/n)};
 }
 
-// 회귀선 값 계산: log이면 exp 복원
 function regVal(sl,ic,sd,i,mult,useLog){
 const v=sl*i+ic+mult*sd;
 return useLog?Math.exp(v):v;
@@ -474,13 +502,14 @@ return r;
 }
 
 function channelPos(data){
+const slice=getAnalysisSlice(data);
 const useLog=showLog;
-const{sl,ic,sd}=linReg(data,useLog);
-const li=data.length-1;
+const{sl,ic,sd}=linReg(slice,useLog);
+const li=slice.length-1;
 const center=regVal(sl,ic,sd,li,0,useLog);
 const upper=regVal(sl,ic,sd,li,2,useLog);
 const lower=regVal(sl,ic,sd,li,-2,useLog);
-return Math.max(0,Math.min(100,((data[li].close-lower)/(upper-lower)*100))).toFixed(0);
+return Math.max(0,Math.min(100,((slice[li].close-lower)/(upper-lower)*100))).toFixed(0);
 }
 
 function volRatio(data,p=20){
@@ -491,30 +520,41 @@ return avg>0?(data[data.length-1].volume/avg).toFixed(1):null;
 
 function getBSSignal(data){
 if(data.length<10)return null;
+const slice=getAnalysisSlice(data);
 const useLog=showLog;
-const{sl,ic,sd}=linReg(data,useLog);
-const li=data.length-1;
-const lastY=useLog?Math.log(data[li].close):data[li].close;
+const{sl,ic,sd}=linReg(slice,useLog);
+const li=slice.length-1;
+const lastY=useLog?Math.log(slice[li].close):slice[li].close;
 const center=sl*li+ic;
 const sigma=(lastY-center)/sd;
 const trendUp=sl>0.0003,trendDn=sl<-0.0003;
-if(sigma<=-2) return trendDn?{label:'B ↑',cls:'ib-up',desc:'채널하단+하락추세'}:{label:'B ■',cls:'ib-buy',desc:'채널하단+수급유입'};
-if(sigma>=2)  return trendUp?{label:'S ↓',cls:'ib-sell',desc:'채널상단+상승추세'}:{label:'S ■',cls:'ib-dn',desc:'채널상단+수급유출'};
+if(sigma<=-2) return trendDn?{label:'B↑',cls:'ib-up',desc:'채널하단+하락추세'}:{label:'B■',cls:'ib-buy',desc:'채널하단+수급유입'};
+if(sigma>=2)  return trendUp?{label:'S↓',cls:'ib-sell',desc:'채널상단+상승추세'}:{label:'S■',cls:'ib-dn',desc:'채널상단+수급유출'};
 return null;
 }
 
+// ⭐ 일목균형표 - 구름대 포함
 function calcIchimoku(data){
 const high=(s,e)=>Math.max(...data.slice(s,e).map(d=>d.high));
 const low=(s,e)=>Math.min(...data.slice(s,e).map(d=>d.low));
-const tenkan=[],kijun=[];
+const tenkan=[],kijun=[],spanA=[],spanB=[];
 for(let i=8;i<data.length;i++) tenkan.push({time:data[i].time,value:(high(i-8,i+1)+low(i-8,i+1))/2});
 for(let i=25;i<data.length;i++) kijun.push({time:data[i].time,value:(high(i-25,i+1)+low(i-25,i+1))/2});
-return{tenkan,kijun};
+// 선행스팬 A = (전환선 + 기준선) / 2
+for(let i=25;i<data.length;i++){
+const ti=tenkan.find(t=>t.time===data[i].time);
+const ki=kijun.find(k=>k.time===data[i].time);
+if(ti&&ki) spanA.push({time:data[i].time,value:(ti.value+ki.value)/2});
+}
+// 선행스팬 B = (52일 최고 + 최저) / 2
+for(let i=51;i<data.length;i++) spanB.push({time:data[i].time,value:(high(i-51,i+1)+low(i-51,i+1))/2});
+return{tenkan,kijun,spanA,spanB};
 }
 
 function renderInfobar(data){
+const slice=getAnalysisSlice(data);
 const useLog=showLog;
-const{sl}=linReg(data,useLog);
+const{sl}=linReg(slice,useLog);
 const trendUp=sl>0.0003,trendDn=sl<-0.0003;
 const pos=channelPos(data);
 const vr=volRatio(data);
@@ -557,57 +597,70 @@ mEl.innerHTML='';vEl.innerHTML='';
 
 mainChart=LightweightCharts.createChart(mEl,{
 width:mEl.clientWidth,height:mEl.clientHeight,
-layout:{background:{color:'#fff'},textColor:'#212529'},
-grid:{vertLines:{color:'#f1f3f5'},horzLines:{color:'#f1f3f5'}},
+layout:{background:{color:'#1a1d24'},textColor:'#9ca3af'},
+grid:{vertLines:{color:'#252830'},horzLines:{color:'#252830'}},
 crosshair:{mode:LightweightCharts.CrosshairMode.Normal},
-rightPriceScale:{borderColor:'#dee2e6',mode:showLog?LightweightCharts.PriceScaleMode.Logarithmic:0},
-timeScale:{borderColor:'#dee2e6',timeVisible:true,rightOffset:5},
+rightPriceScale:{borderColor:'#374151',mode:showLog?LightweightCharts.PriceScaleMode.Logarithmic:0},
+timeScale:{borderColor:'#374151',timeVisible:true,rightOffset:5},
 });
 
-const cs=mainChart.addCandlestickSeries({upColor:'#2f9e44',downColor:'#e03131',borderUpColor:'#2f9e44',borderDownColor:'#e03131',wickUpColor:'#2f9e44',wickDownColor:'#e03131'});
+// ⭐ 한국식 캔들 (빨강 양봉, 파랑 음봉)
+const cs=mainChart.addCandlestickSeries({
+upColor:'#e03131',downColor:'#1971c2',
+borderUpColor:'#e03131',borderDownColor:'#1971c2',
+wickUpColor:'#e03131',wickDownColor:'#1971c2'
+});
 cs.setData(data.map(d=>({time:d.time,open:d.open,high:d.high,low:d.low,close:d.close})));
 
-// ⭐ 회귀채널 — 로그 모드면 log(close) 기반 회귀로 직선 유지
+// ⭐ 일목균형표 - 구름대 색칠
+if(showIchi&&data.length>52){
+const{tenkan,kijun,spanA,spanB}=calcIchimoku(data);
+if(tenkan.length){const s=mainChart.addLineSeries({color:'#ec4899',lineWidth:1,crosshairMarkerVisible:false,lastValueVisible:false,priceLineVisible:false});s.setData(tenkan);}
+if(kijun.length){const s=mainChart.addLineSeries({color:'#06b6d4',lineWidth:1,crosshairMarkerVisible:false,lastValueVisible:false,priceLineVisible:false});s.setData(kijun);}
+// 선행스팬 A (구름 위쪽)
+if(spanA.length){const s=mainChart.addAreaSeries({lineColor:'rgba(34,197,94,0.5)',topColor:'rgba(34,197,94,0.2)',bottomColor:'rgba(34,197,94,0.0)',lineWidth:1,crosshairMarkerVisible:false,lastValueVisible:false,priceLineVisible:false});s.setData(spanA);}
+// 선행스팬 B (구름 아래쪽)
+if(spanB.length){const s=mainChart.addAreaSeries({lineColor:'rgba(239,68,68,0.5)',topColor:'rgba(239,68,68,0.2)',bottomColor:'rgba(239,68,68,0.0)',lineWidth:1,crosshairMarkerVisible:false,lastValueVisible:false,priceLineVisible:false});s.setData(spanB);}
+}
+
+// ⭐ 회귀채널 — 분석 모드에 따라 다른 슬라이스
 if(show7){
+const slice=getAnalysisSlice(data);
+const startIdx=data.length-slice.length;
 const useLog=showLog;
-const{sl,ic,sd}=linReg(data,useLog);
+const{sl,ic,sd}=linReg(slice,useLog);
 [
-[0,'#f59f00',1,LightweightCharts.LineStyle.Dashed],
-[1,'rgba(250,82,82,0.4)',1,0],[2,'#fa5252',1.5,0],[3,'rgba(250,82,82,0.15)',1,LightweightCharts.LineStyle.Dotted],
-[-1,'rgba(64,192,87,0.4)',1,0],[-2,'#40c057',1.5,0],[-3,'rgba(64,192,87,0.15)',1,LightweightCharts.LineStyle.Dotted],
+[0,'#f59f00',2,LightweightCharts.LineStyle.Dashed],
+[1,'rgba(250,82,82,0.4)',1,0],[2,'#fa5252',2,0],[3,'rgba(250,82,82,0.15)',1,LightweightCharts.LineStyle.Dotted],
+[-1,'rgba(64,192,87,0.4)',1,0],[-2,'#40c057',2,0],[-3,'rgba(64,192,87,0.15)',1,LightweightCharts.LineStyle.Dotted],
 ].forEach(([m,c,w,ls])=>{
-const s=mainChart.addLineSeries({color:c,lineWidth:w,lineStyle:ls||0,crosshairMarkerVisible:false,lastValueVisible:false});
-s.setData(data.map((d,i)=>({time:d.time,value:+regVal(sl,ic,sd,i,m,useLog).toFixed(4)})));
+const s=mainChart.addLineSeries({color:c,lineWidth:w,lineStyle:ls||0,crosshairMarkerVisible:false,lastValueVisible:false,priceLineVisible:false});
+s.setData(slice.map((d,i)=>({time:d.time,value:+regVal(sl,ic,sd,i,m,useLog).toFixed(4)})));
 });
 }
 
 if(showMA){
 const ma20=calcMA(data,20),ma60=calcMA(data,60),ma120=calcMA(data,120);
-[[ma20,'#339af0'],[ma60,'#f59f00'],[ma120,'#ae3ec9']].forEach(([ma,c])=>{
-if(ma.length){const s=mainChart.addLineSeries({color:c,lineWidth:1.5,crosshairMarkerVisible:false,lastValueVisible:false});s.setData(ma);}
+[[ma20,'#339af0',1.5],[ma60,'#f59f00',1.5],[ma120,'#ae3ec9',1.5]].forEach(([ma,c,w])=>{
+if(ma.length){const s=mainChart.addLineSeries({color:c,lineWidth:w,crosshairMarkerVisible:false,lastValueVisible:false,priceLineVisible:false});s.setData(ma);}
 });
 }
 
-if(showIchi&&data.length>26){
-const{tenkan,kijun}=calcIchimoku(data);
-if(tenkan.length){const s=mainChart.addLineSeries({color:'#e03131',lineWidth:1,crosshairMarkerVisible:false,lastValueVisible:false});s.setData(tenkan);}
-if(kijun.length){const s=mainChart.addLineSeries({color:'#1971c2',lineWidth:1,crosshairMarkerVisible:false,lastValueVisible:false});s.setData(kijun);}
-}
-
-// B/S 마커 — 로그 모드 반영
 if(showBS){
+const slice=getAnalysisSlice(data);
+const startIdx=data.length-slice.length;
 const useLog=showLog;
 const markers=[];
-const{sl,ic,sd}=linReg(data,useLog);
-data.forEach((d,i)=>{
+const{sl,ic,sd}=linReg(slice,useLog);
+slice.forEach((d,i)=>{
 const y=useLog?Math.log(d.close):d.close;
 const center=sl*i+ic;
 const sigma=(y-center)/sd;
 const trendUp=sl>0.0003,trendDn=sl<-0.0003;
 if(sigma<=-2){
-markers.push({time:d.time,position:'belowBar',color:trendDn?'#40c057':'#2f9e44',shape:'arrowUp',text:trendDn?'B↑':'B'});
+markers.push({time:d.time,position:'belowBar',color:trendDn?'#22c55e':'#16a34a',shape:'arrowUp',text:trendDn?'B↑':'B',size:2});
 } else if(sigma>=2){
-markers.push({time:d.time,position:'aboveBar',color:trendUp?'#fa8c16':'#e03131',shape:'arrowDown',text:trendUp?'S↓':'S'});
+markers.push({time:d.time,position:'aboveBar',color:trendUp?'#f97316':'#dc2626',shape:'arrowDown',text:trendUp?'S↓':'S',size:2});
 }
 });
 cs.setMarkers(markers);
@@ -619,14 +672,14 @@ if(showVol){
 vEl.style.display='block';
 volChart=LightweightCharts.createChart(vEl,{
 width:vEl.clientWidth,height:vEl.clientHeight,
-layout:{background:{color:'#fff'},textColor:'#868e96'},
-grid:{vertLines:{color:'#f1f3f5'},horzLines:{visible:false}},
-rightPriceScale:{borderColor:'#dee2e6',scaleMargins:{top:0.1,bottom:0}},
-timeScale:{borderColor:'#dee2e6',visible:false},
+layout:{background:{color:'#1a1d24'},textColor:'#9ca3af'},
+grid:{vertLines:{color:'#252830'},horzLines:{visible:false}},
+rightPriceScale:{borderColor:'#374151',scaleMargins:{top:0.1,bottom:0}},
+timeScale:{borderColor:'#374151',visible:false},
 crosshair:{mode:LightweightCharts.CrosshairMode.Normal},
 });
 const vs=volChart.addHistogramSeries({priceFormat:{type:'volume'},priceScaleId:''});
-vs.setData(data.map(d=>({time:d.time,value:d.volume,color:d.close>=d.open?'rgba(47,158,68,0.5)':'rgba(224,49,49,0.5)'})));
+vs.setData(data.map(d=>({time:d.time,value:d.volume,color:d.close>=d.open?'rgba(224,49,49,0.5)':'rgba(25,113,194,0.5)'})));
 volChart.timeScale().fitContent();
 mainChart.timeScale().subscribeVisibleLogicalRangeChange(r=>{if(r&&volChart)volChart.timeScale().setVisibleLogicalRange(r);});
 } else {vEl.style.display='none';}
@@ -681,7 +734,15 @@ if(type==='ichi')showIchi=!showIchi;
 if(curStock)drawChart(curStock,curDays,curIv);
 }
 
-// ⭐ AI 호출: 이제 Vercel /api/ai 통해서 호출
+// ⭐ 단기/중기/장기 분석 모드 변경
+function setAnalysis(btn){
+analysisMode=btn.dataset.tt;
+document.querySelectorAll('[data-tt]').forEach(b=>b.classList.toggle('on',b===btn));
+const info={short:'📊 단기 분석 — 최근 30일 데이터로 회귀선 계산',mid:'📊 중기 분석 — 절반 기간 데이터로 회귀선 계산',long:'📊 장기 분석 — 전체 기간 데이터로 회귀선 계산'};
+document.getElementById('ttInfo').textContent=info[analysisMode];
+if(curStock)drawChart(curStock,curDays,curIv);
+}
+
 async function callAI(body){
 const r=await fetch('/api/ai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
 return await r.json();
@@ -702,7 +763,7 @@ model:'claude-sonnet-4-5',max_tokens:1200,
 tools:[{type:'web_search_20250305',name:'web_search'}],
 messages:[{role:'user',content:`전문 포트폴리오 분석가로서 오늘(${today}) 시황을 검색하고 다음 포트폴리오를 분석해주세요.\n\n${ptf}\n\n형식:\n🏥 전체 건강 점수\n💰 밸류 평가\n📊 기술적 평가\n🎯 분산도\n⚡ 주목 종목\n📌 개선 제안\n\n간결하고 실용적으로.`}]
 });
-if(data.error){throw new Error(typeof data.error==="string"?data.error:JSON.stringify(data.error));}
+if(data.error){throw new Error(typeof data.error==='string'?data.error:JSON.stringify(data.error));}
 const text=data.content.filter(b=>b.type==='text').map(b=>b.text).join('\n');
 ct.innerHTML=text.replace(/^(🏥|💰|📊|🎯|⚡|📌).+$/gm,m=>`<h3>${m}</h3>`).replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');
 }catch(e){ct.textContent='오류: '+e.message;}
@@ -720,7 +781,7 @@ model:'claude-sonnet-4-5',max_tokens:1500,
 tools:[{type:'web_search_20250305',name:'web_search'}],
 messages:[{role:'user',content:`오늘 날짜 기준 다음 종목들의 최신 뉴스를 검색해서 JSON 배열로만 반환.\n\n종목: ${names}\n\n[{"title":"제목","summary":"한줄","stock":"종목","time":"시간","url":"링크"}] 최대 10개.`}]
 });
-if(data.error){throw new Error(typeof data.error==="string"?data.error:JSON.stringify(data.error));}
+if(data.error){throw new Error(typeof data.error==='string'?data.error:JSON.stringify(data.error));}
 const text=data.content.filter(b=>b.type==='text').map(b=>b.text).join('');
 try{
 const news=JSON.parse(text.replace(/```json|```/g,'').trim());
@@ -761,10 +822,10 @@ model:'claude-sonnet-4-5',max_tokens:800,
 tools:[{type:'web_search_20250305',name:'web_search'}],
 messages:[{role:'user',content:`${name}(${code}) ${market==='us'?'미국 종목':'한국 종목'} 최신 밸류에이션을 검색해서 JSON으로만 반환.\n\n{\n"targetPrice":목표주가,\n"currentPrice":현재가,\n"minTarget":최저,\n"maxTarget":최고,\n"analystCount":증권사수,\n"forwardPER":선행PER,\n"trailingPER":과거PER,\n"pbr":PBR,\n"avgPER":평균PER,\n"avgPBR":평균PBR,\n"perPosition":PER역사적위치퍼센트,\n"pbrPosition":PBR역사적위치퍼센트,\n"eps":EPS,\n"bps":BPS\n}`}]
 });
-if(data.error){throw new Error(typeof data.error==="string"?data.error:JSON.stringify(data.error));}
+if(data.error){throw new Error(typeof data.error==='string'?data.error:JSON.stringify(data.error));}
 const text=data.content.filter(b=>b.type==='text').map(b=>b.text).join('');
 let fi={};
-try{fi=JSON.parse(text.replace(/```json|```/g,'').trim());}catch(e){console.warn(e);}
+try{fi=JSON.parse(text.replace(/```json|```/g,'').trim());}catch(e){}
 valFi=fi;valData=priceData||[];
 window._valMarket=market;
 renderValuation(name,code,fi,priceData,market);
