@@ -702,7 +702,7 @@ model:'claude-sonnet-4-20250514',max_tokens:1200,
 tools:[{type:'web_search_20250305',name:'web_search'}],
 messages:[{role:'user',content:`전문 포트폴리오 분석가로서 오늘(${today}) 시황을 검색하고 다음 포트폴리오를 분석해주세요.\n\n${ptf}\n\n형식:\n🏥 전체 건강 점수\n💰 밸류 평가\n📊 기술적 평가\n🎯 분산도\n⚡ 주목 종목\n📌 개선 제안\n\n간결하고 실용적으로.`}]
 });
-if(data.error){throw new Error(data.error);}
+if(data.error){throw new Error(typeof data.error==="string"?data.error:JSON.stringify(data.error));}
 const text=data.content.filter(b=>b.type==='text').map(b=>b.text).join('\n');
 ct.innerHTML=text.replace(/^(🏥|💰|📊|🎯|⚡|📌).+$/gm,m=>`<h3>${m}</h3>`).replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');
 }catch(e){ct.textContent='오류: '+e.message;}
@@ -720,7 +720,7 @@ model:'claude-sonnet-4-20250514',max_tokens:1500,
 tools:[{type:'web_search_20250305',name:'web_search'}],
 messages:[{role:'user',content:`오늘 날짜 기준 다음 종목들의 최신 뉴스를 검색해서 JSON 배열로만 반환.\n\n종목: ${names}\n\n[{"title":"제목","summary":"한줄","stock":"종목","time":"시간","url":"링크"}] 최대 10개.`}]
 });
-if(data.error){throw new Error(data.error);}
+if(data.error){throw new Error(typeof data.error==="string"?data.error:JSON.stringify(data.error));}
 const text=data.content.filter(b=>b.type==='text').map(b=>b.text).join('');
 try{
 const news=JSON.parse(text.replace(/```json|```/g,'').trim());
@@ -761,7 +761,7 @@ model:'claude-sonnet-4-20250514',max_tokens:800,
 tools:[{type:'web_search_20250305',name:'web_search'}],
 messages:[{role:'user',content:`${name}(${code}) ${market==='us'?'미국 종목':'한국 종목'} 최신 밸류에이션을 검색해서 JSON으로만 반환.\n\n{\n"targetPrice":목표주가,\n"currentPrice":현재가,\n"minTarget":최저,\n"maxTarget":최고,\n"analystCount":증권사수,\n"forwardPER":선행PER,\n"trailingPER":과거PER,\n"pbr":PBR,\n"avgPER":평균PER,\n"avgPBR":평균PBR,\n"perPosition":PER역사적위치퍼센트,\n"pbrPosition":PBR역사적위치퍼센트,\n"eps":EPS,\n"bps":BPS\n}`}]
 });
-if(data.error){throw new Error(data.error);}
+if(data.error){throw new Error(typeof data.error==="string"?data.error:JSON.stringify(data.error));}
 const text=data.content.filter(b=>b.type==='text').map(b=>b.text).join('');
 let fi={};
 try{fi=JSON.parse(text.replace(/```json|```/g,'').trim());}catch(e){console.warn(e);}
