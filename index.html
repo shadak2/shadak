@@ -300,14 +300,13 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
 </div>
 
 <div class="sh-foot">
-<div class="sh-info">Yahoo Finance · 회귀채널 7선</div>
+<div class="sh-info">Yahoo Finance · 회귀채널 7선 (로그스케일 지원)</div>
 <button class="sh-close" onclick="closeSheet()">닫기</button>
 </div>
 </div>
 </div>
 
 <script>
-// ⚠️ 종목코드 수정됨: 산일전기 062040, 디바이스이온 187870
 const KR=[
 {name:'LS ELECTRIC',  code:'010120',yf:'010120.KS',shares:62, avg:186582,val:19747000,ret:70.70},
 {name:'산일전기',      code:'062040',yf:'062040.KS',shares:40, avg:214125,val:12960000,ret:51.31},
@@ -407,15 +406,15 @@ const yfUrl=`https://query1.finance.yahoo.com/v8/finance/chart/${encodeURICompon
 try{
 const r=await fetch(`/api/chart?symbol=${encodeURIComponent(sym)}&period1=${start}&period2=${end}&interval=${iv}`,{signal:AbortSignal.timeout(10000)});
 if(r.ok){const d=await r.json();if(d.chart?.result?.[0])return parseYF(d);}
-}catch(e){console.warn('Vercel API failed:',e);}
+}catch(e){console.warn('Vercel:',e);}
 try{
 const r=await fetch(`https://corsproxy.io/?url=${encodeURIComponent(yfUrl)}`,{signal:AbortSignal.timeout(10000)});
 if(r.ok){const d=await r.json();if(d.chart?.result?.[0])return parseYF(d);}
-}catch(e){console.warn('corsproxy failed:',e);}
+}catch(e){console.warn('corsproxy:',e);}
 try{
 const r=await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(yfUrl)}`,{signal:AbortSignal.timeout(15000)});
 if(r.ok){const d=await r.json();if(d.chart?.result?.[0])return parseYF(d);}
-}catch(e){console.warn('allorigins failed:',e);}
+}catch(e){console.warn('allorigins:',e);}
 return null;
 }
 
@@ -432,12 +431,27 @@ c.push({time:ts[i],open:+q.open[i].toFixed(4),high:+q.high[i].toFixed(4),low:+q.
 return c.sort((a,b)=>a.time-b.time);
 }
 
-function linReg(data){
+// ⭐ 핵심 수정: 로그 스케일에서 직선이 되도록 log(close) 기반 회귀
+// useLog=true면 log 변환 후 회귀, 결과는 exp(...)로 복원
+function linReg(data,useLog){
 const n=data.length;let sx=0,sy=0,sxy=0,sxx=0;
-data.forEach((d,i)=>{sx+=i;sy+=d.close;sxy+=i*d.close;sxx+=i*i;});
+data.forEach((d,i)=>{
+const y=useLog?Math.log(d.close):d.close;
+sx+=i;sy+=y;sxy+=i*y;sxx+=i*i;
+});
 const sl=(n*sxy-sx*sy)/(n*sxx-sx*sx),ic=(sy-sl*sx)/n;
-let sq=0;data.forEach((d,i)=>{sq+=(d.close-(sl*i+ic))**2;});
+let sq=0;
+data.forEach((d,i)=>{
+const y=useLog?Math.log(d.close):d.close;
+sq+=(y-(sl*i+ic))**2;
+});
 return{sl,ic,sd:Math.sqrt(sq/n)};
+}
+
+// 회귀선 값 계산: log이면 exp 복원
+function regVal(sl,ic,sd,i,mult,useLog){
+const v=sl*i+ic+mult*sd;
+return useLog?Math.exp(v):v;
 }
 
 function maTrend(ma){
@@ -460,9 +474,12 @@ return r;
 }
 
 function channelPos(data){
-const{sl,ic,sd}=linReg(data);
+const useLog=showLog;
+const{sl,ic,sd}=linReg(data,useLog);
 const li=data.length-1;
-const center=sl*li+ic,upper=center+2*sd,lower=center-2*sd;
+const center=regVal(sl,ic,sd,li,0,useLog);
+const upper=regVal(sl,ic,sd,li,2,useLog);
+const lower=regVal(sl,ic,sd,li,-2,useLog);
 return Math.max(0,Math.min(100,((data[li].close-lower)/(upper-lower)*100))).toFixed(0);
 }
 
@@ -474,12 +491,13 @@ return avg>0?(data[data.length-1].volume/avg).toFixed(1):null;
 
 function getBSSignal(data){
 if(data.length<10)return null;
-const{sl,ic,sd}=linReg(data);
+const useLog=showLog;
+const{sl,ic,sd}=linReg(data,useLog);
 const li=data.length-1;
+const lastY=useLog?Math.log(data[li].close):data[li].close;
 const center=sl*li+ic;
-const sigma=(data[li].close-center)/sd;
-const trendUp=sl>center*0.0003;
-const trendDn=sl<-center*0.0003;
+const sigma=(lastY-center)/sd;
+const trendUp=sl>0.0003,trendDn=sl<-0.0003;
 if(sigma<=-2) return trendDn?{label:'B ↑',cls:'ib-up',desc:'채널하단+하락추세'}:{label:'B ■',cls:'ib-buy',desc:'채널하단+수급유입'};
 if(sigma>=2)  return trendUp?{label:'S ↓',cls:'ib-sell',desc:'채널상단+상승추세'}:{label:'S ■',cls:'ib-dn',desc:'채널상단+수급유출'};
 return null;
@@ -495,9 +513,9 @@ return{tenkan,kijun};
 }
 
 function renderInfobar(data){
-const{sl,ic,sd}=linReg(data);
-const li=data.length-1,center=sl*li+ic;
-const trendUp=sl>center*0.0003,trendDn=sl<-center*0.0003;
+const useLog=showLog;
+const{sl}=linReg(data,useLog);
+const trendUp=sl>0.0003,trendDn=sl<-0.0003;
 const pos=channelPos(data);
 const vr=volRatio(data);
 const bs=getBSSignal(data);
@@ -521,7 +539,7 @@ mEl.innerHTML=`<div class="cload"><div class="cload-big">📊</div><div class="l
 vEl.innerHTML='';
 const data=await fetchOHLC(stock.yf,days,iv);
 if(!data||data.length<5){
-mEl.innerHTML=`<div class="cload"><div class="cload-big">📊</div><div>데이터를 불러올 수 없습니다</div><div style="font-size:11px;opacity:.7">잠시 후 다시 시도하거나 TradingView를 이용해주세요</div></div>`;
+mEl.innerHTML=`<div class="cload"><div class="cload-big">📊</div><div>데이터를 불러올 수 없습니다</div></div>`;
 return;
 }
 const last=data[data.length-1],prev=data[data.length-2];
@@ -549,15 +567,17 @@ timeScale:{borderColor:'#dee2e6',timeVisible:true,rightOffset:5},
 const cs=mainChart.addCandlestickSeries({upColor:'#2f9e44',downColor:'#e03131',borderUpColor:'#2f9e44',borderDownColor:'#e03131',wickUpColor:'#2f9e44',wickDownColor:'#e03131'});
 cs.setData(data.map(d=>({time:d.time,open:d.open,high:d.high,low:d.low,close:d.close})));
 
+// ⭐ 회귀채널 — 로그 모드면 log(close) 기반 회귀로 직선 유지
 if(show7){
-const{sl,ic,sd}=linReg(data);
+const useLog=showLog;
+const{sl,ic,sd}=linReg(data,useLog);
 [
 [0,'#f59f00',1,LightweightCharts.LineStyle.Dashed],
 [1,'rgba(250,82,82,0.4)',1,0],[2,'#fa5252',1.5,0],[3,'rgba(250,82,82,0.15)',1,LightweightCharts.LineStyle.Dotted],
 [-1,'rgba(64,192,87,0.4)',1,0],[-2,'#40c057',1.5,0],[-3,'rgba(64,192,87,0.15)',1,LightweightCharts.LineStyle.Dotted],
 ].forEach(([m,c,w,ls])=>{
 const s=mainChart.addLineSeries({color:c,lineWidth:w,lineStyle:ls||0,crosshairMarkerVisible:false,lastValueVisible:false});
-s.setData(data.map((d,i)=>({time:d.time,value:+(sl*i+ic+m*sd).toFixed(4)})));
+s.setData(data.map((d,i)=>({time:d.time,value:+regVal(sl,ic,sd,i,m,useLog).toFixed(4)})));
 });
 }
 
@@ -574,12 +594,16 @@ if(tenkan.length){const s=mainChart.addLineSeries({color:'#e03131',lineWidth:1,c
 if(kijun.length){const s=mainChart.addLineSeries({color:'#1971c2',lineWidth:1,crosshairMarkerVisible:false,lastValueVisible:false});s.setData(kijun);}
 }
 
+// B/S 마커 — 로그 모드 반영
 if(showBS){
+const useLog=showLog;
 const markers=[];
-const{sl,ic,sd}=linReg(data);
+const{sl,ic,sd}=linReg(data,useLog);
 data.forEach((d,i)=>{
-const center=sl*i+ic,sigma=(d.close-center)/sd;
-const trendUp=sl>center*0.0003,trendDn=sl<-center*0.0003;
+const y=useLog?Math.log(d.close):d.close;
+const center=sl*i+ic;
+const sigma=(y-center)/sd;
+const trendUp=sl>0.0003,trendDn=sl<-0.0003;
 if(sigma<=-2){
 markers.push({time:d.time,position:'belowBar',color:trendDn?'#40c057':'#2f9e44',shape:'arrowUp',text:trendDn?'B↑':'B'});
 } else if(sigma>=2){
@@ -657,6 +681,12 @@ if(type==='ichi')showIchi=!showIchi;
 if(curStock)drawChart(curStock,curDays,curIv);
 }
 
+// ⭐ AI 호출: 이제 Vercel /api/ai 통해서 호출
+async function callAI(body){
+const r=await fetch('/api/ai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+return await r.json();
+}
+
 async function runHealth(){
 const btn=document.getElementById('healthBtn'),box=document.getElementById('healthBox');
 const ct=document.getElementById('healthContent'),dt=document.getElementById('healthDate');
@@ -667,12 +697,12 @@ const today=new Date().toLocaleDateString('ko-KR',{year:'numeric',month:'long',d
 dt.textContent=today;
 const ptf=`[한국]\n${KR.map(s=>`- ${s.name}(${s.code}): ${s.shares}주, 수익 ${s.ret}%${s.warn?' [무상증자]':''}`).join('\n')}\n\n[미국]\n${US.map(s=>`- ${s.name}: ${s.shares}주, 수익 ${s.ret}%`).join('\n')}`;
 try{
-const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+const data=await callAI({
 model:'claude-sonnet-4-20250514',max_tokens:1200,
 tools:[{type:'web_search_20250305',name:'web_search'}],
 messages:[{role:'user',content:`전문 포트폴리오 분석가로서 오늘(${today}) 시황을 검색하고 다음 포트폴리오를 분석해주세요.\n\n${ptf}\n\n형식:\n🏥 전체 건강 점수\n💰 밸류 평가\n📊 기술적 평가\n🎯 분산도\n⚡ 주목 종목\n📌 개선 제안\n\n간결하고 실용적으로.`}]
-})});
-const data=await r.json();
+});
+if(data.error){throw new Error(data.error);}
 const text=data.content.filter(b=>b.type==='text').map(b=>b.text).join('\n');
 ct.innerHTML=text.replace(/^(🏥|💰|📊|🎯|⚡|📌).+$/gm,m=>`<h3>${m}</h3>`).replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');
 }catch(e){ct.textContent='오류: '+e.message;}
@@ -685,12 +715,12 @@ btn.disabled=true;btn.textContent='⏳ 검색 중...';
 nl.innerHTML='<div class="lw"><div class="dots"><span></span><span></span><span></span></div> 뉴스 검색 중...</div>';
 const names=[...KR,...US].map(s=>s.name).join(', ');
 try{
-const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+const data=await callAI({
 model:'claude-sonnet-4-20250514',max_tokens:1500,
 tools:[{type:'web_search_20250305',name:'web_search'}],
 messages:[{role:'user',content:`오늘 날짜 기준 다음 종목들의 최신 뉴스를 검색해서 JSON 배열로만 반환.\n\n종목: ${names}\n\n[{"title":"제목","summary":"한줄","stock":"종목","time":"시간","url":"링크"}] 최대 10개.`}]
-})});
-const data=await r.json();
+});
+if(data.error){throw new Error(data.error);}
 const text=data.content.filter(b=>b.type==='text').map(b=>b.text).join('');
 try{
 const news=JSON.parse(text.replace(/```json|```/g,'').trim());
@@ -726,15 +756,15 @@ else if(fu){yfsym=fu.yf;name=fu.name;code=fu.code;market='us';}
 else {yfsym=input.includes('.')?input:(window._valMarket==='us'?input:input+'.KS');name=input;code=input;market=window._valMarket||'kr';}
 try{
 const priceData=await fetchOHLC(yfsym,1825,'1mo');
-const aiRes=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+const data=await callAI({
 model:'claude-sonnet-4-20250514',max_tokens:800,
 tools:[{type:'web_search_20250305',name:'web_search'}],
 messages:[{role:'user',content:`${name}(${code}) ${market==='us'?'미국 종목':'한국 종목'} 최신 밸류에이션을 검색해서 JSON으로만 반환.\n\n{\n"targetPrice":목표주가,\n"currentPrice":현재가,\n"minTarget":최저,\n"maxTarget":최고,\n"analystCount":증권사수,\n"forwardPER":선행PER,\n"trailingPER":과거PER,\n"pbr":PBR,\n"avgPER":평균PER,\n"avgPBR":평균PBR,\n"perPosition":PER역사적위치퍼센트,\n"pbrPosition":PBR역사적위치퍼센트,\n"eps":EPS,\n"bps":BPS\n}`}]
-})});
-const aiData=await aiRes.json();
-const aiText=aiData.content.filter(b=>b.type==='text').map(b=>b.text).join('');
+});
+if(data.error){throw new Error(data.error);}
+const text=data.content.filter(b=>b.type==='text').map(b=>b.text).join('');
 let fi={};
-try{fi=JSON.parse(aiText.replace(/```json|```/g,'').trim());}catch(e){console.warn(e);}
+try{fi=JSON.parse(text.replace(/```json|```/g,'').trim());}catch(e){console.warn(e);}
 valFi=fi;valData=priceData||[];
 window._valMarket=market;
 renderValuation(name,code,fi,priceData,market);
