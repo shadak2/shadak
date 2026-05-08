@@ -1,4 +1,3 @@
-
 module.exports = async function handler(req, res) {
   const targetUrl = req.query.url;
 
