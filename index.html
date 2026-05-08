@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MyStock v23</title>
+<title>MyStock v25</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/lightweight-charts@4.1.1/dist/lightweight-charts.standalone.production.js"></script>
 <style>
@@ -23,7 +23,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
 .tab.on{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
 .main{max-width:900px;margin:0 auto;padding:12px}
 .page{display:none}.page.on{display:block}
-.update-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:11px;color:var(--muted);padding:0 2px;gap:6px}
+.update-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:11px;color:var(--muted);padding:0 2px;gap:6px;flex-wrap:wrap}
 .update-bar .left{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .refresh-btn{background:var(--surface);border:1px solid var(--border2);border-radius:6px;padding:4px 10px;font-size:11px;color:var(--text2);cursor:pointer;font-family:inherit;font-weight:600;flex-shrink:0}
 .refresh-btn:disabled{opacity:0.5}
@@ -104,6 +104,8 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
 .cl{font-size:9px;color:#9ca3af;margin:0 4px;flex-shrink:0;font-weight:600}
 .ind{padding:3px 8px;border-radius:6px;border:1px solid #374151;font-size:10px;font-weight:600;cursor:pointer;background:#252830;color:#9ca3af;font-family:inherit;white-space:nowrap;flex-shrink:0}
 .ind.on{border-color:var(--accent);color:#60a5fa;background:rgba(25,113,194,0.2)}
+.ind.dbg{border-color:#facc15;color:#facc15;background:rgba(250,204,21,0.1)}
+.ind.dbg.on{background:#facc15;color:#000}
 .ma-grp{display:flex;align-items:center;gap:3px;flex-shrink:0}
 .ma-lbl{font-size:9px;font-weight:600;flex-shrink:0;white-space:nowrap}
 .day-info{padding:6px 14px;background:rgba(25,113,194,0.08);border-bottom:1px solid #2d3139;display:flex;flex-wrap:wrap;gap:8px;font-size:10px;flex-shrink:0;align-items:center;margin-top:6px}
@@ -116,12 +118,17 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
 .sh-charts{flex:1;display:flex;flex-direction:column;min-height:0;overflow:hidden;background:var(--chart-bg)}
 .sh-main{flex:5;min-height:280px;width:100%}
 .sh-vol{flex:1;min-height:70px;border-top:1px solid #2d3139;width:100%}
+.dbg-panel{display:none;background:#000;color:#0f0;font-family:'Courier New',monospace;font-size:9px;padding:8px;max-height:160px;overflow-y:auto;border-top:1px solid #facc15;flex-shrink:0;line-height:1.4;white-space:pre-wrap;word-break:break-all}
+.dbg-panel.on{display:block}
+.dbg-panel .e{color:#f87171}
+.dbg-panel .ok{color:#4ade80}
+.dbg-panel .w{color:#fbbf24}
 .sh-foot{display:flex;align-items:center;justify-content:space-between;padding:8px 14px;border-top:1px solid #2d3139;flex-shrink:0}
 .sh-info{font-size:9px;color:#9ca3af}
 .sh-close{padding:6px 16px;background:#374151;color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit}
 .cload{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:10px;color:#9ca3af;font-size:13px;text-align:center;padding:20px}
 .cload-big{font-size:32px}
-.cload-detail{font-size:10px;color:#6b7280;max-width:80%}
+.cload-detail{font-size:10px;color:#6b7280;max-width:90%}
 .val-input-row{display:flex;gap:8px;margin-bottom:12px}
 .val-input{flex:1;height:40px;border:1px solid var(--border2);border-radius:8px;padding:0 12px;font-size:13px;font-family:inherit;outline:none}
 .val-btn{padding:0 16px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit}
@@ -138,7 +145,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
 </style>
 </head>
 <body>
-<div class="ver-tag">v23</div>
+<div class="ver-tag">v25</div>
 <nav class="nav">
 <div class="nav-logo">📈 <em>My</em>Stock</div>
 <div class="nav-search" onclick="doSearch()">🔍 종목 검색</div>
@@ -158,9 +165,11 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
 <div class="main">
 <div class="update-bar">
 <span class="left" id="updateTime">⏳ 가격 갱신 중...</span>
+<button class="refresh-btn" id="dbgGlobalBtn" onclick="toggleGlobalDbg()" style="background:#fff9db;color:#e67700;border-color:#facc15">🐛</button>
 <button class="refresh-btn" id="autoBtn" onclick="toggleAutoRefresh()">▶ 자동(30s)</button>
 <button class="refresh-btn" id="refreshBtn" onclick="updateAllPrices()">🔄 새로고침</button>
 </div>
+<div id="globalDbg" style="display:none;background:#000;color:#0f0;font-family:'Courier New',monospace;font-size:10px;padding:10px;border-radius:8px;max-height:200px;overflow-y:auto;margin-bottom:10px;white-space:pre-wrap;word-break:break-all;line-height:1.5"></div>
 <div class="page on" id="page-portfolio">
 <div class="sg">
 <div class="sc"><div class="sc-l">한국 평가금</div><div class="sc-v" id="sK">—</div><div class="sc-s" id="sKg">—</div></div>
@@ -183,20 +192,14 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
 </div>
 <div class="page" id="page-health">
 <button class="ai-btn" id="healthBtn" onclick="runHealth()">🩺 포트폴리오 AI 건강검진</button>
-<div class="abox" id="healthBox">
-<div class="ah"><div class="abadge">AI 건강검진</div><div class="adate" id="healthDate">—</div></div>
-<div class="ac" id="healthContent"></div>
-</div>
+<div class="abox" id="healthBox"><div class="ah"><div class="abadge">AI 건강검진</div><div class="adate" id="healthDate">—</div></div><div class="ac" id="healthContent"></div></div>
 </div>
 <div class="page" id="page-news">
 <button class="ai-btn" id="newsBtn" onclick="runNews()">📰 보유종목 관련 최신 뉴스</button>
 <div id="newsList"></div>
 </div>
 <div class="page" id="page-val">
-<div class="val-input-row">
-<input class="val-input" id="valInput" placeholder="종목명 또는 코드" onkeydown="if(event.key==='Enter')runVal()">
-<button class="val-btn" onclick="runVal()">분석</button>
-</div>
+<div class="val-input-row"><input class="val-input" id="valInput" placeholder="종목명 또는 코드" onkeydown="if(event.key==='Enter')runVal()"><button class="val-btn" onclick="runVal()">분석</button></div>
 <div style="font-size:12px;color:var(--muted);margin-bottom:8px">보유 종목 빠른 선택:</div>
 <div class="quick-btns" id="valQuick"></div>
 <div id="valResult"></div>
@@ -241,38 +244,33 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
 <button class="ind on" id="iMA" onclick="togInd('ma',this)">이평선</button>
 <button class="ind on" id="iVol" onclick="togInd('vol',this)">거래량</button>
 <button class="ind" id="iIchi" onclick="togInd('ichi',this)">일목</button>
+<button class="ind dbg" id="iDbg" onclick="togDbg(this)">🐛 디버그</button>
 </div>
 <div class="ma-bar">
-<div class="ma-grp">
-<span class="ma-lbl" style="color:#f59f00">📐 단기→</span>
+<div class="ma-grp"><span class="ma-lbl" style="color:#f59f00">📐 단기→</span>
 <button class="cb on" data-short="20" onclick="setShortMA(this)">20</button>
 <button class="cb" data-short="30" onclick="setShortMA(this)">30</button>
-<button class="cb" data-short="60" onclick="setShortMA(this)">60</button>
-</div>
+<button class="cb" data-short="60" onclick="setShortMA(this)">60</button></div>
 <div class="csep"></div>
-<div class="ma-grp">
-<span class="ma-lbl" style="color:#ae3ec9">📐 장기→</span>
+<div class="ma-grp"><span class="ma-lbl" style="color:#ae3ec9">📐 장기→</span>
 <button class="cb" data-long="0" onclick="setLongMA(this)">OFF</button>
 <button class="cb on" data-long="60" onclick="setLongMA(this)">60</button>
 <button class="cb" data-long="120" onclick="setLongMA(this)">120</button>
-<button class="cb" data-long="250" onclick="setLongMA(this)">250</button>
-</div>
+<button class="cb" data-long="250" onclick="setLongMA(this)">250</button></div>
 </div>
 <div class="day-info" id="dayInfo">차트 로딩 중...</div>
 <div class="sh-charts">
 <div class="sh-main" id="shMain"></div>
 <div class="sh-vol" id="shVol"></div>
 </div>
+<div class="dbg-panel" id="dbgPanel">대기 중...</div>
 <div class="sh-foot">
-<div class="sh-info" id="shFoot">v23 · Stooq+Yahoo 다중소스 · 5개 프록시 fallback</div>
+<div class="sh-info" id="shFoot">v25 · 자체 백엔드 프록시 우선 사용</div>
 <button class="sh-close" onclick="closeSheet()">닫기</button>
 </div>
 </div>
 </div>
 <script>
-// ============================================================
-// 보유 종목 데이터 — 2026-05-08
-// ============================================================
 const KR=[
 {name:'LS ELECTRIC',  code:'010120',yf:'010120.KS',shares:62, avg:186582,val:19189000,ret:65.87},
 {name:'산일전기',      code:'062040',yf:'062040.KS',shares:40, avg:214125,val:13000000,ret:51.78},
@@ -298,7 +296,49 @@ let showBS=true,showLog=false,showMA=true,showVol=true,showIchi=false;
 let lineMode=7,shortMA=20,longMA=60;
 let curData=null,priceUpdating=false;
 let autoTimer=null,prevPrices={};
-let lastSrc=''; // 마지막 사용 데이터 소스
+let lastSrc='';
+
+// 자체 백엔드 프록시 사용 가능 여부 (최초 한번만 체크)
+let selfProxyAvailable = null;
+
+const dbgLog = [];
+function dbg(msg, type){
+  type = type || '';
+  const t = new Date();
+  const ts = `${String(t.getHours()).padStart(2,'0')}:${String(t.getMinutes()).padStart(2,'0')}:${String(t.getSeconds()).padStart(2,'0')}`;
+  const cls = type==='err'?'e':type==='ok'?'ok':type==='warn'?'w':'';
+  const line = cls?`<span class="${cls}">[${ts}] ${msg}</span>`:`[${ts}] ${msg}`;
+  dbgLog.push(line);
+  if(dbgLog.length > 60) dbgLog.shift();
+  try{console.log(`[${ts}] ${msg}`);}catch(e){}
+  const p = document.getElementById('dbgPanel');
+  if(p) p.innerHTML = dbgLog.slice(-25).join('<br>');
+  const g = document.getElementById('globalDbg');
+  if(g) g.innerHTML = dbgLog.slice(-20).join('<br>');
+}
+function togDbg(btn){
+  const p = document.getElementById('dbgPanel');
+  const on = !p.classList.contains('on');
+  p.classList.toggle('on', on);
+  btn.classList.toggle('on', on);
+}
+function toggleGlobalDbg(){
+  const g = document.getElementById('globalDbg');
+  g.style.display = g.style.display==='none'?'block':'none';
+  if(g.style.display==='block') g.innerHTML = dbgLog.slice(-20).join('<br>');
+}
+
+// 호환성 fetch with timeout
+function fetchWithTimeout(url, timeoutMs){
+  timeoutMs = timeoutMs || 8000;
+  return new Promise((resolve, reject) => {
+    const ctrl = new AbortController();
+    const tid = setTimeout(() => {try{ctrl.abort();}catch(e){} reject(new Error('timeout '+timeoutMs+'ms'));}, timeoutMs);
+    fetch(url, {signal: ctrl.signal, mode: 'cors', credentials: 'omit'})
+      .then(r => {clearTimeout(tid); resolve(r);})
+      .catch(e => {clearTimeout(tid); reject(e);});
+  });
+}
 
 function fK(v){return v>=1e8?(v/1e8).toFixed(1)+'억':v>=1e4?Math.round(v/1e4)+'만원':v.toLocaleString()+'원'}
 function fU(v){return '$'+v.toLocaleString('en',{maximumFractionDigits:0})}
@@ -345,27 +385,12 @@ gainStr=`<div class="tr-rt-sub ${gC}">${gain>=0?'+':'-'}${gFmt}</div>`;
 }
 const j=JSON.stringify(s);
 return `<div class="tr ${wc}" onclick='openSheet(${j})'>
-<div class="tr-top">
-<div class="tr-name">
-<div class="rn">${s.name}</div>
-<div class="rc">${s.code} · ${s.shares}주</div>
-${s.note?`<div class="rno">⚡ ${s.note}</div>`:''}
-</div>
-<div class="tr-rt-box">
-<div class="tr-rt ${rc}">${rs}</div>
-${gainStr}
-</div>
-</div>
-<div class="tr-prices">
-<div class="tp-grp"><span class="tp-l">평단</span><span class="tp-v">${avgStr}</span></div>
-<span class="tp-arr">→</span>
-<div class="tp-grp"><span class="tp-l">현재</span><span class="tp-v${flashCls}">${curStr}</span></div>
-</div>
-<div class="rbs">
-<button class="rb rb-c" onclick="event.stopPropagation();openSheet(${j})">📈 차트</button>
-<button class="rb rb-e" onclick="event.stopPropagation();goVal('${s.code}','${s.name}','${isKR?'kr':'us'}')">📐 밸류</button>
-</div>
-</div>`;
+<div class="tr-top"><div class="tr-name"><div class="rn">${s.name}</div><div class="rc">${s.code} · ${s.shares}주</div>${s.note?`<div class="rno">⚡ ${s.note}</div>`:''}</div>
+<div class="tr-rt-box"><div class="tr-rt ${rc}">${rs}</div>${gainStr}</div></div>
+<div class="tr-prices"><div class="tp-grp"><span class="tp-l">평단</span><span class="tp-v">${avgStr}</span></div>
+<span class="tp-arr">→</span><div class="tp-grp"><span class="tp-l">현재</span><span class="tp-v${flashCls}">${curStr}</span></div></div>
+<div class="rbs"><button class="rb rb-c" onclick="event.stopPropagation();openSheet(${j})">📈 차트</button>
+<button class="rb rb-e" onclick="event.stopPropagation();goVal('${s.code}','${s.name}','${isKR?'kr':'us'}')">📐 밸류</button></div></div>`;
 }
 
 function render(){
@@ -375,10 +400,7 @@ const uH=US.map(s=>row(s,false)).join('');
 ['kr1','kr2'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=kH;});
 ['us1','us2'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=uH;});
 const qb=document.getElementById('valQuick');
-if(qb)qb.innerHTML=[...KR,...US].map(s=>{
-const isK=s.avg>1000;
-return `<button class="rb rb-e" onclick="goVal('${s.code}','${s.name}','${isK?'kr':'us'}')">${s.name}</button>`;
-}).join('');
+if(qb)qb.innerHTML=[...KR,...US].map(s=>{const isK=s.avg>1000;return `<button class="rb rb-e" onclick="goVal('${s.code}','${s.name}','${isK?'kr':'us'}')">${s.name}</button>`;}).join('');
 }
 
 function doSearch(){
@@ -388,10 +410,15 @@ if(f)openSheet(f);else alert('종목 없음');
 }
 
 // ============================================================
-// 🔥 v23: Stooq + Yahoo 다중 소스 + 5개 프록시 fallback
+// 🚀 v25 핵심: /api/proxy 자체 백엔드 우선 사용
 // ============================================================
 
-// 야후 심볼 → Stooq 심볼 변환
+// 자체 프록시로 fetch (가장 안정적)
+async function viaSelf(targetUrl, timeout){
+  timeout = timeout || 10000;
+  return fetchWithTimeout(`/api/proxy?url=${encodeURIComponent(targetUrl)}`, timeout);
+}
+
 function toStooqSym(yfSym){
   let s = yfSym.toLowerCase();
   if(s.endsWith('.ks')) return s.replace('.ks','.kr');
@@ -400,13 +427,11 @@ function toStooqSym(yfSym){
   return s;
 }
 
-// Stooq CSV 파싱
 function parseStooqCSV(csv){
   if(!csv || csv.length < 50) return null;
   const lines = csv.trim().split('\n');
   if(lines.length < 2) return null;
   const header = lines[0].toLowerCase();
-  // 헤더 검증: Date,Open,High,Low,Close,Volume
   if(!header.includes('date') || !header.includes('close')) return null;
   const data = [];
   for(let i = 1; i < lines.length; i++){
@@ -417,89 +442,127 @@ function parseStooqCSV(csv){
     const low = parseFloat(cols[3]), close = parseFloat(cols[4]);
     const vol = cols[5] ? parseFloat(cols[5]) : 0;
     if(isNaN(ts) || isNaN(open) || isNaN(close)) continue;
-    data.push({
-      time: ts,
-      open: +open.toFixed(4), high: +high.toFixed(4),
-      low: +low.toFixed(4), close: +close.toFixed(4),
-      volume: vol || 0
-    });
+    data.push({time:ts, open:+open.toFixed(4), high:+high.toFixed(4), low:+low.toFixed(4), close:+close.toFixed(4), volume:vol||0});
   }
   return data.length ? data.sort((a,b)=>a.time-b.time) : null;
 }
 
-// Stooq 일봉: 직접 → 프록시
 async function fetchStooqDaily(yfSym, days){
   const sym = toStooqSym(yfSym);
   const url = `https://stooq.com/q/d/l/?s=${sym}&i=d`;
-  // 1차: 직접 (CORS 허용 가능성)
-  try{
-    const r = await fetch(url, {signal: AbortSignal.timeout(8000)});
-    if(r.ok){
-      const csv = await r.text();
-      const data = parseStooqCSV(csv);
-      if(data && data.length >= 5){
-        console.log(`[Stooq direct] ${sym}: ${data.length} bars`);
-        return days ? data.slice(-days) : data;
+
+  // 1차: 자체 백엔드 (가장 안정)
+  if(selfProxyAvailable !== false){
+    try{
+      dbg(`Stooq /api/proxy 시도: ${sym}`);
+      const r = await viaSelf(url, 10000);
+      if(r.ok){
+        selfProxyAvailable = true;
+        const csv = await r.text();
+        const data = parseStooqCSV(csv);
+        if(data && data.length >= 5){dbg(`✓ Stooq 자체프록시 OK: ${data.length}봉`,'ok'); return days?data.slice(-days):data;}
+        else dbg(`Stooq 자체프록시 빈응답`,'warn');
+      } else {
+        dbg(`Stooq 자체프록시 HTTP ${r.status}`,'warn');
+        if(r.status === 404){selfProxyAvailable = false; dbg(`자체프록시 미설치 → 외부로 전환`,'warn');}
       }
-    }
-  }catch(e){console.warn(`[Stooq direct] ${sym} fail:`, e.message);}
+    }catch(e){dbg(`Stooq 자체프록시 fail: ${e.message}`,'err');}
+  }
+
   // 2차: corsproxy.io
   try{
-    const r = await fetch(`https://corsproxy.io/?url=${encodeURIComponent(url)}`, {signal: AbortSignal.timeout(8000)});
+    dbg(`Stooq corsproxy.io fallback`);
+    const r = await fetchWithTimeout(`https://corsproxy.io/?url=${encodeURIComponent(url)}`, 8000);
     if(r.ok){
       const csv = await r.text();
       const data = parseStooqCSV(csv);
-      if(data && data.length >= 5){
-        console.log(`[Stooq corsproxy] ${sym}: ${data.length} bars`);
-        return days ? data.slice(-days) : data;
-      }
+      if(data && data.length >= 5){dbg(`✓ Stooq corsproxy OK: ${data.length}봉`,'ok'); return days?data.slice(-days):data;}
     }
-  }catch(e){console.warn(`[Stooq corsproxy] ${sym} fail:`, e.message);}
-  // 3차: allorigins
+  }catch(e){dbg(`Stooq corsproxy fail: ${e.message}`,'err');}
+
+  // 3차: allorigins/get
   try{
-    const r = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`, {signal: AbortSignal.timeout(8000)});
+    dbg(`Stooq allorigins/get fallback`);
+    const r = await fetchWithTimeout(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`, 10000);
     if(r.ok){
-      const csv = await r.text();
-      const data = parseStooqCSV(csv);
-      if(data && data.length >= 5){
-        console.log(`[Stooq allorigins] ${sym}: ${data.length} bars`);
-        return days ? data.slice(-days) : data;
+      const j = await r.json();
+      if(j && j.contents){
+        const data = parseStooqCSV(j.contents);
+        if(data && data.length >= 5){dbg(`✓ Stooq allorigins OK: ${data.length}봉`,'ok'); return days?data.slice(-days):data;}
       }
     }
-  }catch(e){console.warn(`[Stooq allorigins] ${sym} fail:`, e.message);}
+  }catch(e){dbg(`Stooq allorigins fail: ${e.message}`,'err');}
+
   return null;
 }
 
-// 야후 fetch: 5개 프록시 시도
 async function yfFetch(url, timeout){
-  timeout = timeout || 7000;
-  const tries = [
-    {name:'self', urlFn: u => u.replace('https://query1.finance.yahoo.com','/api/yf')},
-    {name:'corsproxy.io', urlFn: u => `https://corsproxy.io/?url=${encodeURIComponent(u)}`},
-    {name:'allorigins', urlFn: u => `https://api.allorigins.win/raw?url=${encodeURIComponent(u)}`},
-    {name:'codetabs', urlFn: u => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(u)}`},
-    {name:'cors.eu.org', urlFn: u => `https://cors.eu.org/${u}`},
-  ];
-  for(const t of tries){
+  timeout = timeout || 8000;
+
+  // 1차: 자체 백엔드
+  if(selfProxyAvailable !== false){
     try{
-      const r = await fetch(t.urlFn(url), {signal: AbortSignal.timeout(timeout)});
+      dbg(`Yahoo /api/proxy 시도`);
+      const r = await viaSelf(url, timeout);
       if(r.ok){
+        selfProxyAvailable = true;
         const txt = await r.text();
         try{
           const j = JSON.parse(txt);
-          if(j && j.chart){
-            console.log(`[Yahoo ${t.name}] OK`);
-            return j;
-          }
-        }catch(e){/* JSON 아님, 다음 */}
+          if(j && j.chart){dbg(`✓ Yahoo 자체프록시 OK`,'ok'); return j;}
+        }catch(e){dbg(`Yahoo 자체프록시 JSON 파싱실패`,'warn');}
+      } else {
+        dbg(`Yahoo 자체프록시 HTTP ${r.status}`,'warn');
+        if(r.status === 404){selfProxyAvailable = false; dbg(`자체프록시 미설치 → 외부로 전환`,'warn');}
       }
-    }catch(e){/* 다음 시도 */}
+    }catch(e){dbg(`Yahoo 자체프록시 fail: ${e.message}`,'err');}
   }
-  console.warn('[Yahoo] all proxies failed');
+
+  // 2차: corsproxy.io
+  try{
+    dbg(`Yahoo corsproxy.io fallback`);
+    const r = await fetchWithTimeout(`https://corsproxy.io/?url=${encodeURIComponent(url)}`, timeout);
+    if(r.ok){
+      const txt = await r.text();
+      try{
+        const j = JSON.parse(txt);
+        if(j && j.chart){dbg(`✓ Yahoo corsproxy OK`,'ok'); return j;}
+      }catch(e){}
+    }
+  }catch(e){dbg(`Yahoo corsproxy fail: ${e.message}`,'err');}
+
+  // 3차: allorigins/get
+  try{
+    dbg(`Yahoo allorigins/get fallback`);
+    const r = await fetchWithTimeout(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`, timeout+2000);
+    if(r.ok){
+      const wrap = await r.json();
+      if(wrap && wrap.contents){
+        try{
+          const j = JSON.parse(wrap.contents);
+          if(j && j.chart){dbg(`✓ Yahoo allorigins OK`,'ok'); return j;}
+        }catch(e){}
+      }
+    }
+  }catch(e){dbg(`Yahoo allorigins fail: ${e.message}`,'err');}
+
+  // 4차: codetabs
+  try{
+    dbg(`Yahoo codetabs fallback`);
+    const r = await fetchWithTimeout(`https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`, timeout);
+    if(r.ok){
+      const txt = await r.text();
+      try{
+        const j = JSON.parse(txt);
+        if(j && j.chart){dbg(`✓ Yahoo codetabs OK`,'ok'); return j;}
+      }catch(e){}
+    }
+  }catch(e){dbg(`Yahoo codetabs fail: ${e.message}`,'err');}
+
+  dbg(`❌ Yahoo 모든 소스 실패`,'err');
   return null;
 }
 
-// 야후 일봉
 async function fetchYahooDaily(sym, days, iv){
   iv = iv || '1d';
   const end=Math.floor(Date.now()/1000),start=end-days*86400;
@@ -509,7 +572,6 @@ async function fetchYahooDaily(sym, days, iv){
   return parseYahoo(d);
 }
 
-// 야후 1분봉
 async function fetchIntraday(sym){
   const url=`https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(sym)}?interval=1m&range=1d`;
   const d = await yfFetch(url, 7000);
@@ -530,7 +592,6 @@ function parseYahoo(parsed){
   return c.sort((a,b)=>a.time-b.time);
 }
 
-// 1분봉 → 오늘 일봉 캔들 집계
 function aggregateIntraday(intraday){
   if(!intraday) return null;
   const q=intraday.indicators.quote[0];
@@ -547,56 +608,44 @@ function aggregateIntraday(intraday){
   }
   if(open===null) return null;
   const today=new Date();today.setHours(0,0,0,0);
-  return {
-    time:Math.floor(today.getTime()/1000),
-    open:+open.toFixed(4),high:+high.toFixed(4),low:+low.toFixed(4),close:+close.toFixed(4),
-    volume:volume,
-    regularMarketPrice:meta.regularMarketPrice
-  };
+  return {time:Math.floor(today.getTime()/1000),open:+open.toFixed(4),high:+high.toFixed(4),low:+low.toFixed(4),close:+close.toFixed(4),volume:volume,regularMarketPrice:meta.regularMarketPrice};
 }
 
-// 차트용 통합: Stooq 우선 → 야후 fallback → 오늘 캔들 보강
 async function fetchOHLC(sym, days, iv){
   iv = iv || '1d';
-  let data = null;
-  let src = '';
-  // 일봉이면 Stooq 우선 (CORS 안정적)
+  dbg(`━━━ ${sym} (${iv}, ${days}일) 시작 ━━━`);
+  let data = null, src = '';
   if(iv === '1d'){
     data = await fetchStooqDaily(sym, days);
-    if(data && data.length >= 5){
-      src = 'Stooq';
-    }
+    if(data && data.length >= 5) src = 'Stooq';
   }
-  // Stooq 실패 또는 주/월봉이면 야후
   if(!data || data.length < 5){
+    dbg(`Stooq 실패, Yahoo 시도`);
     data = await fetchYahooDaily(sym, days, iv);
     if(data && data.length >= 5) src = 'Yahoo';
   }
-  if(!data || data.length < 5){
-    lastSrc = '실패';
-    return null;
-  }
+  if(!data || data.length < 5){lastSrc = '실패'; dbg(`❌ ${sym} 모든 소스 실패`,'err'); return null;}
   lastSrc = src;
-  // 일봉만 오늘 캔들 보강
   if(iv === '1d'){
     const todayMid=new Date();todayMid.setHours(0,0,0,0);
     const todayTs=Math.floor(todayMid.getTime()/1000);
     const lastTs=data.length?data[data.length-1].time:0;
     if(lastTs < todayTs){
+      dbg(`오늘 캔들 없음 → 1m 보강`);
       const intraday = await fetchIntraday(sym);
       const todayBar = aggregateIntraday(intraday);
       if(todayBar){
         data.push({time:todayBar.time, open:todayBar.open, high:todayBar.high, low:todayBar.low, close:todayBar.close, volume:todayBar.volume});
         lastSrc = src + '+1m';
+        dbg(`✓ 오늘 캔들 보강`,'ok');
       }
     }
   }
+  dbg(`✓ ${sym} 완료 (${src}, ${data.length}봉)`,'ok');
   return data;
 }
 
-// 실시간 현재가: 야후 1m → 야후 일봉 → Stooq 일봉
 async function fetchLatestPrice(yfSym){
-  // 1차: 야후 1m
   try{
     const intraday = await fetchIntraday(yfSym);
     if(intraday){
@@ -607,16 +656,8 @@ async function fetchLatestPrice(yfSym){
       if(closes.length) return closes[closes.length-1];
     }
   }catch(e){}
-  // 2차: 야후 일봉
-  try{
-    const daily = await fetchYahooDaily(yfSym, 7, '1d');
-    if(daily && daily.length) return daily[daily.length-1].close;
-  }catch(e){}
-  // 3차: Stooq 일봉
-  try{
-    const daily = await fetchStooqDaily(yfSym, 7);
-    if(daily && daily.length) return daily[daily.length-1].close;
-  }catch(e){}
+  try{const daily = await fetchYahooDaily(yfSym, 7, '1d');if(daily && daily.length) return daily[daily.length-1].close;}catch(e){}
+  try{const daily = await fetchStooqDaily(yfSym, 7);if(daily && daily.length) return daily[daily.length-1].close;}catch(e){}
   return null;
 }
 
@@ -630,6 +671,7 @@ if(rb)rb.disabled=true;
 [...KR,...US].forEach(s=>{ if(s.cur!=null) prevPrices[s.code]=s.cur; });
 const all=[...KR,...US];
 let success=0,fail=0;
+dbg(`━━━ 전체 가격 갱신 (${all.length}종목) ━━━`);
 const results=await Promise.allSettled(all.map(s=>fetchLatestPrice(s.yf)));
 results.forEach((r,i)=>{
 if(r.status==='fulfilled'&&r.value!=null){
@@ -643,29 +685,23 @@ success++;
 render();
 const t=new Date();
 const ts=`${String(t.getHours()).padStart(2,'0')}:${String(t.getMinutes()).padStart(2,'0')}:${String(t.getSeconds()).padStart(2,'0')}`;
+const srcTag = selfProxyAvailable ? ' · 🛡️자체프록시' : '';
 if(ut){
-if(success>0) ut.innerHTML=`<span class="live-dot"></span> ${ts} 갱신 (${success}개${fail>0?` · 실패 ${fail}`:''})`;
-else ut.innerHTML=`<span style="color:var(--down)">❌ 모든 소스 실패 (저장값 표시) · F12로 확인</span>`;
+if(success>0) ut.innerHTML=`<span class="live-dot"></span> ${ts} 갱신 (${success}개${fail>0?` · 실패 ${fail}`:''})${srcTag}`;
+else ut.innerHTML=`<span style="color:var(--down)">❌ 모든 소스 실패 · 🐛 눌러 진단</span>`;
 }
+dbg(success>0?`✓ 가격 갱신: 성공 ${success}, 실패 ${fail}`:`❌ 모든 가격 갱신 실패`, success>0?'ok':'err');
 if(rb)rb.disabled=false;
 priceUpdating=false;
 }
 
 function toggleAutoRefresh(){
 const btn=document.getElementById('autoBtn');
-if(autoTimer){
-clearInterval(autoTimer);autoTimer=null;
-btn.textContent='▶ 자동(30s)';btn.classList.remove('on');
-}else{
-autoTimer=setInterval(updateAllPrices,30000);
-btn.textContent='⏸ 자동 ON';btn.classList.add('on');
-updateAllPrices();
-}
+if(autoTimer){clearInterval(autoTimer);autoTimer=null;btn.textContent='▶ 자동(30s)';btn.classList.remove('on');}
+else{autoTimer=setInterval(updateAllPrices,30000);btn.textContent='⏸ 자동 ON';btn.classList.add('on');updateAllPrices();}
 }
 
-// ============================================================
-// 회귀/지표 계산
-// ============================================================
+// 회귀/지표
 function linReg(data,useLog){
 const n=data.length;let sx=0,sy=0,sxy=0,sxx=0;
 data.forEach((d,i)=>{const y=useLog?Math.log(d.close):d.close;sx+=i;sy+=y;sxy+=i*y;sxx+=i*i;});
@@ -675,65 +711,12 @@ data.forEach((d,i)=>{const y=useLog?Math.log(d.close):d.close;sq+=(y-(sl*i+ic))*
 return{sl,ic,sd:Math.sqrt(sq/n)};
 }
 function regVal(sl,ic,sd,i,mult,useLog){const v=sl*i+ic+mult*sd;return useLog?Math.exp(v):v;}
-function calcMA(data,p){
-if(p<=0||data.length<p)return [];
-const r=[];
-for(let i=p-1;i<data.length;i++){const s=data.slice(i-p+1,i+1).reduce((a,d)=>a+d.close,0);r.push({time:data[i].time,value:+(s/p).toFixed(4)});}
-return r;
-}
-function getTrend(data,days){
-if(days<=0||data.length<5)return 'neu';
-const slice=data.slice(Math.max(0,data.length-days));
-if(slice.length<5)return 'neu';
-const{sl}=linReg(slice,showLog);
-return sl>0.0003?'up':sl<-0.0003?'dn':'neu';
-}
-function getChannelPos(data,idx){
-const slice=data.slice(Math.max(0,data.length-shortMA));
-if(slice.length<5) return {pct:'50'};
-const startIdx=data.length-slice.length;
-if(idx<startIdx) idx=startIdx;
-const localIdx=idx-startIdx;
-const{sl,ic,sd}=linReg(slice,showLog);
-const upper=regVal(sl,ic,sd,localIdx,2,showLog);
-const lower=regVal(sl,ic,sd,localIdx,-2,showLog);
-const close=data[idx].close;
-const pct=((close-lower)/(upper-lower)*100);
-return{pct:Math.max(0,Math.min(100,pct)).toFixed(1)};
-}
-function volRatio(data,p){
-p = p || 20;
-if(data.length<p+1)return null;
-const avg=data.slice(-p-1,-1).reduce((s,d)=>s+d.volume,0)/p;
-return avg>0?(data[data.length-1].volume/avg).toFixed(1):null;
-}
-function getBSSignal(data){
-const slice=data.slice(Math.max(0,data.length-shortMA));
-if(slice.length<5)return null;
-const{sl,ic,sd}=linReg(slice,showLog);
-const li=slice.length-1;
-const lastY=showLog?Math.log(slice[li].close):slice[li].close;
-const center=sl*li+ic;
-const sigma=(lastY-center)/sd;
-const trendUp=sl>0.0003,trendDn=sl<-0.0003;
-if(sigma<=-2) return trendDn?{label:'B↑',cls:'ib-up'}:{label:'B■',cls:'ib-buy'};
-if(sigma>=2)  return trendUp?{label:'S↓',cls:'ib-sell'}:{label:'S■',cls:'ib-dn'};
-return null;
-}
-function calcIchimoku(data){
-const high=(s,e)=>Math.max(...data.slice(s,e).map(d=>d.high));
-const low=(s,e)=>Math.min(...data.slice(s,e).map(d=>d.low));
-const tenkan=[],kijun=[],spanA=[],spanB=[];
-for(let i=8;i<data.length;i++) tenkan.push({time:data[i].time,value:(high(i-8,i+1)+low(i-8,i+1))/2});
-for(let i=25;i<data.length;i++) kijun.push({time:data[i].time,value:(high(i-25,i+1)+low(i-25,i+1))/2});
-for(let i=25;i<data.length;i++){
-const ti=tenkan.find(t=>t.time===data[i].time);
-const ki=kijun.find(k=>k.time===data[i].time);
-if(ti&&ki) spanA.push({time:data[i].time,value:(ti.value+ki.value)/2});
-}
-for(let i=51;i<data.length;i++) spanB.push({time:data[i].time,value:(high(i-51,i+1)+low(i-51,i+1))/2});
-return{tenkan,kijun,spanA,spanB};
-}
+function calcMA(data,p){if(p<=0||data.length<p)return [];const r=[];for(let i=p-1;i<data.length;i++){const s=data.slice(i-p+1,i+1).reduce((a,d)=>a+d.close,0);r.push({time:data[i].time,value:+(s/p).toFixed(4)});}return r;}
+function getTrend(data,days){if(days<=0||data.length<5)return 'neu';const slice=data.slice(Math.max(0,data.length-days));if(slice.length<5)return 'neu';const{sl}=linReg(slice,showLog);return sl>0.0003?'up':sl<-0.0003?'dn':'neu';}
+function getChannelPos(data,idx){const slice=data.slice(Math.max(0,data.length-shortMA));if(slice.length<5) return {pct:'50'};const startIdx=data.length-slice.length;if(idx<startIdx) idx=startIdx;const localIdx=idx-startIdx;const{sl,ic,sd}=linReg(slice,showLog);const upper=regVal(sl,ic,sd,localIdx,2,showLog);const lower=regVal(sl,ic,sd,localIdx,-2,showLog);const close=data[idx].close;const pct=((close-lower)/(upper-lower)*100);return{pct:Math.max(0,Math.min(100,pct)).toFixed(1)};}
+function volRatio(data,p){p=p||20;if(data.length<p+1)return null;const avg=data.slice(-p-1,-1).reduce((s,d)=>s+d.volume,0)/p;return avg>0?(data[data.length-1].volume/avg).toFixed(1):null;}
+function getBSSignal(data){const slice=data.slice(Math.max(0,data.length-shortMA));if(slice.length<5)return null;const{sl,ic,sd}=linReg(slice,showLog);const li=slice.length-1;const lastY=showLog?Math.log(slice[li].close):slice[li].close;const center=sl*li+ic;const sigma=(lastY-center)/sd;const trendUp=sl>0.0003,trendDn=sl<-0.0003;if(sigma<=-2) return trendDn?{label:'B↑',cls:'ib-up'}:{label:'B■',cls:'ib-buy'};if(sigma>=2)  return trendUp?{label:'S↓',cls:'ib-sell'}:{label:'S■',cls:'ib-dn'};return null;}
+function calcIchimoku(data){const high=(s,e)=>Math.max(...data.slice(s,e).map(d=>d.high));const low=(s,e)=>Math.min(...data.slice(s,e).map(d=>d.low));const tenkan=[],kijun=[],spanA=[],spanB=[];for(let i=8;i<data.length;i++) tenkan.push({time:data[i].time,value:(high(i-8,i+1)+low(i-8,i+1))/2});for(let i=25;i<data.length;i++) kijun.push({time:data[i].time,value:(high(i-25,i+1)+low(i-25,i+1))/2});for(let i=25;i<data.length;i++){const ti=tenkan.find(t=>t.time===data[i].time);const ki=kijun.find(k=>k.time===data[i].time);if(ti&&ki) spanA.push({time:data[i].time,value:(ti.value+ki.value)/2});}for(let i=51;i<data.length;i++) spanB.push({time:data[i].time,value:(high(i-51,i+1)+low(i-51,i+1))/2});return{tenkan,kijun,spanA,spanB};}
 
 function renderInfobar(data,hasLive,src){
 const tShort=getTrend(data,shortMA);
@@ -756,11 +739,9 @@ document.getElementById('shBar').innerHTML=h;
 
 function renderDayInfo(data,idx){
 if(!data||idx<0||idx>=data.length)return;
-const d=data[idx];
-const prev=idx>0?data[idx-1]:null;
+const d=data[idx];const prev=idx>0?data[idx-1]:null;
 const isKR=curStock&&curStock.avg>1000;
-const cur=isKR?'':'$';
-const cur2=isKR?'원':'';
+const cur=isKR?'':'$';const cur2=isKR?'원':'';
 const fmt=v=>isKR?Math.round(v).toLocaleString():(+v).toFixed(2);
 const date=new Date(d.time*1000);
 const ds=`${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
@@ -770,32 +751,29 @@ const chgS=(chg>=0?'+':'')+chg.toFixed(2)+'%';
 const{pct}=getChannelPos(data,idx);
 const posC=parseFloat(pct)>=80||parseFloat(pct)<=20?'warn':'';
 const posL=parseFloat(pct)>=80?'상단근접':parseFloat(pct)<=20?'하단근접':parseFloat(pct)>=50?'중상부':'중하부';
-let h=`
-<div class="di-itm"><span class="di-l">📅</span><span class="di-v">${ds}</span></div>
+let h=`<div class="di-itm"><span class="di-l">📅</span><span class="di-v">${ds}</span></div>
 <div class="di-itm"><span class="di-l">시</span><span class="di-v">${cur}${fmt(d.open)}${cur2}</span></div>
 <div class="di-itm"><span class="di-l">고</span><span class="di-v up">${cur}${fmt(d.high)}${cur2}</span></div>
 <div class="di-itm"><span class="di-l">저</span><span class="di-v dn">${cur}${fmt(d.low)}${cur2}</span></div>
 <div class="di-itm"><span class="di-l">종</span><span class="di-v">${cur}${fmt(d.close)}${cur2}</span></div>
 <div class="di-itm"><span class="di-l">전일대비</span><span class="di-v ${chgC}">${chgS}</span></div>
 <div class="di-itm"><span class="di-l">채널</span><span class="di-v ${posC}">${pct}% (${posL})</span></div>
-<div class="di-itm"><span class="di-l">거래량</span><span class="di-v">${(d.volume/10000).toFixed(0)}만</span></div>
-`;
+<div class="di-itm"><span class="di-l">거래량</span><span class="di-v">${(d.volume/10000).toFixed(0)}만</span></div>`;
 document.getElementById('dayInfo').innerHTML=h;
 }
 
 async function drawChart(stock,days,iv){
 const mEl=document.getElementById('shMain'),vEl=document.getElementById('shVol');
-mEl.innerHTML=`<div class="cload"><div class="cload-big">📊</div><div>차트 로딩 중...</div><div class="cload-detail">Stooq → Yahoo 다중 소스 시도 중<br>(F12 콘솔에서 진행 상황 확인 가능)</div></div>`;
+mEl.innerHTML=`<div class="cload"><div class="cload-big">📊</div><div>차트 로딩 중...</div><div class="cload-detail">🐛 디버그 버튼 눌러 확인</div></div>`;
 vEl.innerHTML='';
 const data=await fetchOHLC(stock.yf,days,iv);
 if(!data||data.length<5){
-mEl.innerHTML=`<div class="cload"><div class="cload-big">⚠️</div><div>모든 데이터 소스 실패</div><div class="cload-detail">시도한 소스: Stooq(직접/프록시), Yahoo(5개 프록시)<br>F12 → 콘솔에서 자세한 오류 확인<br>잠시 후 다시 시도해보세요</div></div>`;
+mEl.innerHTML=`<div class="cload"><div class="cload-big">⚠️</div><div>모든 데이터 소스 실패</div><div class="cload-detail">🐛 디버그 버튼 눌러 진단<br>※ /api/proxy.js 미설치 시 외부 프록시만 시도</div></div>`;
 return;
 }
 curData=data;
 const todayMid=new Date();todayMid.setHours(0,0,0,0);
 const hasLive = (iv==='1d') && (data[data.length-1].time >= Math.floor(todayMid.getTime()/1000));
-
 const last=data[data.length-1],prev=data[data.length-2];
 const isKR=stock.avg>1000;
 const chg=((last.close-prev.close)/prev.close*100);
@@ -805,27 +783,14 @@ cEl.textContent=(chg>=0?'▲ +':'▼ ')+chg.toFixed(2)+'%';
 cEl.className='sh-chg '+(chg>=0?'up':'dn');
 renderInfobar(data,hasLive,lastSrc);
 renderDayInfo(data,data.length-1);
-document.getElementById('shFoot').textContent=`v23 · 데이터: ${lastSrc} · ${data.length} bars`;
-
+const proxyTag = selfProxyAvailable ? '🛡️자체프록시' : '외부프록시';
+document.getElementById('shFoot').textContent=`v25 · ${lastSrc} · ${data.length}봉 · ${proxyTag}`;
 if(mainChart){mainChart.remove();mainChart=null;}
 if(volChart){volChart.remove();volChart=null;}
 mEl.innerHTML='';vEl.innerHTML='';
-
-mainChart=LightweightCharts.createChart(mEl,{
-width:mEl.clientWidth,height:mEl.clientHeight,
-layout:{background:{color:'#1a1d24'},textColor:'#9ca3af'},
-grid:{vertLines:{color:'#252830'},horzLines:{color:'#252830'}},
-crosshair:{mode:LightweightCharts.CrosshairMode.Normal},
-rightPriceScale:{borderColor:'#374151',mode:showLog?LightweightCharts.PriceScaleMode.Logarithmic:0},
-timeScale:{borderColor:'#374151',timeVisible:true,rightOffset:5},
-});
-const cs=mainChart.addCandlestickSeries({
-upColor:'#e03131',downColor:'#1971c2',
-borderUpColor:'#e03131',borderDownColor:'#1971c2',
-wickUpColor:'#e03131',wickDownColor:'#1971c2'
-});
+mainChart=LightweightCharts.createChart(mEl,{width:mEl.clientWidth,height:mEl.clientHeight,layout:{background:{color:'#1a1d24'},textColor:'#9ca3af'},grid:{vertLines:{color:'#252830'},horzLines:{color:'#252830'}},crosshair:{mode:LightweightCharts.CrosshairMode.Normal},rightPriceScale:{borderColor:'#374151',mode:showLog?LightweightCharts.PriceScaleMode.Logarithmic:0},timeScale:{borderColor:'#374151',timeVisible:true,rightOffset:5}});
+const cs=mainChart.addCandlestickSeries({upColor:'#e03131',downColor:'#1971c2',borderUpColor:'#e03131',borderDownColor:'#1971c2',wickUpColor:'#e03131',wickDownColor:'#1971c2'});
 cs.setData(data.map(d=>({time:d.time,open:d.open,high:d.high,low:d.low,close:d.close})));
-
 if(showIchi&&data.length>52){
 const{tenkan,kijun,spanA,spanB}=calcIchimoku(data);
 if(tenkan.length){const s=mainChart.addLineSeries({color:'#ec4899',lineWidth:1,crosshairMarkerVisible:false,lastValueVisible:false,priceLineVisible:false});s.setData(tenkan);}
@@ -833,86 +798,23 @@ if(kijun.length){const s=mainChart.addLineSeries({color:'#06b6d4',lineWidth:1,cr
 if(spanA.length){const s=mainChart.addAreaSeries({lineColor:'rgba(34,197,94,0.5)',topColor:'rgba(34,197,94,0.2)',bottomColor:'rgba(34,197,94,0)',lineWidth:1,crosshairMarkerVisible:false,lastValueVisible:false,priceLineVisible:false});s.setData(spanA);}
 if(spanB.length){const s=mainChart.addAreaSeries({lineColor:'rgba(239,68,68,0.5)',topColor:'rgba(239,68,68,0.2)',bottomColor:'rgba(239,68,68,0)',lineWidth:1,crosshairMarkerVisible:false,lastValueVisible:false,priceLineVisible:false});s.setData(spanB);}
 }
-
 if(lineMode>0){
 const shortSlice=data.slice(Math.max(0,data.length-shortMA));
 if(shortSlice.length>=5){
 const{sl,ic,sd}=linReg(shortSlice,showLog);
 let lines;
-if(lineMode===7){
-lines=[
-[0,'#f59f00',2.5,LightweightCharts.LineStyle.Solid],
-[1,'rgba(245,159,0,0.5)',1,0],[2,'rgba(245,159,0,0.85)',2,0],[3,'rgba(245,159,0,0.25)',1,LightweightCharts.LineStyle.Dotted],
-[-1,'rgba(245,159,0,0.5)',1,0],[-2,'rgba(245,159,0,0.85)',2,0],[-3,'rgba(245,159,0,0.25)',1,LightweightCharts.LineStyle.Dotted],
-];
-} else {
-lines=[[0,'#f59f00',2.5,LightweightCharts.LineStyle.Solid],[2,'rgba(245,159,0,0.85)',2,0],[-2,'rgba(245,159,0,0.85)',2,0]];
+if(lineMode===7){lines=[[0,'#f59f00',2.5,LightweightCharts.LineStyle.Solid],[1,'rgba(245,159,0,0.5)',1,0],[2,'rgba(245,159,0,0.85)',2,0],[3,'rgba(245,159,0,0.25)',1,LightweightCharts.LineStyle.Dotted],[-1,'rgba(245,159,0,0.5)',1,0],[-2,'rgba(245,159,0,0.85)',2,0],[-3,'rgba(245,159,0,0.25)',1,LightweightCharts.LineStyle.Dotted]];}
+else {lines=[[0,'#f59f00',2.5,LightweightCharts.LineStyle.Solid],[2,'rgba(245,159,0,0.85)',2,0],[-2,'rgba(245,159,0,0.85)',2,0]];}
+lines.forEach(([m,c,w,ls])=>{const s=mainChart.addLineSeries({color:c,lineWidth:w,lineStyle:ls||0,crosshairMarkerVisible:false,lastValueVisible:false,priceLineVisible:false});s.setData(shortSlice.map((d,i)=>({time:d.time,value:+regVal(sl,ic,sd,i,m,showLog).toFixed(4)})));});
 }
-lines.forEach(([m,c,w,ls])=>{
-const s=mainChart.addLineSeries({color:c,lineWidth:w,lineStyle:ls||0,crosshairMarkerVisible:false,lastValueVisible:false,priceLineVisible:false});
-s.setData(shortSlice.map((d,i)=>({time:d.time,value:+regVal(sl,ic,sd,i,m,showLog).toFixed(4)})));
-});
+if(longMA>0){const longSlice=data.slice(Math.max(0,data.length-longMA));if(longSlice.length>=10){const{sl,ic,sd}=linReg(longSlice,showLog);const lines=[[0,'#ae3ec9',2,LightweightCharts.LineStyle.Dashed],[2,'rgba(174,62,201,0.6)',1.5,LightweightCharts.LineStyle.Dotted],[-2,'rgba(174,62,201,0.6)',1.5,LightweightCharts.LineStyle.Dotted]];lines.forEach(([m,c,w,ls])=>{const s=mainChart.addLineSeries({color:c,lineWidth:w,lineStyle:ls||0,crosshairMarkerVisible:false,lastValueVisible:false,priceLineVisible:false});s.setData(longSlice.map((d,i)=>({time:d.time,value:+regVal(sl,ic,sd,i,m,showLog).toFixed(4)})));});}}
 }
-if(longMA>0){
-const longSlice=data.slice(Math.max(0,data.length-longMA));
-if(longSlice.length>=10){
-const{sl,ic,sd}=linReg(longSlice,showLog);
-const lines=[
-[0,'#ae3ec9',2,LightweightCharts.LineStyle.Dashed],
-[2,'rgba(174,62,201,0.6)',1.5,LightweightCharts.LineStyle.Dotted],
-[-2,'rgba(174,62,201,0.6)',1.5,LightweightCharts.LineStyle.Dotted],
-];
-lines.forEach(([m,c,w,ls])=>{
-const s=mainChart.addLineSeries({color:c,lineWidth:w,lineStyle:ls||0,crosshairMarkerVisible:false,lastValueVisible:false,priceLineVisible:false});
-s.setData(longSlice.map((d,i)=>({time:d.time,value:+regVal(sl,ic,sd,i,m,showLog).toFixed(4)})));
-});
-}
-}
-}
-if(showMA){
-[[20,'#339af0'],[60,'#fab005'],[120,'#7950f2']].forEach(([p,c])=>{
-const ma=calcMA(data,p);
-if(ma.length){const s=mainChart.addLineSeries({color:c,lineWidth:1.5,crosshairMarkerVisible:false,lastValueVisible:false,priceLineVisible:false});s.setData(ma);}
-});
-}
-if(showBS){
-const shortSlice=data.slice(Math.max(0,data.length-shortMA));
-if(shortSlice.length>=5){
-const{sl,ic,sd}=linReg(shortSlice,showLog);
-const markers=[];
-shortSlice.forEach((d,i)=>{
-const y=showLog?Math.log(d.close):d.close;
-const center=sl*i+ic;
-const sigma=(y-center)/sd;
-const trendUp=sl>0.0003,trendDn=sl<-0.0003;
-if(sigma<=-2){markers.push({time:d.time,position:'belowBar',color:trendDn?'#22c55e':'#16a34a',shape:'arrowUp',text:trendDn?'B↑':'B',size:2});}
-else if(sigma>=2){markers.push({time:d.time,position:'aboveBar',color:trendUp?'#f97316':'#dc2626',shape:'arrowDown',text:trendUp?'S↓':'S',size:2});}
-});
-cs.setMarkers(markers);
-}
-}
+if(showMA){[[20,'#339af0'],[60,'#fab005'],[120,'#7950f2']].forEach(([p,c])=>{const ma=calcMA(data,p);if(ma.length){const s=mainChart.addLineSeries({color:c,lineWidth:1.5,crosshairMarkerVisible:false,lastValueVisible:false,priceLineVisible:false});s.setData(ma);}});}
+if(showBS){const shortSlice=data.slice(Math.max(0,data.length-shortMA));if(shortSlice.length>=5){const{sl,ic,sd}=linReg(shortSlice,showLog);const markers=[];shortSlice.forEach((d,i)=>{const y=showLog?Math.log(d.close):d.close;const center=sl*i+ic;const sigma=(y-center)/sd;const trendUp=sl>0.0003,trendDn=sl<-0.0003;if(sigma<=-2){markers.push({time:d.time,position:'belowBar',color:trendDn?'#22c55e':'#16a34a',shape:'arrowUp',text:trendDn?'B↑':'B',size:2});}else if(sigma>=2){markers.push({time:d.time,position:'aboveBar',color:trendUp?'#f97316':'#dc2626',shape:'arrowDown',text:trendUp?'S↓':'S',size:2});}});cs.setMarkers(markers);}}
 mainChart.timeScale().fitContent();
 mainChart.subscribeCrosshairMove(p=>{if(!p.time||!curData)return;const idx=curData.findIndex(d=>d.time===p.time);if(idx>=0) renderDayInfo(curData,idx);});
-
-if(showVol){
-vEl.style.display='block';
-volChart=LightweightCharts.createChart(vEl,{
-width:vEl.clientWidth,height:vEl.clientHeight,
-layout:{background:{color:'#1a1d24'},textColor:'#9ca3af'},
-grid:{vertLines:{color:'#252830'},horzLines:{visible:false}},
-rightPriceScale:{borderColor:'#374151',scaleMargins:{top:0.1,bottom:0}},
-timeScale:{borderColor:'#374151',visible:false},
-crosshair:{mode:LightweightCharts.CrosshairMode.Normal},
-});
-const vs=volChart.addHistogramSeries({priceFormat:{type:'volume'},priceScaleId:''});
-vs.setData(data.map(d=>({time:d.time,value:d.volume,color:d.close>=d.open?'rgba(224,49,49,0.5)':'rgba(25,113,194,0.5)'})));
-volChart.timeScale().fitContent();
-mainChart.timeScale().subscribeVisibleLogicalRangeChange(r=>{if(r&&volChart)volChart.timeScale().setVisibleLogicalRange(r);});
-} else {vEl.style.display='none';}
-new ResizeObserver(()=>{
-if(mainChart)mainChart.applyOptions({width:mEl.clientWidth,height:mEl.clientHeight});
-if(volChart)volChart.applyOptions({width:vEl.clientWidth,height:vEl.clientHeight});
-}).observe(mEl);
+if(showVol){vEl.style.display='block';volChart=LightweightCharts.createChart(vEl,{width:vEl.clientWidth,height:vEl.clientHeight,layout:{background:{color:'#1a1d24'},textColor:'#9ca3af'},grid:{vertLines:{color:'#252830'},horzLines:{visible:false}},rightPriceScale:{borderColor:'#374151',scaleMargins:{top:0.1,bottom:0}},timeScale:{borderColor:'#374151',visible:false},crosshair:{mode:LightweightCharts.CrosshairMode.Normal}});const vs=volChart.addHistogramSeries({priceFormat:{type:'volume'},priceScaleId:''});vs.setData(data.map(d=>({time:d.time,value:d.volume,color:d.close>=d.open?'rgba(224,49,49,0.5)':'rgba(25,113,194,0.5)'})));volChart.timeScale().fitContent();mainChart.timeScale().subscribeVisibleLogicalRangeChange(r=>{if(r&&volChart)volChart.timeScale().setVisibleLogicalRange(r);});} else {vEl.style.display='none';}
+new ResizeObserver(()=>{if(mainChart)mainChart.applyOptions({width:mEl.clientWidth,height:mEl.clientHeight});if(volChart)volChart.applyOptions({width:vEl.clientWidth,height:vEl.clientHeight});}).observe(mEl);
 }
 
 async function openSheet(s){
@@ -940,67 +842,38 @@ curData=null;
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeSheet();});
 function setIv(btn){curIv=btn.dataset.iv;document.querySelectorAll('[data-iv]').forEach(b=>b.classList.toggle('on',b===btn));if(curStock)drawChart(curStock,curDays,curIv);}
 function setDays(btn){curDays=+btn.dataset.d;document.querySelectorAll('[data-d]').forEach(b=>b.classList.toggle('on',b===btn));if(curStock)drawChart(curStock,curDays,curIv);}
-function togInd(type,btn){
-btn.classList.toggle('on');
-if(type==='bs')showBS=!showBS;
-if(type==='log')showLog=!showLog;
-if(type==='ma')showMA=!showMA;
-if(type==='vol')showVol=!showVol;
-if(type==='ichi')showIchi=!showIchi;
-if(curStock)drawChart(curStock,curDays,curIv);
-}
-function togLines(btn){
-const cur=btn.dataset.mode;
-if(cur==='7'){btn.dataset.mode='3';btn.textContent='3선';lineMode=3;}
-else if(cur==='3'){btn.dataset.mode='off';btn.textContent='OFF';btn.classList.remove('on');lineMode=0;}
-else {btn.dataset.mode='7';btn.textContent='7선';btn.classList.add('on');lineMode=7;}
-if(curStock)drawChart(curStock,curDays,curIv);
-}
+function togInd(type,btn){btn.classList.toggle('on');if(type==='bs')showBS=!showBS;if(type==='log')showLog=!showLog;if(type==='ma')showMA=!showMA;if(type==='vol')showVol=!showVol;if(type==='ichi')showIchi=!showIchi;if(curStock)drawChart(curStock,curDays,curIv);}
+function togLines(btn){const cur=btn.dataset.mode;if(cur==='7'){btn.dataset.mode='3';btn.textContent='3선';lineMode=3;}else if(cur==='3'){btn.dataset.mode='off';btn.textContent='OFF';btn.classList.remove('on');lineMode=0;}else {btn.dataset.mode='7';btn.textContent='7선';btn.classList.add('on');lineMode=7;}if(curStock)drawChart(curStock,curDays,curIv);}
 function setShortMA(btn){shortMA=+btn.dataset.short;document.querySelectorAll('[data-short]').forEach(b=>b.classList.toggle('on',b===btn));if(curStock)drawChart(curStock,curDays,curIv);}
 function setLongMA(btn){longMA=+btn.dataset.long;document.querySelectorAll('[data-long]').forEach(b=>b.classList.toggle('on',b===btn));if(curStock)drawChart(curStock,curDays,curIv);}
 
-async function callAI(body){
-const r=await fetch('/api/ai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
-return await r.json();
-}
+async function callAI(body){const r=await fetch('/api/ai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});return await r.json();}
 async function runHealth(){
 const btn=document.getElementById('healthBtn'),box=document.getElementById('healthBox');
 const ct=document.getElementById('healthContent'),dt=document.getElementById('healthDate');
-btn.disabled=true;btn.textContent='⏳ 분석 중...';
-box.className='abox on';
+btn.disabled=true;btn.textContent='⏳ 분석 중...';box.className='abox on';
 ct.innerHTML='<div class="lw"><div class="dots"><span></span><span></span><span></span></div> 분석 중...</div>';
 const today=new Date().toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric',weekday:'short'});
 dt.textContent=today;
 const ptf=`[한국]\n${KR.map(s=>`- ${s.name}(${s.code}): ${s.shares}주, 수익 ${s.ret.toFixed(2)}%${s.warn?' [무상증자]':''}`).join('\n')}\n\n[미국]\n${US.map(s=>`- ${s.name}: ${s.shares}주, 수익 ${s.ret.toFixed(2)}%`).join('\n')}`;
-try{
-const data=await callAI({model:'claude-sonnet-4-5',max_tokens:1200,tools:[{type:'web_search_20250305',name:'web_search'}],messages:[{role:'user',content:`전문 포트폴리오 분석가로서 오늘(${today}) 시황을 검색하고 다음 포트폴리오를 분석해주세요.\n\n${ptf}\n\n형식:\n🏥 전체 건강 점수\n💰 밸류 평가\n📊 기술적 평가\n🎯 분산도\n⚡ 주목 종목\n📌 개선 제안`}]});
+try{const data=await callAI({model:'claude-sonnet-4-5',max_tokens:1200,tools:[{type:'web_search_20250305',name:'web_search'}],messages:[{role:'user',content:`전문 포트폴리오 분석가로서 오늘(${today}) 시황을 검색하고 다음 포트폴리오를 분석해주세요.\n\n${ptf}\n\n형식:\n🏥 전체 건강 점수\n💰 밸류 평가\n📊 기술적 평가\n🎯 분산도\n⚡ 주목 종목\n📌 개선 제안`}]});
 if(data.error)throw new Error(typeof data.error==='string'?data.error:JSON.stringify(data.error));
 const text=data.content.filter(b=>b.type==='text').map(b=>b.text).join('\n');
 ct.innerHTML=text.replace(/^(🏥|💰|📊|🎯|⚡|📌).+$/gm,m=>`<h3>${m}</h3>`).replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');
-}catch(e){ct.textContent='오류: '+e.message;}
-finally{btn.disabled=false;btn.textContent='🔄 다시 실행';}
+}catch(e){ct.textContent='오류: '+e.message;}finally{btn.disabled=false;btn.textContent='🔄 다시 실행';}
 }
 async function runNews(){
 const btn=document.getElementById('newsBtn'),nl=document.getElementById('newsList');
 btn.disabled=true;btn.textContent='⏳ 검색 중...';
 nl.innerHTML='<div class="lw"><div class="dots"><span></span><span></span><span></span></div> 검색 중...</div>';
 const names=[...KR,...US].map(s=>s.name).join(', ');
-try{
-const data=await callAI({model:'claude-sonnet-4-5',max_tokens:1500,tools:[{type:'web_search_20250305',name:'web_search'}],messages:[{role:'user',content:`오늘 날짜 기준 다음 종목들의 최신 뉴스 JSON 배열로 반환.\n\n종목: ${names}\n\n[{"title":"제목","summary":"한줄","stock":"종목","url":"링크"}] 최대 10개.`}]});
+try{const data=await callAI({model:'claude-sonnet-4-5',max_tokens:1500,tools:[{type:'web_search_20250305',name:'web_search'}],messages:[{role:'user',content:`오늘 날짜 기준 다음 종목들의 최신 뉴스 JSON 배열로 반환.\n\n종목: ${names}\n\n[{"title":"제목","summary":"한줄","stock":"종목","url":"링크"}] 최대 10개.`}]});
 if(data.error)throw new Error(typeof data.error==='string'?data.error:JSON.stringify(data.error));
 const text=data.content.filter(b=>b.type==='text').map(b=>b.text).join('');
-try{
-const news=JSON.parse(text.replace(/```json|```/g,'').trim());
-nl.innerHTML=news.map(n=>`<div class="news-item" onclick="window.open('${n.url||'#'}','_blank')"><div style="font-size:13px;font-weight:600;margin-bottom:5px">${n.title}</div><div style="font-size:12px;color:var(--text2);margin-bottom:5px">${n.summary}</div><div style="font-size:11px;color:var(--accent);font-weight:600">${n.stock}</div></div>`).join('');
-}catch{nl.innerHTML=`<div class="abox on"><div class="ac">${text}</div></div>`;}
-}catch(e){nl.innerHTML=`<div style="color:var(--down);padding:12px">오류: ${e.message}</div>`;}
-finally{btn.disabled=false;btn.textContent='🔄 다시 검색';}
+try{const news=JSON.parse(text.replace(/```json|```/g,'').trim());nl.innerHTML=news.map(n=>`<div class="news-item" onclick="window.open('${n.url||'#'}','_blank')"><div style="font-size:13px;font-weight:600;margin-bottom:5px">${n.title}</div><div style="font-size:12px;color:var(--text2);margin-bottom:5px">${n.summary}</div><div style="font-size:11px;color:var(--accent);font-weight:600">${n.stock}</div></div>`).join('');}catch{nl.innerHTML=`<div class="abox on"><div class="ac">${text}</div></div>`;}
+}catch(e){nl.innerHTML=`<div style="color:var(--down);padding:12px">오류: ${e.message}</div>`;}finally{btn.disabled=false;btn.textContent='🔄 다시 검색';}
 }
-function goVal(code,name,market){
-document.getElementById('valInput').value=name||code;
-window._valMarket=market||'kr';
-goPage('val');runVal();
-}
+function goVal(code,name,market){document.getElementById('valInput').value=name||code;window._valMarket=market||'kr';goPage('val');runVal();}
 async function runVal(){
 const input=document.getElementById('valInput').value.trim();if(!input)return;
 const result=document.getElementById('valResult');
@@ -1011,16 +884,38 @@ const fu=US.find(s=>s.name.includes(input)||s.code.toLowerCase()===input.toLower
 if(fk){yfsym=fk.yf;name=fk.name;code=fk.code;market='kr';}
 else if(fu){yfsym=fu.yf;name=fu.name;code=fu.code;market='us';}
 else{yfsym=input.includes('.')?input:(window._valMarket==='us'?input:input+'.KS');name=input;code=input;market=window._valMarket||'kr';}
-try{
-const data=await callAI({model:'claude-sonnet-4-5',max_tokens:600,tools:[{type:'web_search_20250305',name:'web_search'}],messages:[{role:'user',content:`${name}(${code}) ${market==='us'?'미국':'한국'} 종목 최신 밸류에이션을 검색해서 답변. PER, PBR, 목표주가, 평균 PER 등 포함.`}]});
+try{const data=await callAI({model:'claude-sonnet-4-5',max_tokens:600,tools:[{type:'web_search_20250305',name:'web_search'}],messages:[{role:'user',content:`${name}(${code}) ${market==='us'?'미국':'한국'} 종목 최신 밸류에이션을 검색해서 답변. PER, PBR, 목표주가, 평균 PER 등 포함.`}]});
 if(data.error)throw new Error(typeof data.error==='string'?data.error:JSON.stringify(data.error));
 const text=data.content.filter(b=>b.type==='text').map(b=>b.text).join('');
 result.innerHTML=`<div class="abox on"><div class="ah"><div class="abadge">${name}</div><div class="adate">${code}</div></div><div class="ac">${text.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')}</div></div>`;
 }catch(e){result.innerHTML=`<div style="color:var(--down);padding:12px">오류: ${e.message}</div>`;}
 }
 
+dbg(`━━━ v25 시작 (자체프록시 우선) ━━━`,'ok');
+dbg(`UA: ${navigator.userAgent.substr(0,80)}`);
+dbg(`호스트: ${location.host}`);
+dbg(`/api/proxy 헬스체크...`);
+
+// /api/proxy 헬스체크 (간단한 stooq 호출로)
+fetchWithTimeout('/api/proxy?url=https%3A%2F%2Fstooq.com%2Fq%2Fd%2Fl%2F%3Fs%3Daapl.us%26i%3Dd', 6000)
+  .then(r => {
+    if(r.ok){
+      selfProxyAvailable = true;
+      dbg(`✓ /api/proxy 정상 동작 — 자체 백엔드 사용`,'ok');
+      const ut=document.getElementById('updateTime');
+      if(ut)ut.innerHTML='<span class="live-dot"></span> 자체 프록시 OK · 가격 갱신 중...';
+    } else {
+      selfProxyAvailable = false;
+      dbg(`✗ /api/proxy HTTP ${r.status} — 미설치 가능성`,'warn');
+    }
+  })
+  .catch(e => {
+    selfProxyAvailable = false;
+    dbg(`✗ /api/proxy 미응답: ${e.message} — 외부프록시로`, 'warn');
+  });
+
 render();
-setTimeout(updateAllPrices,300);
+setTimeout(updateAllPrices, 500);
 document.addEventListener('visibilitychange',()=>{
   if(document.hidden && autoTimer){clearInterval(autoTimer);autoTimer=null;}
   else if(!document.hidden && document.getElementById('autoBtn').classList.contains('on') && !autoTimer){
