@@ -3,52 +3,39 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MyStock v22</title>
+<title>MyStock v23</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/lightweight-charts@4.1.1/dist/lightweight-charts.standalone.production.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
---bg:#f8f9fa;--surface:#fff;--border:#e9ecef;--border2:#dee2e6;
---accent:#1971c2;--accent-bg:#e7f5ff;
---text:#212529;--text2:#495057;--muted:#868e96;
---up:#e03131;--up-bg:#fff5f5;--down:#1971c2;--down-bg:#e7f5ff;
---warn:#e67700;--warn-bg:#fff9db;
---chart-bg:#1a1d24}
+:root{--bg:#f8f9fa;--surface:#fff;--border:#e9ecef;--border2:#dee2e6;--accent:#1971c2;--accent-bg:#e7f5ff;--text:#212529;--text2:#495057;--muted:#868e96;--up:#e03131;--up-bg:#fff5f5;--down:#1971c2;--down-bg:#e7f5ff;--warn:#e67700;--warn-bg:#fff9db;--chart-bg:#1a1d24}
 html,body{height:100%}
 body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-serif;font-size:14px;line-height:1.5;padding-bottom:62px}
-
 .nav{position:sticky;top:0;z-index:100;background:var(--surface);border-bottom:1px solid var(--border);height:52px;display:flex;align-items:center;padding:0 14px;gap:8px}
 .nav-logo{font-size:16px;font-weight:700;flex-shrink:0}.nav-logo em{color:var(--accent);font-style:normal}
 .nav-search{flex:1;max-width:260px;height:34px;background:var(--bg);border:1px solid var(--border2);border-radius:8px;padding:0 10px;display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);cursor:pointer}
 .nav-r{margin-left:auto;display:flex;gap:5px}
 .nb{padding:5px 10px;border-radius:6px;border:1px solid var(--border2);font-size:11px;font-weight:600;cursor:pointer;background:var(--surface);color:var(--text2);font-family:inherit;text-decoration:none;display:inline-flex;align-items:center}
 .nb.p{background:var(--accent);color:#fff;border-color:var(--accent)}
-
 .tabs{background:var(--surface);border-bottom:1px solid var(--border);display:flex;padding:0 8px;overflow-x:auto;height:42px;scrollbar-width:none}
 .tabs::-webkit-scrollbar{display:none}
 .tab{padding:0 10px;height:100%;display:flex;align-items:center;font-size:12px;font-weight:500;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;flex-shrink:0}
 .tab.on{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
-
 .main{max-width:900px;margin:0 auto;padding:12px}
 .page{display:none}.page.on{display:block}
-
 .update-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:11px;color:var(--muted);padding:0 2px;gap:6px}
 .update-bar .left{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .refresh-btn{background:var(--surface);border:1px solid var(--border2);border-radius:6px;padding:4px 10px;font-size:11px;color:var(--text2);cursor:pointer;font-family:inherit;font-weight:600;flex-shrink:0}
 .refresh-btn:disabled{opacity:0.5}
 .refresh-btn.on{background:var(--up);color:#fff;border-color:var(--up)}
-
 .sg{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:12px}
 .sc{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 14px}
 .sc-l{font-size:11px;color:var(--muted);margin-bottom:4px}
 .sc-v{font-size:18px;font-weight:700}
 .sc-s{font-size:11px;margin-top:2px}
-
 .sec{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border)}
 .sec-t{font-size:14px;font-weight:700}
 .sec-b{font-size:11px;color:var(--muted);background:var(--bg);padding:2px 9px;border-radius:20px;border:1px solid var(--border)}
-
 .tbl{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:12px}
 .tr{padding:12px 14px;border-bottom:1px solid var(--border);cursor:pointer;display:flex;flex-direction:column;gap:8px}
 .tr:last-child{border-bottom:none}
@@ -67,7 +54,6 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
 .tp-grp{display:flex;align-items:baseline;gap:3px}
 .tp-l{color:var(--muted);font-size:10px;font-weight:500}
 .tp-v{color:var(--text);font-weight:700;font-size:12px;transition:background 0.6s}
-.tp-v.loading{color:var(--muted);font-style:italic}
 .tp-v.flash-up{background:var(--up-bg);box-shadow:0 0 0 3px var(--up-bg);border-radius:3px}
 .tp-v.flash-dn{background:var(--down-bg);box-shadow:0 0 0 3px var(--down-bg);border-radius:3px}
 .tp-arr{color:var(--muted);font-weight:bold;margin:0 2px}
@@ -75,7 +61,6 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
 .rb{padding:5px 10px;border-radius:6px;border:none;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;flex:1}
 .rb-c{background:var(--accent-bg);color:var(--accent)}
 .rb-e{background:var(--bg);color:var(--text2);border:1px solid var(--border2)}
-
 .ai-btn{width:100%;padding:12px;margin-bottom:12px;background:linear-gradient(135deg,#1971c2,#1098ad);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit}
 .ai-btn:disabled{opacity:.5}
 .abox{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px;margin-bottom:12px;display:none}
@@ -85,16 +70,13 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
 .adate{font-size:11px;color:var(--muted);margin-left:auto}
 .ac{font-size:13px;line-height:1.85;white-space:pre-wrap;color:var(--text2)}
 .ac h3{font-size:12px;font-weight:700;color:var(--accent);margin:12px 0 5px}
-
 .bnav{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border);display:flex;z-index:100;padding-bottom:env(safe-area-inset-bottom)}
 .bt{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6px 0;cursor:pointer;font-size:9px;color:var(--muted);gap:2px;border:none;background:none;font-family:inherit}
 .bt.on{color:var(--accent)}
 .bt .ico{font-size:18px}
-
 .ov{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:none}
 .ov.on{display:block}
 .sheet{position:fixed;top:0;left:0;right:0;bottom:0;background:var(--chart-bg);display:flex;flex-direction:column;color:#e5e7eb}
-
 .sh-head{padding:10px 14px;flex-shrink:0;border-bottom:1px solid #2d3139}
 .sh-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
 .sh-name{font-size:16px;font-weight:700;color:#fff}
@@ -112,8 +94,8 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
 .ib-buy{background:rgba(244,63,94,0.15);color:#fb7185;border-color:rgba(244,63,94,0.4)}
 .ib-sell{background:rgba(250,204,21,0.15);color:#facc15;border-color:rgba(250,204,21,0.4)}
 .ib-live{background:rgba(34,197,94,0.15);color:#4ade80;border-color:rgba(34,197,94,0.4);animation:pulse 1.5s ease-in-out infinite}
+.ib-src{background:rgba(96,165,250,0.1);color:#93c5fd;border-color:rgba(96,165,250,0.3)}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.6}}
-
 .sh-ctrl,.ind-bar,.ma-bar{display:flex;align-items:center;padding:6px 14px 0;gap:3px;overflow-x:auto;flex-shrink:0;scrollbar-width:none}
 .sh-ctrl::-webkit-scrollbar,.ind-bar::-webkit-scrollbar,.ma-bar::-webkit-scrollbar{display:none}
 .cb{padding:4px 9px;border-radius:6px;border:1px solid #374151;font-size:10px;font-weight:600;cursor:pointer;background:#252830;color:#9ca3af;font-family:inherit;white-space:nowrap;flex-shrink:0}
@@ -124,7 +106,6 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
 .ind.on{border-color:var(--accent);color:#60a5fa;background:rgba(25,113,194,0.2)}
 .ma-grp{display:flex;align-items:center;gap:3px;flex-shrink:0}
 .ma-lbl{font-size:9px;font-weight:600;flex-shrink:0;white-space:nowrap}
-
 .day-info{padding:6px 14px;background:rgba(25,113,194,0.08);border-bottom:1px solid #2d3139;display:flex;flex-wrap:wrap;gap:8px;font-size:10px;flex-shrink:0;align-items:center;margin-top:6px}
 .di-itm{display:flex;align-items:center;gap:3px}
 .di-l{color:#9ca3af}
@@ -132,41 +113,32 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
 .di-v.up{color:var(--up)}
 .di-v.dn{color:var(--down)}
 .di-v.warn{color:#facc15}
-
 .sh-charts{flex:1;display:flex;flex-direction:column;min-height:0;overflow:hidden;background:var(--chart-bg)}
 .sh-main{flex:5;min-height:280px;width:100%}
 .sh-vol{flex:1;min-height:70px;border-top:1px solid #2d3139;width:100%}
-
 .sh-foot{display:flex;align-items:center;justify-content:space-between;padding:8px 14px;border-top:1px solid #2d3139;flex-shrink:0}
 .sh-info{font-size:9px;color:#9ca3af}
 .sh-close{padding:6px 16px;background:#374151;color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit}
-
 .cload{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:10px;color:#9ca3af;font-size:13px;text-align:center;padding:20px}
 .cload-big{font-size:32px}
-
+.cload-detail{font-size:10px;color:#6b7280;max-width:80%}
 .val-input-row{display:flex;gap:8px;margin-bottom:12px}
 .val-input{flex:1;height:40px;border:1px solid var(--border2);border-radius:8px;padding:0 12px;font-size:13px;font-family:inherit;outline:none}
 .val-btn{padding:0 16px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit}
 .quick-btns{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px}
-
 .news-item{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:8px;cursor:pointer}
-
 .lw{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:13px;padding:8px 0}
 .dots span{display:inline-block;width:6px;height:6px;background:var(--accent);border-radius:50%;animation:bup 1.2s ease-in-out infinite;margin:0 2px}
 .dots span:nth-child(2){animation-delay:.2s}.dots span:nth-child(3){animation-delay:.4s}
 @keyframes bup{0%,80%,100%{transform:translateY(0);opacity:.4}40%{transform:translateY(-5px);opacity:1}}
-
 @media(min-width:640px){.bnav{display:none}body{padding-bottom:0}}
 @media(max-width:639px){.sg{grid-template-columns:1fr 1fr}}
-
 .ver-tag{position:fixed;top:8px;right:8px;background:rgba(25,113,194,0.9);color:#fff;font-size:10px;padding:3px 8px;border-radius:6px;font-weight:700;z-index:99}
 .live-dot{display:inline-block;width:6px;height:6px;background:#22c55e;border-radius:50%;margin-right:4px;animation:pulse 1.5s ease-in-out infinite;vertical-align:middle}
 </style>
 </head>
 <body>
-
-<div class="ver-tag">v22</div>
-
+<div class="ver-tag">v23</div>
 <nav class="nav">
 <div class="nav-logo">📈 <em>My</em>Stock</div>
 <div class="nav-search" onclick="doSearch()">🔍 종목 검색</div>
@@ -175,7 +147,6 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
 <a class="nb p" href="https://kr.tradingview.com" target="_blank">TV</a>
 </div>
 </nav>
-
 <div class="tabs">
 <div class="tab on" data-p="portfolio">📊 포트</div>
 <div class="tab" data-p="kr">🇰🇷 한국</div>
@@ -184,14 +155,12 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
 <div class="tab" data-p="news">📰 뉴스</div>
 <div class="tab" data-p="val">📐 밸류</div>
 </div>
-
 <div class="main">
 <div class="update-bar">
 <span class="left" id="updateTime">⏳ 가격 갱신 중...</span>
 <button class="refresh-btn" id="autoBtn" onclick="toggleAutoRefresh()">▶ 자동(30s)</button>
 <button class="refresh-btn" id="refreshBtn" onclick="updateAllPrices()">🔄 새로고침</button>
 </div>
-
 <div class="page on" id="page-portfolio">
 <div class="sg">
 <div class="sc"><div class="sc-l">한국 평가금</div><div class="sc-v" id="sK">—</div><div class="sc-s" id="sKg">—</div></div>
@@ -204,17 +173,14 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
 <div class="sec"><div class="sec-t">🇺🇸 미국</div><div class="sec-b">6종목</div></div>
 <div class="tbl"><div id="us1"></div></div>
 </div>
-
 <div class="page" id="page-kr">
 <div class="sec"><div class="sec-t">🇰🇷 한국</div><div class="sec-b">9종목</div></div>
 <div class="tbl"><div id="kr2"></div></div>
 </div>
-
 <div class="page" id="page-us">
 <div class="sec"><div class="sec-t">🇺🇸 미국</div><div class="sec-b">6종목</div></div>
 <div class="tbl"><div id="us2"></div></div>
 </div>
-
 <div class="page" id="page-health">
 <button class="ai-btn" id="healthBtn" onclick="runHealth()">🩺 포트폴리오 AI 건강검진</button>
 <div class="abox" id="healthBox">
@@ -222,12 +188,10 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
 <div class="ac" id="healthContent"></div>
 </div>
 </div>
-
 <div class="page" id="page-news">
 <button class="ai-btn" id="newsBtn" onclick="runNews()">📰 보유종목 관련 최신 뉴스</button>
 <div id="newsList"></div>
 </div>
-
 <div class="page" id="page-val">
 <div class="val-input-row">
 <input class="val-input" id="valInput" placeholder="종목명 또는 코드" onkeydown="if(event.key==='Enter')runVal()">
@@ -238,7 +202,6 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
 <div id="valResult"></div>
 </div>
 </div>
-
 <div class="bnav">
 <button class="bt on" data-p="portfolio"><div class="ico">📊</div>포트</button>
 <button class="bt" data-p="kr"><div class="ico">🇰🇷</div>한국</button>
@@ -247,7 +210,6 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
 <button class="bt" data-p="news"><div class="ico">📰</div>뉴스</button>
 <button class="bt" data-p="val"><div class="ico">📐</div>밸류</button>
 </div>
-
 <div class="ov" id="ov" onclick="closeSheet(event)">
 <div class="sheet" onclick="event.stopPropagation()">
 <div class="sh-head">
@@ -257,7 +219,6 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
 </div>
 <div class="sh-bar" id="shBar"></div>
 </div>
-
 <div class="sh-ctrl">
 <span class="cl">봉</span>
 <button class="cb on" data-iv="1d" onclick="setIv(this)">일</button>
@@ -273,7 +234,6 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
 <button class="cb" data-d="1825" onclick="setDays(this)">5Y</button>
 <button class="cb" data-d="3650" onclick="setDays(this)">MAX</button>
 </div>
-
 <div class="ind-bar">
 <button class="ind on" id="iBS" onclick="togInd('bs',this)">B/S신호</button>
 <button class="ind" id="iLog" onclick="togInd('log',this)">로그</button>
@@ -282,7 +242,6 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
 <button class="ind on" id="iVol" onclick="togInd('vol',this)">거래량</button>
 <button class="ind" id="iIchi" onclick="togInd('ichi',this)">일목</button>
 </div>
-
 <div class="ma-bar">
 <div class="ma-grp">
 <span class="ma-lbl" style="color:#f59f00">📐 단기→</span>
@@ -299,24 +258,20 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
 <button class="cb" data-long="250" onclick="setLongMA(this)">250</button>
 </div>
 </div>
-
 <div class="day-info" id="dayInfo">차트 로딩 중...</div>
-
 <div class="sh-charts">
 <div class="sh-main" id="shMain"></div>
 <div class="sh-vol" id="shVol"></div>
 </div>
-
 <div class="sh-foot">
-<div class="sh-info">v22 · 1분봉 실시간가 + 오늘 캔들 자동보강 + 30초 자동갱신</div>
+<div class="sh-info" id="shFoot">v23 · Stooq+Yahoo 다중소스 · 5개 프록시 fallback</div>
 <button class="sh-close" onclick="closeSheet()">닫기</button>
 </div>
 </div>
 </div>
-
 <script>
 // ============================================================
-// 보유 종목 데이터 — 2026-05-08 동기화
+// 보유 종목 데이터 — 2026-05-08
 // ============================================================
 const KR=[
 {name:'LS ELECTRIC',  code:'010120',yf:'010120.KS',shares:62, avg:186582,val:19189000,ret:65.87},
@@ -340,11 +295,10 @@ const US=[
 
 let mainChart=null,volChart=null,curStock=null,curDays=180,curIv='1d';
 let showBS=true,showLog=false,showMA=true,showVol=true,showIchi=false;
-let lineMode=7;
-let shortMA=20,longMA=60;
+let lineMode=7,shortMA=20,longMA=60;
 let curData=null,priceUpdating=false;
-let autoTimer=null;
-let prevPrices={};
+let autoTimer=null,prevPrices={};
+let lastSrc=''; // 마지막 사용 데이터 소스
 
 function fK(v){return v>=1e8?(v/1e8).toFixed(1)+'억':v>=1e4?Math.round(v/1e4)+'만원':v.toLocaleString()+'원'}
 function fU(v){return '$'+v.toLocaleString('en',{maximumFractionDigits:0})}
@@ -376,7 +330,6 @@ const rs=s.warn?'※무증':(s.ret>=0?'+':'')+s.ret.toFixed(2)+'%';
 const avgStr=isKR?s.avg.toLocaleString()+'원':'$'+s.avg.toFixed(2);
 const curVal = s.cur!=null ? s.cur : (s.val/s.shares);
 const curStr=isKR?Math.round(curVal).toLocaleString()+'원':'$'+curVal.toFixed(2);
-// 가격 변동 감지 → flash 클래스
 const prevP = prevPrices[s.code];
 let flashCls = '';
 if(prevP && s.cur && Math.abs(prevP - s.cur) > (isKR?0.5:0.001)){
@@ -435,49 +388,136 @@ if(f)openSheet(f);else alert('종목 없음');
 }
 
 // ============================================================
-// 🔥 v22 핵심: 1분봉 기반 실시간 가격 + 오늘 캔들 보강
+// 🔥 v23: Stooq + Yahoo 다중 소스 + 5개 프록시 fallback
 // ============================================================
 
-// 공통 fetch 헬퍼 (CORS 프록시 다중 fallback)
-async function yfFetch(url, timeout){
-  timeout = timeout || 8000;
-  // 1차: 자체 프록시 (있으면)
+// 야후 심볼 → Stooq 심볼 변환
+function toStooqSym(yfSym){
+  let s = yfSym.toLowerCase();
+  if(s.endsWith('.ks')) return s.replace('.ks','.kr');
+  if(s.endsWith('.kq')) return s.replace('.kq','.kr');
+  if(!s.includes('.')) return s + '.us';
+  return s;
+}
+
+// Stooq CSV 파싱
+function parseStooqCSV(csv){
+  if(!csv || csv.length < 50) return null;
+  const lines = csv.trim().split('\n');
+  if(lines.length < 2) return null;
+  const header = lines[0].toLowerCase();
+  // 헤더 검증: Date,Open,High,Low,Close,Volume
+  if(!header.includes('date') || !header.includes('close')) return null;
+  const data = [];
+  for(let i = 1; i < lines.length; i++){
+    const cols = lines[i].split(',');
+    if(cols.length < 5) continue;
+    const ts = Math.floor(new Date(cols[0] + 'T00:00:00Z').getTime() / 1000);
+    const open = parseFloat(cols[1]), high = parseFloat(cols[2]);
+    const low = parseFloat(cols[3]), close = parseFloat(cols[4]);
+    const vol = cols[5] ? parseFloat(cols[5]) : 0;
+    if(isNaN(ts) || isNaN(open) || isNaN(close)) continue;
+    data.push({
+      time: ts,
+      open: +open.toFixed(4), high: +high.toFixed(4),
+      low: +low.toFixed(4), close: +close.toFixed(4),
+      volume: vol || 0
+    });
+  }
+  return data.length ? data.sort((a,b)=>a.time-b.time) : null;
+}
+
+// Stooq 일봉: 직접 → 프록시
+async function fetchStooqDaily(yfSym, days){
+  const sym = toStooqSym(yfSym);
+  const url = `https://stooq.com/q/d/l/?s=${sym}&i=d`;
+  // 1차: 직접 (CORS 허용 가능성)
   try{
-    const r=await fetch(url.replace('https://query1.finance.yahoo.com','/api/yf'),{signal:AbortSignal.timeout(timeout)});
-    if(r.ok) return await r.json();
-  }catch(e){}
+    const r = await fetch(url, {signal: AbortSignal.timeout(8000)});
+    if(r.ok){
+      const csv = await r.text();
+      const data = parseStooqCSV(csv);
+      if(data && data.length >= 5){
+        console.log(`[Stooq direct] ${sym}: ${data.length} bars`);
+        return days ? data.slice(-days) : data;
+      }
+    }
+  }catch(e){console.warn(`[Stooq direct] ${sym} fail:`, e.message);}
   // 2차: corsproxy.io
   try{
-    const r=await fetch(`https://corsproxy.io/?url=${encodeURIComponent(url)}`,{signal:AbortSignal.timeout(timeout)});
-    if(r.ok) return await r.json();
-  }catch(e){}
+    const r = await fetch(`https://corsproxy.io/?url=${encodeURIComponent(url)}`, {signal: AbortSignal.timeout(8000)});
+    if(r.ok){
+      const csv = await r.text();
+      const data = parseStooqCSV(csv);
+      if(data && data.length >= 5){
+        console.log(`[Stooq corsproxy] ${sym}: ${data.length} bars`);
+        return days ? data.slice(-days) : data;
+      }
+    }
+  }catch(e){console.warn(`[Stooq corsproxy] ${sym} fail:`, e.message);}
   // 3차: allorigins
   try{
-    const r=await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,{signal:AbortSignal.timeout(timeout)});
-    if(r.ok) return await r.json();
-  }catch(e){}
+    const r = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`, {signal: AbortSignal.timeout(8000)});
+    if(r.ok){
+      const csv = await r.text();
+      const data = parseStooqCSV(csv);
+      if(data && data.length >= 5){
+        console.log(`[Stooq allorigins] ${sym}: ${data.length} bars`);
+        return days ? data.slice(-days) : data;
+      }
+    }
+  }catch(e){console.warn(`[Stooq allorigins] ${sym} fail:`, e.message);}
   return null;
 }
 
-// 일봉 데이터 (히스토리)
-async function fetchDaily(sym, days, iv){
+// 야후 fetch: 5개 프록시 시도
+async function yfFetch(url, timeout){
+  timeout = timeout || 7000;
+  const tries = [
+    {name:'self', urlFn: u => u.replace('https://query1.finance.yahoo.com','/api/yf')},
+    {name:'corsproxy.io', urlFn: u => `https://corsproxy.io/?url=${encodeURIComponent(u)}`},
+    {name:'allorigins', urlFn: u => `https://api.allorigins.win/raw?url=${encodeURIComponent(u)}`},
+    {name:'codetabs', urlFn: u => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(u)}`},
+    {name:'cors.eu.org', urlFn: u => `https://cors.eu.org/${u}`},
+  ];
+  for(const t of tries){
+    try{
+      const r = await fetch(t.urlFn(url), {signal: AbortSignal.timeout(timeout)});
+      if(r.ok){
+        const txt = await r.text();
+        try{
+          const j = JSON.parse(txt);
+          if(j && j.chart){
+            console.log(`[Yahoo ${t.name}] OK`);
+            return j;
+          }
+        }catch(e){/* JSON 아님, 다음 */}
+      }
+    }catch(e){/* 다음 시도 */}
+  }
+  console.warn('[Yahoo] all proxies failed');
+  return null;
+}
+
+// 야후 일봉
+async function fetchYahooDaily(sym, days, iv){
   iv = iv || '1d';
   const end=Math.floor(Date.now()/1000),start=end-days*86400;
   const url=`https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(sym)}?interval=${iv}&period1=${start}&period2=${end}&events=history`;
-  const d = await yfFetch(url, 10000);
+  const d = await yfFetch(url, 8000);
   if(!d || !d.chart || !d.chart.result || !d.chart.result[0]) return null;
-  return parseYF(d);
+  return parseYahoo(d);
 }
 
-// 1분봉 (오늘 장중)
+// 야후 1분봉
 async function fetchIntraday(sym){
   const url=`https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(sym)}?interval=1m&range=1d`;
-  const d = await yfFetch(url, 8000);
+  const d = await yfFetch(url, 7000);
   if(!d || !d.chart || !d.chart.result || !d.chart.result[0]) return null;
   return d.chart.result[0];
 }
 
-function parseYF(parsed){
+function parseYahoo(parsed){
   const res=parsed.chart.result[0];
   const q=res.indicators.quote[0];
   const ts=res.timestamp||[];
@@ -490,7 +530,7 @@ function parseYF(parsed){
   return c.sort((a,b)=>a.time-b.time);
 }
 
-// 1분봉 → 오늘 일봉 캔들로 집계
+// 1분봉 → 오늘 일봉 캔들 집계
 function aggregateIntraday(intraday){
   if(!intraday) return null;
   const q=intraday.indicators.quote[0];
@@ -506,7 +546,6 @@ function aggregateIntraday(intraday){
     volume+=q.volume[i]||0;
   }
   if(open===null) return null;
-  // 오늘 자정(UTC 기준 timestamp). LightweightCharts는 UTC 타임스탬프 받음
   const today=new Date();today.setHours(0,0,0,0);
   return {
     time:Math.floor(today.getTime()/1000),
@@ -516,31 +555,48 @@ function aggregateIntraday(intraday){
   };
 }
 
-// 차트용 통합: 일봉 + 오늘 캔들 보강
+// 차트용 통합: Stooq 우선 → 야후 fallback → 오늘 캔들 보강
 async function fetchOHLC(sym, days, iv){
   iv = iv || '1d';
-  let data = await fetchDaily(sym, days, iv);
-  if(!data) return null;
-  if(iv !== '1d') return data;
-
-  const todayMid=new Date();todayMid.setHours(0,0,0,0);
-  const todayTs=Math.floor(todayMid.getTime()/1000);
-  const lastTs=data.length?data[data.length-1].time:0;
-
-  // 마지막 캔들이 오늘이 아니면 1m으로 보강
-  if(lastTs < todayTs){
-    const intraday = await fetchIntraday(sym);
-    const todayBar = aggregateIntraday(intraday);
-    if(todayBar){
-      data.push({time:todayBar.time, open:todayBar.open, high:todayBar.high, low:todayBar.low, close:todayBar.close, volume:todayBar.volume});
+  let data = null;
+  let src = '';
+  // 일봉이면 Stooq 우선 (CORS 안정적)
+  if(iv === '1d'){
+    data = await fetchStooqDaily(sym, days);
+    if(data && data.length >= 5){
+      src = 'Stooq';
+    }
+  }
+  // Stooq 실패 또는 주/월봉이면 야후
+  if(!data || data.length < 5){
+    data = await fetchYahooDaily(sym, days, iv);
+    if(data && data.length >= 5) src = 'Yahoo';
+  }
+  if(!data || data.length < 5){
+    lastSrc = '실패';
+    return null;
+  }
+  lastSrc = src;
+  // 일봉만 오늘 캔들 보강
+  if(iv === '1d'){
+    const todayMid=new Date();todayMid.setHours(0,0,0,0);
+    const todayTs=Math.floor(todayMid.getTime()/1000);
+    const lastTs=data.length?data[data.length-1].time:0;
+    if(lastTs < todayTs){
+      const intraday = await fetchIntraday(sym);
+      const todayBar = aggregateIntraday(intraday);
+      if(todayBar){
+        data.push({time:todayBar.time, open:todayBar.open, high:todayBar.high, low:todayBar.low, close:todayBar.close, volume:todayBar.volume});
+        lastSrc = src + '+1m';
+      }
     }
   }
   return data;
 }
 
-// 실시간 현재가: 1m 분봉 마지막 close (또는 meta.regularMarketPrice)
+// 실시간 현재가: 야후 1m → 야후 일봉 → Stooq 일봉
 async function fetchLatestPrice(yfSym){
-  // 1차: 1분봉 (실시간성 ↑)
+  // 1차: 야후 1m
   try{
     const intraday = await fetchIntraday(yfSym);
     if(intraday){
@@ -551,9 +607,14 @@ async function fetchLatestPrice(yfSym){
       if(closes.length) return closes[closes.length-1];
     }
   }catch(e){}
-  // 2차 fallback: 일봉 마지막 종가
+  // 2차: 야후 일봉
   try{
-    const daily = await fetchDaily(yfSym, 7, '1d');
+    const daily = await fetchYahooDaily(yfSym, 7, '1d');
+    if(daily && daily.length) return daily[daily.length-1].close;
+  }catch(e){}
+  // 3차: Stooq 일봉
+  try{
+    const daily = await fetchStooqDaily(yfSym, 7);
     if(daily && daily.length) return daily[daily.length-1].close;
   }catch(e){}
   return null;
@@ -566,10 +627,7 @@ const ut=document.getElementById('updateTime');
 const rb=document.getElementById('refreshBtn');
 if(ut)ut.innerHTML='<span class="live-dot"></span> 가격 갱신 중...';
 if(rb)rb.disabled=true;
-
-// 이전 가격 저장 (flash용)
 [...KR,...US].forEach(s=>{ if(s.cur!=null) prevPrices[s.code]=s.cur; });
-
 const all=[...KR,...US];
 let success=0,fail=0;
 const results=await Promise.allSettled(all.map(s=>fetchLatestPrice(s.yf)));
@@ -586,24 +644,21 @@ render();
 const t=new Date();
 const ts=`${String(t.getHours()).padStart(2,'0')}:${String(t.getMinutes()).padStart(2,'0')}:${String(t.getSeconds()).padStart(2,'0')}`;
 if(ut){
-if(success>0) ut.innerHTML=`<span class="live-dot"></span> ${ts} 갱신 (${success}개${fail>0?` · 실패 ${fail}`:''}) <span style="color:var(--muted);font-size:10px">· 야후 1분봉</span>`;
-else ut.innerHTML=`<span style="color:var(--down)">❌ 갱신 실패 (저장값 표시)</span>`;
+if(success>0) ut.innerHTML=`<span class="live-dot"></span> ${ts} 갱신 (${success}개${fail>0?` · 실패 ${fail}`:''})`;
+else ut.innerHTML=`<span style="color:var(--down)">❌ 모든 소스 실패 (저장값 표시) · F12로 확인</span>`;
 }
 if(rb)rb.disabled=false;
 priceUpdating=false;
 }
 
-// 자동 새로고침 토글 (30초)
 function toggleAutoRefresh(){
 const btn=document.getElementById('autoBtn');
 if(autoTimer){
 clearInterval(autoTimer);autoTimer=null;
-btn.textContent='▶ 자동(30s)';
-btn.classList.remove('on');
+btn.textContent='▶ 자동(30s)';btn.classList.remove('on');
 }else{
 autoTimer=setInterval(updateAllPrices,30000);
-btn.textContent='⏸ 자동 ON';
-btn.classList.add('on');
+btn.textContent='⏸ 자동 ON';btn.classList.add('on');
 updateAllPrices();
 }
 }
@@ -613,34 +668,19 @@ updateAllPrices();
 // ============================================================
 function linReg(data,useLog){
 const n=data.length;let sx=0,sy=0,sxy=0,sxx=0;
-data.forEach((d,i)=>{
-const y=useLog?Math.log(d.close):d.close;
-sx+=i;sy+=y;sxy+=i*y;sxx+=i*i;
-});
+data.forEach((d,i)=>{const y=useLog?Math.log(d.close):d.close;sx+=i;sy+=y;sxy+=i*y;sxx+=i*i;});
 const sl=(n*sxy-sx*sy)/(n*sxx-sx*sx),ic=(sy-sl*sx)/n;
 let sq=0;
-data.forEach((d,i)=>{
-const y=useLog?Math.log(d.close):d.close;
-sq+=(y-(sl*i+ic))**2;
-});
+data.forEach((d,i)=>{const y=useLog?Math.log(d.close):d.close;sq+=(y-(sl*i+ic))**2;});
 return{sl,ic,sd:Math.sqrt(sq/n)};
 }
-
-function regVal(sl,ic,sd,i,mult,useLog){
-const v=sl*i+ic+mult*sd;
-return useLog?Math.exp(v):v;
-}
-
+function regVal(sl,ic,sd,i,mult,useLog){const v=sl*i+ic+mult*sd;return useLog?Math.exp(v):v;}
 function calcMA(data,p){
 if(p<=0||data.length<p)return [];
 const r=[];
-for(let i=p-1;i<data.length;i++){
-const s=data.slice(i-p+1,i+1).reduce((a,d)=>a+d.close,0);
-r.push({time:data[i].time,value:+(s/p).toFixed(4)});
-}
+for(let i=p-1;i<data.length;i++){const s=data.slice(i-p+1,i+1).reduce((a,d)=>a+d.close,0);r.push({time:data[i].time,value:+(s/p).toFixed(4)});}
 return r;
 }
-
 function getTrend(data,days){
 if(days<=0||data.length<5)return 'neu';
 const slice=data.slice(Math.max(0,data.length-days));
@@ -648,7 +688,6 @@ if(slice.length<5)return 'neu';
 const{sl}=linReg(slice,showLog);
 return sl>0.0003?'up':sl<-0.0003?'dn':'neu';
 }
-
 function getChannelPos(data,idx){
 const slice=data.slice(Math.max(0,data.length-shortMA));
 if(slice.length<5) return {pct:'50'};
@@ -662,14 +701,12 @@ const close=data[idx].close;
 const pct=((close-lower)/(upper-lower)*100);
 return{pct:Math.max(0,Math.min(100,pct)).toFixed(1)};
 }
-
 function volRatio(data,p){
 p = p || 20;
 if(data.length<p+1)return null;
 const avg=data.slice(-p-1,-1).reduce((s,d)=>s+d.volume,0)/p;
 return avg>0?(data[data.length-1].volume/avg).toFixed(1):null;
 }
-
 function getBSSignal(data){
 const slice=data.slice(Math.max(0,data.length-shortMA));
 if(slice.length<5)return null;
@@ -683,7 +720,6 @@ if(sigma<=-2) return trendDn?{label:'B↑',cls:'ib-up'}:{label:'B■',cls:'ib-bu
 if(sigma>=2)  return trendUp?{label:'S↓',cls:'ib-sell'}:{label:'S■',cls:'ib-dn'};
 return null;
 }
-
 function calcIchimoku(data){
 const high=(s,e)=>Math.max(...data.slice(s,e).map(d=>d.high));
 const low=(s,e)=>Math.min(...data.slice(s,e).map(d=>d.low));
@@ -699,7 +735,7 @@ for(let i=51;i<data.length;i++) spanB.push({time:data[i].time,value:(high(i-51,i
 return{tenkan,kijun,spanA,spanB};
 }
 
-function renderInfobar(data,hasLive){
+function renderInfobar(data,hasLive,src){
 const tShort=getTrend(data,shortMA);
 const tLong=longMA>0?getTrend(data,longMA):'neu';
 const li=data.length-1;
@@ -708,6 +744,7 @@ const vr=volRatio(data);
 const bs=getBSSignal(data);
 let h='';
 const tL=t=>t==='up'?'↑':t==='dn'?'↓':'→';
+if(src) h+=`<div class="ib ib-src">📡 ${src}</div>`;
 if(hasLive) h+=`<div class="ib ib-live">● LIVE 장중</div>`;
 h+=`<div class="ib ${tShort==='up'?'ib-up':tShort==='dn'?'ib-dn':'ib-neu'}">단기${tL(tShort)}${shortMA}일</div>`;
 if(longMA>0)h+=`<div class="ib ${tLong==='up'?'ib-up':tLong==='dn'?'ib-dn':'ib-neu'}">장기${tL(tLong)}${longMA}일</div>`;
@@ -748,11 +785,11 @@ document.getElementById('dayInfo').innerHTML=h;
 
 async function drawChart(stock,days,iv){
 const mEl=document.getElementById('shMain'),vEl=document.getElementById('shVol');
-mEl.innerHTML=`<div class="cload"><div class="cload-big">📊</div><div>차트 로딩 중...<br><span style="font-size:10px">(일봉 + 1분봉 오늘캔들 보강)</span></div></div>`;
+mEl.innerHTML=`<div class="cload"><div class="cload-big">📊</div><div>차트 로딩 중...</div><div class="cload-detail">Stooq → Yahoo 다중 소스 시도 중<br>(F12 콘솔에서 진행 상황 확인 가능)</div></div>`;
 vEl.innerHTML='';
 const data=await fetchOHLC(stock.yf,days,iv);
 if(!data||data.length<5){
-mEl.innerHTML=`<div class="cload"><div class="cload-big">📊</div><div>데이터를 불러올 수 없습니다</div></div>`;
+mEl.innerHTML=`<div class="cload"><div class="cload-big">⚠️</div><div>모든 데이터 소스 실패</div><div class="cload-detail">시도한 소스: Stooq(직접/프록시), Yahoo(5개 프록시)<br>F12 → 콘솔에서 자세한 오류 확인<br>잠시 후 다시 시도해보세요</div></div>`;
 return;
 }
 curData=data;
@@ -766,8 +803,9 @@ document.getElementById('shP').textContent=isKR?last.close.toLocaleString()+'원
 const cEl=document.getElementById('shC');
 cEl.textContent=(chg>=0?'▲ +':'▼ ')+chg.toFixed(2)+'%';
 cEl.className='sh-chg '+(chg>=0?'up':'dn');
-renderInfobar(data,hasLive);
+renderInfobar(data,hasLive,lastSrc);
 renderDayInfo(data,data.length-1);
+document.getElementById('shFoot').textContent=`v23 · 데이터: ${lastSrc} · ${data.length} bars`;
 
 if(mainChart){mainChart.remove();mainChart=null;}
 if(volChart){volChart.remove();volChart=null;}
@@ -781,7 +819,6 @@ crosshair:{mode:LightweightCharts.CrosshairMode.Normal},
 rightPriceScale:{borderColor:'#374151',mode:showLog?LightweightCharts.PriceScaleMode.Logarithmic:0},
 timeScale:{borderColor:'#374151',timeVisible:true,rightOffset:5},
 });
-
 const cs=mainChart.addCandlestickSeries({
 upColor:'#e03131',downColor:'#1971c2',
 borderUpColor:'#e03131',borderDownColor:'#1971c2',
@@ -809,18 +846,13 @@ lines=[
 [-1,'rgba(245,159,0,0.5)',1,0],[-2,'rgba(245,159,0,0.85)',2,0],[-3,'rgba(245,159,0,0.25)',1,LightweightCharts.LineStyle.Dotted],
 ];
 } else {
-lines=[
-[0,'#f59f00',2.5,LightweightCharts.LineStyle.Solid],
-[2,'rgba(245,159,0,0.85)',2,0],
-[-2,'rgba(245,159,0,0.85)',2,0],
-];
+lines=[[0,'#f59f00',2.5,LightweightCharts.LineStyle.Solid],[2,'rgba(245,159,0,0.85)',2,0],[-2,'rgba(245,159,0,0.85)',2,0]];
 }
 lines.forEach(([m,c,w,ls])=>{
 const s=mainChart.addLineSeries({color:c,lineWidth:w,lineStyle:ls||0,crosshairMarkerVisible:false,lastValueVisible:false,priceLineVisible:false});
 s.setData(shortSlice.map((d,i)=>({time:d.time,value:+regVal(sl,ic,sd,i,m,showLog).toFixed(4)})));
 });
 }
-
 if(longMA>0){
 const longSlice=data.slice(Math.max(0,data.length-longMA));
 if(longSlice.length>=10){
@@ -837,14 +869,12 @@ s.setData(longSlice.map((d,i)=>({time:d.time,value:+regVal(sl,ic,sd,i,m,showLog)
 }
 }
 }
-
 if(showMA){
 [[20,'#339af0'],[60,'#fab005'],[120,'#7950f2']].forEach(([p,c])=>{
 const ma=calcMA(data,p);
 if(ma.length){const s=mainChart.addLineSeries({color:c,lineWidth:1.5,crosshairMarkerVisible:false,lastValueVisible:false,priceLineVisible:false});s.setData(ma);}
 });
 }
-
 if(showBS){
 const shortSlice=data.slice(Math.max(0,data.length-shortMA));
 if(shortSlice.length>=5){
@@ -855,23 +885,14 @@ const y=showLog?Math.log(d.close):d.close;
 const center=sl*i+ic;
 const sigma=(y-center)/sd;
 const trendUp=sl>0.0003,trendDn=sl<-0.0003;
-if(sigma<=-2){
-markers.push({time:d.time,position:'belowBar',color:trendDn?'#22c55e':'#16a34a',shape:'arrowUp',text:trendDn?'B↑':'B',size:2});
-} else if(sigma>=2){
-markers.push({time:d.time,position:'aboveBar',color:trendUp?'#f97316':'#dc2626',shape:'arrowDown',text:trendUp?'S↓':'S',size:2});
-}
+if(sigma<=-2){markers.push({time:d.time,position:'belowBar',color:trendDn?'#22c55e':'#16a34a',shape:'arrowUp',text:trendDn?'B↑':'B',size:2});}
+else if(sigma>=2){markers.push({time:d.time,position:'aboveBar',color:trendUp?'#f97316':'#dc2626',shape:'arrowDown',text:trendUp?'S↓':'S',size:2});}
 });
 cs.setMarkers(markers);
 }
 }
-
 mainChart.timeScale().fitContent();
-
-mainChart.subscribeCrosshairMove(p=>{
-if(!p.time||!curData)return;
-const idx=curData.findIndex(d=>d.time===p.time);
-if(idx>=0) renderDayInfo(curData,idx);
-});
+mainChart.subscribeCrosshairMove(p=>{if(!p.time||!curData)return;const idx=curData.findIndex(d=>d.time===p.time);if(idx>=0) renderDayInfo(curData,idx);});
 
 if(showVol){
 vEl.style.display='block';
@@ -888,7 +909,6 @@ vs.setData(data.map(d=>({time:d.time,value:d.volume,color:d.close>=d.open?'rgba(
 volChart.timeScale().fitContent();
 mainChart.timeScale().subscribeVisibleLogicalRangeChange(r=>{if(r&&volChart)volChart.timeScale().setVisibleLogicalRange(r);});
 } else {vEl.style.display='none';}
-
 new ResizeObserver(()=>{
 if(mainChart)mainChart.applyOptions({width:mEl.clientWidth,height:mEl.clientHeight});
 if(volChart)volChart.applyOptions({width:vEl.clientWidth,height:vEl.clientHeight});
@@ -907,7 +927,6 @@ document.getElementById('ov').classList.add('on');
 document.body.style.overflow='hidden';
 setTimeout(()=>drawChart(s,curDays,curIv),100);
 }
-
 function closeSheet(e){
 if(e&&e.target!==document.getElementById('ov'))return;
 document.getElementById('ov').classList.remove('on');
@@ -919,7 +938,6 @@ document.getElementById('shVol').innerHTML='';
 curData=null;
 }
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeSheet();});
-
 function setIv(btn){curIv=btn.dataset.iv;document.querySelectorAll('[data-iv]').forEach(b=>b.classList.toggle('on',b===btn));if(curStock)drawChart(curStock,curDays,curIv);}
 function setDays(btn){curDays=+btn.dataset.d;document.querySelectorAll('[data-d]').forEach(b=>b.classList.toggle('on',b===btn));if(curStock)drawChart(curStock,curDays,curIv);}
 function togInd(type,btn){
@@ -945,7 +963,6 @@ async function callAI(body){
 const r=await fetch('/api/ai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
 return await r.json();
 }
-
 async function runHealth(){
 const btn=document.getElementById('healthBtn'),box=document.getElementById('healthBox');
 const ct=document.getElementById('healthContent'),dt=document.getElementById('healthDate');
@@ -956,53 +973,36 @@ const today=new Date().toLocaleDateString('ko-KR',{year:'numeric',month:'long',d
 dt.textContent=today;
 const ptf=`[한국]\n${KR.map(s=>`- ${s.name}(${s.code}): ${s.shares}주, 수익 ${s.ret.toFixed(2)}%${s.warn?' [무상증자]':''}`).join('\n')}\n\n[미국]\n${US.map(s=>`- ${s.name}: ${s.shares}주, 수익 ${s.ret.toFixed(2)}%`).join('\n')}`;
 try{
-const data=await callAI({
-model:'claude-sonnet-4-5',max_tokens:1200,
-tools:[{type:'web_search_20250305',name:'web_search'}],
-messages:[{role:'user',content:`전문 포트폴리오 분석가로서 오늘(${today}) 시황을 검색하고 다음 포트폴리오를 분석해주세요.\n\n${ptf}\n\n형식:\n🏥 전체 건강 점수\n💰 밸류 평가\n📊 기술적 평가\n🎯 분산도\n⚡ 주목 종목\n📌 개선 제안`}]
-});
+const data=await callAI({model:'claude-sonnet-4-5',max_tokens:1200,tools:[{type:'web_search_20250305',name:'web_search'}],messages:[{role:'user',content:`전문 포트폴리오 분석가로서 오늘(${today}) 시황을 검색하고 다음 포트폴리오를 분석해주세요.\n\n${ptf}\n\n형식:\n🏥 전체 건강 점수\n💰 밸류 평가\n📊 기술적 평가\n🎯 분산도\n⚡ 주목 종목\n📌 개선 제안`}]});
 if(data.error)throw new Error(typeof data.error==='string'?data.error:JSON.stringify(data.error));
 const text=data.content.filter(b=>b.type==='text').map(b=>b.text).join('\n');
 ct.innerHTML=text.replace(/^(🏥|💰|📊|🎯|⚡|📌).+$/gm,m=>`<h3>${m}</h3>`).replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');
 }catch(e){ct.textContent='오류: '+e.message;}
 finally{btn.disabled=false;btn.textContent='🔄 다시 실행';}
 }
-
 async function runNews(){
 const btn=document.getElementById('newsBtn'),nl=document.getElementById('newsList');
 btn.disabled=true;btn.textContent='⏳ 검색 중...';
 nl.innerHTML='<div class="lw"><div class="dots"><span></span><span></span><span></span></div> 검색 중...</div>';
 const names=[...KR,...US].map(s=>s.name).join(', ');
 try{
-const data=await callAI({
-model:'claude-sonnet-4-5',max_tokens:1500,
-tools:[{type:'web_search_20250305',name:'web_search'}],
-messages:[{role:'user',content:`오늘 날짜 기준 다음 종목들의 최신 뉴스 JSON 배열로 반환.\n\n종목: ${names}\n\n[{"title":"제목","summary":"한줄","stock":"종목","url":"링크"}] 최대 10개.`}]
-});
+const data=await callAI({model:'claude-sonnet-4-5',max_tokens:1500,tools:[{type:'web_search_20250305',name:'web_search'}],messages:[{role:'user',content:`오늘 날짜 기준 다음 종목들의 최신 뉴스 JSON 배열로 반환.\n\n종목: ${names}\n\n[{"title":"제목","summary":"한줄","stock":"종목","url":"링크"}] 최대 10개.`}]});
 if(data.error)throw new Error(typeof data.error==='string'?data.error:JSON.stringify(data.error));
 const text=data.content.filter(b=>b.type==='text').map(b=>b.text).join('');
 try{
 const news=JSON.parse(text.replace(/```json|```/g,'').trim());
-nl.innerHTML=news.map(n=>`<div class="news-item" onclick="window.open('${n.url||'#'}','_blank')">
-<div style="font-size:13px;font-weight:600;margin-bottom:5px">${n.title}</div>
-<div style="font-size:12px;color:var(--text2);margin-bottom:5px">${n.summary}</div>
-<div style="font-size:11px;color:var(--accent);font-weight:600">${n.stock}</div>
-</div>`).join('');
+nl.innerHTML=news.map(n=>`<div class="news-item" onclick="window.open('${n.url||'#'}','_blank')"><div style="font-size:13px;font-weight:600;margin-bottom:5px">${n.title}</div><div style="font-size:12px;color:var(--text2);margin-bottom:5px">${n.summary}</div><div style="font-size:11px;color:var(--accent);font-weight:600">${n.stock}</div></div>`).join('');
 }catch{nl.innerHTML=`<div class="abox on"><div class="ac">${text}</div></div>`;}
 }catch(e){nl.innerHTML=`<div style="color:var(--down);padding:12px">오류: ${e.message}</div>`;}
 finally{btn.disabled=false;btn.textContent='🔄 다시 검색';}
 }
-
 function goVal(code,name,market){
 document.getElementById('valInput').value=name||code;
 window._valMarket=market||'kr';
-goPage('val');
-runVal();
+goPage('val');runVal();
 }
-
 async function runVal(){
-const input=document.getElementById('valInput').value.trim();
-if(!input)return;
+const input=document.getElementById('valInput').value.trim();if(!input)return;
 const result=document.getElementById('valResult');
 result.innerHTML=`<div class="lw"><div class="dots"><span></span><span></span><span></span></div> 분석 중...</div>`;
 let yfsym,name,code,market;
@@ -1012,11 +1012,7 @@ if(fk){yfsym=fk.yf;name=fk.name;code=fk.code;market='kr';}
 else if(fu){yfsym=fu.yf;name=fu.name;code=fu.code;market='us';}
 else{yfsym=input.includes('.')?input:(window._valMarket==='us'?input:input+'.KS');name=input;code=input;market=window._valMarket||'kr';}
 try{
-const data=await callAI({
-model:'claude-sonnet-4-5',max_tokens:600,
-tools:[{type:'web_search_20250305',name:'web_search'}],
-messages:[{role:'user',content:`${name}(${code}) ${market==='us'?'미국':'한국'} 종목 최신 밸류에이션을 검색해서 답변. PER, PBR, 목표주가, 평균 PER 등 포함.`}]
-});
+const data=await callAI({model:'claude-sonnet-4-5',max_tokens:600,tools:[{type:'web_search_20250305',name:'web_search'}],messages:[{role:'user',content:`${name}(${code}) ${market==='us'?'미국':'한국'} 종목 최신 밸류에이션을 검색해서 답변. PER, PBR, 목표주가, 평균 PER 등 포함.`}]});
 if(data.error)throw new Error(typeof data.error==='string'?data.error:JSON.stringify(data.error));
 const text=data.content.filter(b=>b.type==='text').map(b=>b.text).join('');
 result.innerHTML=`<div class="abox on"><div class="ah"><div class="abadge">${name}</div><div class="adate">${code}</div></div><div class="ac">${text.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')}</div></div>`;
@@ -1025,13 +1021,10 @@ result.innerHTML=`<div class="abox on"><div class="ah"><div class="abadge">${nam
 
 render();
 setTimeout(updateAllPrices,300);
-// 페이지 가려지면 자동갱신 일시정지
 document.addEventListener('visibilitychange',()=>{
-  if(document.hidden && autoTimer){
-    clearInterval(autoTimer);autoTimer=null;
-  } else if(!document.hidden && document.getElementById('autoBtn').classList.contains('on') && !autoTimer){
-    autoTimer=setInterval(updateAllPrices,30000);
-    updateAllPrices();
+  if(document.hidden && autoTimer){clearInterval(autoTimer);autoTimer=null;}
+  else if(!document.hidden && document.getElementById('autoBtn').classList.contains('on') && !autoTimer){
+    autoTimer=setInterval(updateAllPrices,30000);updateAllPrices();
   }
 });
 </script>
