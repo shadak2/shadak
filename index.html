@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MyStock v20</title>
+<title>MyStock v21</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/lightweight-charts@4.1.1/dist/lightweight-charts.standalone.production.js"></script>
 <style>
@@ -47,7 +47,6 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
 .sec-t{font-size:14px;font-weight:700}
 .sec-b{font-size:11px;color:var(--muted);background:var(--bg);padding:2px 9px;border-radius:20px;border:1px solid var(--border)}
 
-/* 종목 카드 */
 .tbl{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:12px}
 .tr{padding:12px 14px;border-bottom:1px solid var(--border);cursor:pointer;display:flex;flex-direction:column;gap:8px}
 .tr:last-child{border-bottom:none}
@@ -88,7 +87,6 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
 .bt.on{color:var(--accent)}
 .bt .ico{font-size:18px}
 
-/* CHART SHEET — DARK MODE */
 .ov{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:none}
 .ov.on{display:block}
 .sheet{position:fixed;top:0;left:0;right:0;bottom:0;background:var(--chart-bg);display:flex;flex-direction:column;color:#e5e7eb}
@@ -160,7 +158,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
 </head>
 <body>
 
-<div class="ver-tag">v20</div>
+<div class="ver-tag">v21</div>
 
 <nav class="nav">
 <div class="nav-logo">📈 <em>My</em>Stock</div>
@@ -175,7 +173,6 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
 <div class="tab on" data-p="portfolio">📊 포트</div>
 <div class="tab" data-p="kr">🇰🇷 한국</div>
 <div class="tab" data-p="us">🇺🇸 미국</div>
-<div class="tab" data-p="analysis">📈 분석</div>
 <div class="tab" data-p="health">🩺 건강</div>
 <div class="tab" data-p="news">📰 뉴스</div>
 <div class="tab" data-p="val">📐 밸류</div>
@@ -210,36 +207,6 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
 <div class="tbl"><div id="us2"></div></div>
 </div>
 
-<div class="page" id="page-analysis">
-<div style="background:linear-gradient(135deg,#1971c2,#1098ad);color:#fff;padding:14px;border-radius:10px;margin-bottom:12px">
-<div style="font-size:14px;font-weight:700;margin-bottom:4px">📈 종가 분석</div>
-<div style="font-size:11px;opacity:0.9" id="analTimeHint">시간대 자동 인식 · 한국·미국 종가별 분석</div>
-</div>
-
-<div style="display:flex;gap:8px;margin-bottom:12px">
-<button class="ai-btn" id="krAnalBtn" onclick="runMarketAnalysis('kr')" style="flex:1;margin-bottom:0;font-size:13px;padding:11px">🇰🇷 한국 종가 분석</button>
-<button class="ai-btn" id="usAnalBtn" onclick="runMarketAnalysis('us')" style="flex:1;margin-bottom:0;font-size:13px;padding:11px">🇺🇸 미국 종가 분석</button>
-</div>
-
-<div class="abox" id="analBox">
-<div class="ah">
-<div class="abadge" id="analBadge">분석</div>
-<div class="adate" id="analDate">—</div>
-</div>
-<div class="ac" id="analContent"></div>
-</div>
-
-<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-top:8px">
-<div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:8px">⏰ 분석 가이드</div>
-<div style="font-size:11px;color:var(--muted);line-height:1.7">
-• <strong>오전 (06:00~15:30)</strong>: 어제 미국 종가 분석 권장<br>
-• <strong>오후 (15:30~22:30)</strong>: 한국 종가 분석 권장<br>
-• <strong>밤·새벽 (22:30~06:00)</strong>: 한국 종가 + 미국 실시간 가능<br>
-• 매일 들어와서 버튼 누르면 그날 시황 + 보유 15종목 분석
-</div>
-</div>
-</div>
-
 <div class="page" id="page-health">
 <button class="ai-btn" id="healthBtn" onclick="runHealth()">🩺 포트폴리오 AI 건강검진</button>
 <div class="abox" id="healthBox">
@@ -268,13 +235,11 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
 <button class="bt on" data-p="portfolio"><div class="ico">📊</div>포트</button>
 <button class="bt" data-p="kr"><div class="ico">🇰🇷</div>한국</button>
 <button class="bt" data-p="us"><div class="ico">🇺🇸</div>미국</button>
-<button class="bt" data-p="analysis"><div class="ico">📈</div>분석</button>
 <button class="bt" data-p="health"><div class="ico">🩺</div>건강</button>
 <button class="bt" data-p="news"><div class="ico">📰</div>뉴스</button>
 <button class="bt" data-p="val"><div class="ico">📐</div>밸류</button>
 </div>
 
-<!-- 차트 모달 -->
 <div class="ov" id="ov" onclick="closeSheet(event)">
 <div class="sheet" onclick="event.stopPropagation()">
 <div class="sh-head">
@@ -285,7 +250,6 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
 <div class="sh-bar" id="shBar"></div>
 </div>
 
-<!-- 봉/분석 -->
 <div class="sh-ctrl">
 <span class="cl">봉</span>
 <button class="cb on" data-iv="1d" onclick="setIv(this)">일</button>
@@ -302,7 +266,6 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
 <button class="cb" data-d="3650" onclick="setDays(this)">MAX</button>
 </div>
 
-<!-- 인디케이터 -->
 <div class="ind-bar">
 <button class="ind on" id="iBS" onclick="togInd('bs',this)">B/S신호</button>
 <button class="ind" id="iLog" onclick="togInd('log',this)">로그</button>
@@ -312,7 +275,6 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
 <button class="ind" id="iIchi" onclick="togInd('ichi',this)">일목</button>
 </div>
 
-<!-- 단기 회귀선 + 장기 회귀선 -->
 <div class="ma-bar">
 <div class="ma-grp">
 <span class="ma-lbl" style="color:#f59f00">📐 단기→</span>
@@ -338,31 +300,34 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
 </div>
 
 <div class="sh-foot">
-<div class="sh-info">v20 · 단기(주황)/장기(보라) 회귀선 · 한국식 다크</div>
+<div class="sh-info">v21 · 보유종목 데이터 동기화 (2026-05-08)</div>
 <button class="sh-close" onclick="closeSheet()">닫기</button>
 </div>
 </div>
 </div>
 
 <script>
+// ============================================================
+// 보유 종목 데이터 — 2026-05-08 동기화
+// ============================================================
 const KR=[
-{name:'LS ELECTRIC',  code:'010120',yf:'010120.KS',shares:62, avg:186582,val:19747000,ret:70.70},
-{name:'산일전기',      code:'062040',yf:'062040.KS',shares:40, avg:214125,val:12960000,ret:51.31},
-{name:'한국금융지주',  code:'071050',yf:'071050.KS',shares:35, avg:249071,val:9730000, ret:11.61},
-{name:'퀄리타스반도체',code:'432720',yf:'432720.KQ',shares:303,avg:20556, val:8044650, ret:29.15},
-{name:'파미셀',        code:'005690',yf:'005690.KS',shares:385,avg:18510, val:7376600, ret:3.50},
-{name:'SK이노베이션',  code:'096770',yf:'096770.KS',shares:50, avg:129600,val:6897500, ret:6.44},
-{name:'세미파이브',    code:'490470',yf:'490470.KQ',shares:144,avg:36827, val:6235200, ret:17.57},
-{name:'디바이스이온',  code:'187870',yf:'187870.KQ',shares:200,avg:37900, val:4060000, ret:-46.43,warn:true,note:'무상증자(1:1)—실질손실 아님'},
-{name:'LS머트리얼즈', code:'417200',yf:'417200.KS',shares:141,avg:20000, val:3792900, ret:31.46},
+{name:'LS ELECTRIC',  code:'010120',yf:'010120.KS',shares:62, avg:186582,val:19189000,ret:65.87},
+{name:'산일전기',      code:'062040',yf:'062040.KS',shares:40, avg:214125,val:13000000,ret:51.78},
+{name:'한국금융지주',  code:'071050',yf:'071050.KS',shares:35, avg:249071,val:9415000, ret:8.00},
+{name:'퀄리타스반도체',code:'432720',yf:'432720.KQ',shares:303,avg:20556, val:7544700, ret:21.12},
+{name:'파미셀',        code:'005690',yf:'005690.KS',shares:385,avg:18510, val:7445900, ret:4.47},
+{name:'SK이노베이션',  code:'096770',yf:'096770.KS',shares:50, avg:129600,val:6740000, ret:4.01},
+{name:'세미파이브',    code:'490470',yf:'490470.KQ',shares:144,avg:36827, val:5896800, ret:11.19},
+{name:'디바이스이온',  code:'187870',yf:'187870.KQ',shares:200,avg:37900, val:4450000, ret:-41.29,warn:true,note:'무상증자(1:1)—실질손실 아님'},
+{name:'LS머트리얼즈', code:'417200',yf:'417200.KS',shares:141,avg:20462, val:3799950, ret:31.70},
 ];
 const US=[
-{name:'GDXU',       code:'GDXU',yf:'GDXU',shares:35,avg:179.49,val:6688.15,ret:6.45,note:'금 3배 레버리지'},
-{name:'이튼 ETN',   code:'ETN', yf:'ETN', shares:13,avg:417.41,val:5486.00,ret:1.09},
-{name:'코닝 GLW',   code:'GLW', yf:'GLW', shares:25,avg:164.34,val:4657.25,ret:13.35},
-{name:'버티브 홀딩스', code:'VRT', yf:'VRT', shares:12,avg:299.22,val:4314.12,ret:20.14},
-{name:'NVE NVEC',   code:'NVEC',yf:'NVEC',shares:40,avg:84.55, val:3451.20,ret:2.04},
-{name:'암페놀 APH', code:'APH', yf:'APH', shares:20,avg:139.93,val:2786.40,ret:-0.43},
+{name:'GDXU',         code:'GDXU',yf:'GDXU',shares:35,avg:179.49,val:6568.10,ret:4.54,note:'금 3배 레버리지'},
+{name:'이튼 ETN',     code:'ETN', yf:'ETN', shares:14,avg:416.20,val:5600.28,ret:-3.88},
+{name:'코닝 GLW',     code:'GLW', yf:'GLW', shares:25,avg:164.34,val:4651.50,ret:13.21},
+{name:'버티브 홀딩스',code:'VRT', yf:'VRT', shares:12,avg:299.22,val:4098.96,ret:14.15},
+{name:'NVE NVEC',     code:'NVEC',yf:'NVEC',shares:40,avg:84.55, val:3543.60,ret:4.77},
+{name:'암페놀 APH',   code:'APH', yf:'APH', shares:20,avg:139.93,val:2739.00,ret:-2.12},
 ];
 
 let mainChart=null,volChart=null,curStock=null,curDays=180,curIv='1d';
@@ -402,10 +367,15 @@ const avgStr=isKR?s.avg.toLocaleString()+'원':'$'+s.avg.toFixed(2);
 let curStr='<span class="loading">로딩...</span>';
 if(s.cur!=null){
 curStr=isKR?Math.round(s.cur).toLocaleString()+'원':'$'+s.cur.toFixed(2);
+} else {
+// 평가금/주식수로부터 현재가 역산 (초기 표시용)
+const initCur=s.val/s.shares;
+curStr=isKR?Math.round(initCur).toLocaleString()+'원':'$'+initCur.toFixed(2);
 }
 let gainStr='';
-if(!s.warn && s.cur!=null){
-const gain=(s.cur-s.avg)*s.shares;
+if(!s.warn){
+const cur=s.cur!=null?s.cur:(s.val/s.shares);
+const gain=(cur-s.avg)*s.shares;
 const gC=gain>=0?'up':'dn';
 const gAbs=Math.abs(gain);
 const gFmt=isKR?(gAbs>=1e8?(gAbs/1e8).toFixed(1)+'억':gAbs>=1e4?Math.round(gAbs/1e4)+'만':Math.round(gAbs).toLocaleString()+'원'):'$'+gAbs.toFixed(0);
@@ -455,92 +425,18 @@ const f=[...KR,...US].find(s=>s.name.includes(q)||s.code.toLowerCase()===q.toLow
 if(f)openSheet(f);else alert('종목 없음');
 }
 
-// === Yahoo Finance API (캐시 무력화 + 분봉 보완) ===
 async function fetchOHLC(sym,days,iv='1d'){
 const end=Math.floor(Date.now()/1000),start=end-days*86400;
-const cb=Date.now();
 const yfUrl=`https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(sym)}?interval=${iv}&period1=${start}&period2=${end}&events=history`;
-const opts={signal:AbortSignal.timeout(10000),cache:'no-store',headers:{'Cache-Control':'no-cache','Pragma':'no-cache'}};
-let data=null;
 try{
-const r=await fetch(`/api/chart?symbol=${encodeURIComponent(sym)}&period1=${start}&period2=${end}&interval=${iv}&_=${cb}`,opts);
-if(r.ok){const d=await r.json();if(d.chart?.result?.[0])data=parseYF(d);}
+const r=await fetch(`/api/chart?symbol=${encodeURIComponent(sym)}&period1=${start}&period2=${end}&interval=${iv}`,{signal:AbortSignal.timeout(10000)});
+if(r.ok){const d=await r.json();if(d.chart?.result?.[0])return parseYF(d);}
 }catch(e){}
-if(!data){
 try{
-const r=await fetch(`https://corsproxy.io/?url=${encodeURIComponent(yfUrl+'&_='+cb)}`,opts);
-if(r.ok){const d=await r.json();if(d.chart?.result?.[0])data=parseYF(d);}
+const r=await fetch(`https://corsproxy.io/?url=${encodeURIComponent(yfUrl)}`,{signal:AbortSignal.timeout(10000)});
+if(r.ok){const d=await r.json();if(d.chart?.result?.[0])return parseYF(d);}
 }catch(e){}
-}
-if(!data){
-try{
-const r=await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(yfUrl+'&_='+cb)}`,{...opts,signal:AbortSignal.timeout(15000)});
-if(r.ok){const d=await r.json();if(d.chart?.result?.[0])data=parseYF(d);}
-}catch(e){}
-}
-
-// ⭐ 일봉인데 마지막 봉이 너무 오래됐으면 분봉으로 보완
-if(data && data.length && iv==='1d'){
-const last=data[data.length-1];
-const lastDate=new Date(last.time*1000);
-const today=new Date();
-// 마지막 봉이 오늘이 아니면 (= 오늘 장중 캔들 없으면) 분봉으로 보완
-const lastY=lastDate.getFullYear(),lastM=lastDate.getMonth(),lastD=lastDate.getDate();
-const todayY=today.getFullYear(),todayM=today.getMonth(),todayD=today.getDate();
-const isToday=(lastY===todayY&&lastM===todayM&&lastD===todayD);
-if(!isToday){
-try{
-const fillData=await fetchMinuteFill(sym,last.time);
-if(fillData && fillData.length){
-data=[...data,...fillData].sort((a,b)=>a.time-b.time);
-}
-}catch(e){console.warn('분봉 보완 실패:',e.message);}
-}
-}
-
-return data;
-}
-
-// 분봉(30m) 데이터로 일봉 보완 — 어제 봉 누락 또는 오늘 장중 캔들 추가
-async function fetchMinuteFill(sym,afterTime){
-const end=Math.floor(Date.now()/1000),start=end-7*86400;
-const cb=Date.now();
-const yfUrl=`https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(sym)}?interval=30m&period1=${start}&period2=${end}`;
-const opts={signal:AbortSignal.timeout(10000),cache:'no-store',headers:{'Cache-Control':'no-cache'}};
-let data=null;
-try{
-const r=await fetch(`/api/chart?symbol=${encodeURIComponent(sym)}&period1=${start}&period2=${end}&interval=30m&_=${cb}`,opts);
-if(r.ok){const d=await r.json();if(d.chart?.result?.[0])data=parseYF(d);}
-}catch(e){}
-if(!data){
-try{
-const r=await fetch(`https://corsproxy.io/?url=${encodeURIComponent(yfUrl+'&_='+cb)}`,opts);
-if(r.ok){const d=await r.json();if(d.chart?.result?.[0])data=parseYF(d);}
-}catch(e){}
-}
-if(!data||!data.length)return [];
-
-// 분봉을 일봉으로 집계 (장중 캔들도 포함)
-const dailyMap=new Map();
-data.forEach(m=>{
-const d=new Date(m.time*1000);
-const dateKey=`${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
-if(!dailyMap.has(dateKey)){
-// 분봉 첫 시간을 일봉 timestamp로 (일봉 패턴 유사)
-dailyMap.set(dateKey,{time:m.time,open:m.open,high:m.high,low:m.low,close:m.close,volume:m.volume||0});
-}else{
-const day=dailyMap.get(dateKey);
-day.high=Math.max(day.high,m.high);
-day.low=Math.min(day.low,m.low);
-day.close=m.close;
-day.volume+=m.volume||0;
-}
-});
-
-// afterTime 이후의 일봉만 반환 (장중인 오늘 캔들 포함)
-return Array.from(dailyMap.values())
-.filter(d=>d.time>afterTime)
-.sort((a,b)=>a.time-b.time);
+return null;
 }
 
 function parseYF(parsed){
@@ -558,54 +454,22 @@ return c.sort((a,b)=>a.time-b.time);
 
 async function fetchLatestPrice(yfSym){
 const end=Math.floor(Date.now()/1000),start=end-7*86400;
-const cb=Date.now();
 const yfUrl=`https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(yfSym)}?interval=1d&period1=${start}&period2=${end}`;
-const opts={signal:AbortSignal.timeout(8000),cache:'no-store',headers:{'Cache-Control':'no-cache'}};
 const extract=d=>{
 const res=d.chart?.result?.[0];
 if(!res)return null;
 const closes=(res.indicators.quote[0].close||[]).filter(c=>c!=null);
-const ts=res.timestamp;
-if(!closes.length||!ts)return null;
-return {price:closes[closes.length-1],time:ts[ts.length-1]};
+return closes.length?closes[closes.length-1]:null;
 };
-let result=null;
 try{
-const r=await fetch(`/api/chart?symbol=${encodeURIComponent(yfSym)}&period1=${start}&period2=${end}&interval=1d&_=${cb}`,opts);
-if(r.ok){const d=await r.json();result=extract(d);}
+const r=await fetch(`/api/chart?symbol=${encodeURIComponent(yfSym)}&period1=${start}&period2=${end}&interval=1d`,{signal:AbortSignal.timeout(8000)});
+if(r.ok){const d=await r.json();const p=extract(d);if(p!=null)return p;}
 }catch(e){}
-if(!result){
 try{
-const r=await fetch(`https://corsproxy.io/?url=${encodeURIComponent(yfUrl+'&_='+cb)}`,opts);
-if(r.ok){const d=await r.json();result=extract(d);}
+const r=await fetch(`https://corsproxy.io/?url=${encodeURIComponent(yfUrl)}`,{signal:AbortSignal.timeout(8000)});
+if(r.ok){const d=await r.json();const p=extract(d);if(p!=null)return p;}
 }catch(e){}
-}
-if(!result)return null;
-
-// 마지막 일봉이 너무 오래됐으면 분봉(30m)으로 보완
-const lastDate=new Date(result.time*1000);
-const dayDiff=Math.floor((Date.now()-lastDate.getTime())/86400000);
-if(dayDiff>=2){
-try{
-const minUrl=`https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(yfSym)}?interval=30m&period1=${start}&period2=${end}`;
-let minData=null;
-try{
-const r=await fetch(`/api/chart?symbol=${encodeURIComponent(yfSym)}&period1=${start}&period2=${end}&interval=30m&_=${cb}`,opts);
-if(r.ok){const d=await r.json();minData=d;}
-}catch(e){}
-if(!minData){
-try{
-const r=await fetch(`https://corsproxy.io/?url=${encodeURIComponent(minUrl+'&_='+cb)}`,opts);
-if(r.ok)minData=await r.json();
-}catch(e){}
-}
-if(minData?.chart?.result?.[0]){
-const closes=(minData.chart.result[0].indicators.quote[0].close||[]).filter(c=>c!=null);
-if(closes.length) return closes[closes.length-1];
-}
-}catch(e){}
-}
-return result.price;
+return null;
 }
 
 async function updateAllPrices(){
@@ -632,13 +496,12 @@ const t=new Date();
 const ts=`${String(t.getHours()).padStart(2,'0')}:${String(t.getMinutes()).padStart(2,'0')}`;
 if(ut){
 if(success>0) ut.innerHTML=`✅ ${ts} 갱신 (${success}개${fail>0?`·실패 ${fail}`:''})`;
-else ut.innerHTML=`<span style="color:var(--down)">❌ 갱신 실패</span>`;
+else ut.innerHTML=`<span style="color:var(--down)">❌ 갱신 실패 (저장된 값 표시 중)</span>`;
 }
 if(rb)rb.disabled=false;
 priceUpdating=false;
 }
 
-// === 회귀 분석 함수 ===
 function linReg(data,useLog){
 const n=data.length;let sx=0,sy=0,sxy=0,sxx=0;
 data.forEach((d,i)=>{
@@ -789,23 +652,6 @@ document.getElementById('shP').textContent=isKR?last.close.toLocaleString()+'원
 const cEl=document.getElementById('shC');
 cEl.textContent=(chg>=0?'▲ +':'▼ ')+chg.toFixed(2)+'%';
 cEl.className='sh-chg '+(chg>=0?'up':'dn');
-// 마지막 봉 날짜 표시 (데이터 신선도 확인용)
-const lastDate=new Date(last.time*1000);
-const today=new Date();
-const sameDay=(lastDate.getFullYear()===today.getFullYear()&&lastDate.getMonth()===today.getMonth()&&lastDate.getDate()===today.getDate());
-const dDiff=Math.floor((today-lastDate)/86400000);
-const dateStr=`${lastDate.getMonth()+1}/${lastDate.getDate()}`;
-// 한국장 시간 (09:00~15:30 KST) 또는 미국장 시간 체크
-const h=today.getHours(),m=today.getMinutes();
-const isKRMarketOpen=(h>9||(h===9&&m>=0))&&(h<15||(h===15&&m<30));
-const isLive=sameDay&&isKR&&isKRMarketOpen;
-let freshness;
-if(isLive) freshness='🔴 장중';
-else if(sameDay) freshness='오늘';
-else if(dDiff===1) freshness='어제';
-else freshness=dDiff+'일전';
-const freshColor=isLive?'#ef4444':sameDay||dDiff<=1?'#60a5fa':dDiff<=3?'#facc15':'#f87171';
-document.getElementById('shM').innerHTML=`${stock.yf} · ${stock.shares}주 · 📅 <span style="color:${freshColor};font-weight:600">${dateStr} (${freshness})</span>`;
 renderInfobar(data);
 renderDayInfo(data,data.length-1);
 
@@ -822,7 +668,6 @@ rightPriceScale:{borderColor:'#374151',mode:showLog?LightweightCharts.PriceScale
 timeScale:{borderColor:'#374151',timeVisible:true,rightOffset:5},
 });
 
-// 한국식 캔들
 const cs=mainChart.addCandlestickSeries({
 upColor:'#e03131',downColor:'#1971c2',
 borderUpColor:'#e03131',borderDownColor:'#1971c2',
@@ -830,7 +675,6 @@ wickUpColor:'#e03131',wickDownColor:'#1971c2'
 });
 cs.setData(data.map(d=>({time:d.time,open:d.open,high:d.high,low:d.low,close:d.close})));
 
-// 일목균형표
 if(showIchi&&data.length>52){
 const{tenkan,kijun,spanA,spanB}=calcIchimoku(data);
 if(tenkan.length){const s=mainChart.addLineSeries({color:'#ec4899',lineWidth:1,crosshairMarkerVisible:false,lastValueVisible:false,priceLineVisible:false});s.setData(tenkan);}
@@ -839,7 +683,6 @@ if(spanA.length){const s=mainChart.addAreaSeries({lineColor:'rgba(34,197,94,0.5)
 if(spanB.length){const s=mainChart.addAreaSeries({lineColor:'rgba(239,68,68,0.5)',topColor:'rgba(239,68,68,0.2)',bottomColor:'rgba(239,68,68,0)',lineWidth:1,crosshairMarkerVisible:false,lastValueVisible:false,priceLineVisible:false});s.setData(spanB);}
 }
 
-// === 단기 회귀선 (주황) ===
 if(lineMode>0){
 const shortSlice=data.slice(Math.max(0,data.length-shortMA));
 if(shortSlice.length>=5){
@@ -864,7 +707,6 @@ s.setData(shortSlice.map((d,i)=>({time:d.time,value:+regVal(sl,ic,sd,i,m,showLog
 });
 }
 
-// === 장기 회귀선 (보라) ===
 if(longMA>0){
 const longSlice=data.slice(Math.max(0,data.length-longMA));
 if(longSlice.length>=10){
@@ -882,7 +724,6 @@ s.setData(longSlice.map((d,i)=>({time:d.time,value:+regVal(sl,ic,sd,i,m,showLog)
 }
 }
 
-// 이평선 MA20+MA60+MA120
 if(showMA){
 [[20,'#339af0'],[60,'#fab005'],[120,'#7950f2']].forEach(([p,c])=>{
 const ma=calcMA(data,p);
@@ -890,7 +731,6 @@ if(ma.length){const s=mainChart.addLineSeries({color:c,lineWidth:1.5,crosshairMa
 });
 }
 
-// B/S 마커
 if(showBS){
 const shortSlice=data.slice(Math.max(0,data.length-shortMA));
 if(shortSlice.length>=5){
@@ -992,79 +832,6 @@ const r=await fetch('/api/ai',{method:'POST',headers:{'Content-Type':'applicatio
 return await r.json();
 }
 
-async function runMarketAnalysis(market){
-const btn=document.getElementById(market==='kr'?'krAnalBtn':'usAnalBtn');
-const box=document.getElementById('analBox');
-const ct=document.getElementById('analContent');
-const dt=document.getElementById('analDate');
-const bd=document.getElementById('analBadge');
-btn.disabled=true;
-const orig=btn.textContent;
-btn.textContent='⏳ 분석 중...';
-box.className='abox on';
-bd.textContent=market==='kr'?'🇰🇷 한국 종가 분석':'🇺🇸 미국 종가 분석';
-ct.innerHTML='<div class="lw"><div class="dots"><span></span><span></span><span></span></div> 시황 검색 중...</div>';
-const today=new Date().toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric',weekday:'short'});
-dt.textContent=today;
-
-const stocks=market==='kr'?KR:US;
-const stockList=stocks.map(s=>{
-const cur=s.cur!=null?(market==='kr'?Math.round(s.cur).toLocaleString()+'원':'$'+s.cur.toFixed(2)):'미수신';
-const ret=s.warn?'※무증':(s.ret>=0?'+':'')+s.ret.toFixed(2)+'%';
-return `- ${s.name}(${s.code}): ${s.shares}주, 평단 ${market==='kr'?s.avg.toLocaleString()+'원':'$'+s.avg}, 현재 ${cur}, 수익률 ${ret}`;
-}).join('\n');
-
-const marketName=market==='kr'?'한국 (KOSPI/KOSDAQ)':'미국 (NYSE/NASDAQ)';
-const prompt=`전문 시황 분석가로서 오늘(${today}) ${marketName} 시장 종가를 검색해서 분석해줘. 
-
-내 보유 종목:
-${stockList}
-
-다음 형식으로 답변:
-
-📊 시장 전반
-- 주요 지수 종가, 등락률
-- 주도 섹터, 핵심 이슈
-
-🔍 보유 종목 분석
-- 각 종목별 주요 등락 요인 (뉴스/실적/수급)
-- 핵심 종목 위주로 (수익률 큰 변동 / 주목할만한 이슈)
-
-⚡ 주목 종목
-- 오늘 가장 강했던/약했던 보유 종목
-- 그 이유
-
-🎯 내일 전망
-- 다음 거래일 주요 이벤트
-- 보유 종목 영향
-
-간결하게 핵심만. 정확한 종가 데이터 검색 필수.`;
-
-try{
-const data=await callAI({
-model:'claude-sonnet-4-5',max_tokens:1500,
-tools:[{type:'web_search_20250305',name:'web_search'}],
-messages:[{role:'user',content:prompt}]
-});
-if(data.error)throw new Error(typeof data.error==='string'?data.error:JSON.stringify(data.error));
-const text=data.content.filter(b=>b.type==='text').map(b=>b.text).join('\n');
-ct.innerHTML=text.replace(/^(📊|🔍|⚡|🎯|💰|📈|📉).+$/gm,m=>`<h3>${m}</h3>`).replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');
-}catch(e){ct.innerHTML=`<div style="color:var(--down)">오류: ${e.message}</div>`;}
-finally{btn.disabled=false;btn.textContent=orig;}
-}
-
-// 시간대 따라 추천 분석 표시
-function updateAnalysisHint(){
-const h=new Date().getHours();
-const hint=document.getElementById('analTimeHint');
-if(!hint)return;
-let msg='';
-if(h>=6&&h<15) msg='💡 추천: 어제 미국 종가 분석 (장 마감 후)';
-else if(h>=15&&h<22) msg='💡 추천: 오늘 한국 종가 분석 (방금 마감)';
-else msg='💡 추천: 한국 종가 + 미국 실시간 분석';
-hint.textContent=msg;
-}
-
 async function runHealth(){
 const btn=document.getElementById('healthBtn'),box=document.getElementById('healthBox');
 const ct=document.getElementById('healthContent'),dt=document.getElementById('healthDate');
@@ -1143,7 +910,6 @@ result.innerHTML=`<div class="abox on"><div class="ah"><div class="abadge">${nam
 }
 
 render();
-updateAnalysisHint();
 setTimeout(updateAllPrices,300);
 </script>
 </body>
