@@ -175,6 +175,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
 <div class="tab on" data-p="portfolio">📊 포트</div>
 <div class="tab" data-p="kr">🇰🇷 한국</div>
 <div class="tab" data-p="us">🇺🇸 미국</div>
+<div class="tab" data-p="analysis">📈 분석</div>
 <div class="tab" data-p="health">🩺 건강</div>
 <div class="tab" data-p="news">📰 뉴스</div>
 <div class="tab" data-p="val">📐 밸류</div>
@@ -209,6 +210,36 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
 <div class="tbl"><div id="us2"></div></div>
 </div>
 
+<div class="page" id="page-analysis">
+<div style="background:linear-gradient(135deg,#1971c2,#1098ad);color:#fff;padding:14px;border-radius:10px;margin-bottom:12px">
+<div style="font-size:14px;font-weight:700;margin-bottom:4px">📈 종가 분석</div>
+<div style="font-size:11px;opacity:0.9" id="analTimeHint">시간대 자동 인식 · 한국·미국 종가별 분석</div>
+</div>
+
+<div style="display:flex;gap:8px;margin-bottom:12px">
+<button class="ai-btn" id="krAnalBtn" onclick="runMarketAnalysis('kr')" style="flex:1;margin-bottom:0;font-size:13px;padding:11px">🇰🇷 한국 종가 분석</button>
+<button class="ai-btn" id="usAnalBtn" onclick="runMarketAnalysis('us')" style="flex:1;margin-bottom:0;font-size:13px;padding:11px">🇺🇸 미국 종가 분석</button>
+</div>
+
+<div class="abox" id="analBox">
+<div class="ah">
+<div class="abadge" id="analBadge">분석</div>
+<div class="adate" id="analDate">—</div>
+</div>
+<div class="ac" id="analContent"></div>
+</div>
+
+<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-top:8px">
+<div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:8px">⏰ 분석 가이드</div>
+<div style="font-size:11px;color:var(--muted);line-height:1.7">
+• <strong>오전 (06:00~15:30)</strong>: 어제 미국 종가 분석 권장<br>
+• <strong>오후 (15:30~22:30)</strong>: 한국 종가 분석 권장<br>
+• <strong>밤·새벽 (22:30~06:00)</strong>: 한국 종가 + 미국 실시간 가능<br>
+• 매일 들어와서 버튼 누르면 그날 시황 + 보유 15종목 분석
+</div>
+</div>
+</div>
+
 <div class="page" id="page-health">
 <button class="ai-btn" id="healthBtn" onclick="runHealth()">🩺 포트폴리오 AI 건강검진</button>
 <div class="abox" id="healthBox">
@@ -237,6 +268,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
 <button class="bt on" data-p="portfolio"><div class="ico">📊</div>포트</button>
 <button class="bt" data-p="kr"><div class="ico">🇰🇷</div>한국</button>
 <button class="bt" data-p="us"><div class="ico">🇺🇸</div>미국</button>
+<button class="bt" data-p="analysis"><div class="ico">📈</div>분석</button>
 <button class="bt" data-p="health"><div class="ico">🩺</div>건강</button>
 <button class="bt" data-p="news"><div class="ico">📰</div>뉴스</button>
 <button class="bt" data-p="val"><div class="ico">📐</div>밸류</button>
@@ -423,19 +455,90 @@ const f=[...KR,...US].find(s=>s.name.includes(q)||s.code.toLowerCase()===q.toLow
 if(f)openSheet(f);else alert('종목 없음');
 }
 
-// === Yahoo Finance API ===
+// === Yahoo Finance API (캐시 무력화 + 분봉 보완) ===
 async function fetchOHLC(sym,days,iv='1d'){
 const end=Math.floor(Date.now()/1000),start=end-days*86400;
+const cb=Date.now();
 const yfUrl=`https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(sym)}?interval=${iv}&period1=${start}&period2=${end}&events=history`;
+const opts={signal:AbortSignal.timeout(10000),cache:'no-store',headers:{'Cache-Control':'no-cache','Pragma':'no-cache'}};
+let data=null;
 try{
-const r=await fetch(`/api/chart?symbol=${encodeURIComponent(sym)}&period1=${start}&period2=${end}&interval=${iv}`,{signal:AbortSignal.timeout(10000)});
-if(r.ok){const d=await r.json();if(d.chart?.result?.[0])return parseYF(d);}
+const r=await fetch(`/api/chart?symbol=${encodeURIComponent(sym)}&period1=${start}&period2=${end}&interval=${iv}&_=${cb}`,opts);
+if(r.ok){const d=await r.json();if(d.chart?.result?.[0])data=parseYF(d);}
 }catch(e){}
+if(!data){
 try{
-const r=await fetch(`https://corsproxy.io/?url=${encodeURIComponent(yfUrl)}`,{signal:AbortSignal.timeout(10000)});
-if(r.ok){const d=await r.json();if(d.chart?.result?.[0])return parseYF(d);}
+const r=await fetch(`https://corsproxy.io/?url=${encodeURIComponent(yfUrl+'&_='+cb)}`,opts);
+if(r.ok){const d=await r.json();if(d.chart?.result?.[0])data=parseYF(d);}
 }catch(e){}
-return null;
+}
+if(!data){
+try{
+const r=await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(yfUrl+'&_='+cb)}`,{...opts,signal:AbortSignal.timeout(15000)});
+if(r.ok){const d=await r.json();if(d.chart?.result?.[0])data=parseYF(d);}
+}catch(e){}
+}
+
+// ⭐ 일봉인데 마지막 봉이 너무 오래됐으면 분봉으로 보완
+if(data && data.length && iv==='1d'){
+const last=data[data.length-1];
+const lastDate=new Date(last.time*1000);
+const today=new Date();
+const dayDiff=Math.floor((today.getTime()-lastDate.getTime())/86400000);
+// 마지막 봉이 2일 이상 오래됐으면 분봉으로 보완 시도
+if(dayDiff>=2){
+try{
+const fillData=await fetchMinuteFill(sym,last.time);
+if(fillData && fillData.length){
+data=[...data,...fillData].sort((a,b)=>a.time-b.time);
+}
+}catch(e){console.warn('분봉 보완 실패:',e.message);}
+}
+}
+
+return data;
+}
+
+// 분봉(30m) 데이터로 일봉 보완
+async function fetchMinuteFill(sym,afterTime){
+const end=Math.floor(Date.now()/1000),start=end-7*86400;
+const cb=Date.now();
+const yfUrl=`https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(sym)}?interval=30m&period1=${start}&period2=${end}`;
+const opts={signal:AbortSignal.timeout(10000),cache:'no-store',headers:{'Cache-Control':'no-cache'}};
+let data=null;
+try{
+const r=await fetch(`/api/chart?symbol=${encodeURIComponent(sym)}&period1=${start}&period2=${end}&interval=30m&_=${cb}`,opts);
+if(r.ok){const d=await r.json();if(d.chart?.result?.[0])data=parseYF(d);}
+}catch(e){}
+if(!data){
+try{
+const r=await fetch(`https://corsproxy.io/?url=${encodeURIComponent(yfUrl+'&_='+cb)}`,opts);
+if(r.ok){const d=await r.json();if(d.chart?.result?.[0])data=parseYF(d);}
+}catch(e){}
+}
+if(!data||!data.length)return [];
+
+// 분봉을 일봉으로 집계
+const dailyMap=new Map();
+data.forEach(m=>{
+const d=new Date(m.time*1000);
+const dateKey=`${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+if(!dailyMap.has(dateKey)){
+const dayStart=Math.floor(new Date(d.getFullYear(),d.getMonth(),d.getDate()).getTime()/1000);
+dailyMap.set(dateKey,{time:dayStart,open:m.open,high:m.high,low:m.low,close:m.close,volume:m.volume||0});
+}else{
+const day=dailyMap.get(dateKey);
+day.high=Math.max(day.high,m.high);
+day.low=Math.min(day.low,m.low);
+day.close=m.close;
+day.volume+=m.volume||0;
+}
+});
+
+// afterTime 이후의 일봉만 반환
+return Array.from(dailyMap.values())
+.filter(d=>d.time>afterTime)
+.sort((a,b)=>a.time-b.time);
 }
 
 function parseYF(parsed){
@@ -453,22 +556,54 @@ return c.sort((a,b)=>a.time-b.time);
 
 async function fetchLatestPrice(yfSym){
 const end=Math.floor(Date.now()/1000),start=end-7*86400;
+const cb=Date.now();
 const yfUrl=`https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(yfSym)}?interval=1d&period1=${start}&period2=${end}`;
+const opts={signal:AbortSignal.timeout(8000),cache:'no-store',headers:{'Cache-Control':'no-cache'}};
 const extract=d=>{
 const res=d.chart?.result?.[0];
 if(!res)return null;
 const closes=(res.indicators.quote[0].close||[]).filter(c=>c!=null);
-return closes.length?closes[closes.length-1]:null;
+const ts=res.timestamp;
+if(!closes.length||!ts)return null;
+return {price:closes[closes.length-1],time:ts[ts.length-1]};
 };
+let result=null;
 try{
-const r=await fetch(`/api/chart?symbol=${encodeURIComponent(yfSym)}&period1=${start}&period2=${end}&interval=1d`,{signal:AbortSignal.timeout(8000)});
-if(r.ok){const d=await r.json();const p=extract(d);if(p!=null)return p;}
+const r=await fetch(`/api/chart?symbol=${encodeURIComponent(yfSym)}&period1=${start}&period2=${end}&interval=1d&_=${cb}`,opts);
+if(r.ok){const d=await r.json();result=extract(d);}
 }catch(e){}
+if(!result){
 try{
-const r=await fetch(`https://corsproxy.io/?url=${encodeURIComponent(yfUrl)}`,{signal:AbortSignal.timeout(8000)});
-if(r.ok){const d=await r.json();const p=extract(d);if(p!=null)return p;}
+const r=await fetch(`https://corsproxy.io/?url=${encodeURIComponent(yfUrl+'&_='+cb)}`,opts);
+if(r.ok){const d=await r.json();result=extract(d);}
 }catch(e){}
-return null;
+}
+if(!result)return null;
+
+// 마지막 일봉이 너무 오래됐으면 분봉(30m)으로 보완
+const lastDate=new Date(result.time*1000);
+const dayDiff=Math.floor((Date.now()-lastDate.getTime())/86400000);
+if(dayDiff>=2){
+try{
+const minUrl=`https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(yfSym)}?interval=30m&period1=${start}&period2=${end}`;
+let minData=null;
+try{
+const r=await fetch(`/api/chart?symbol=${encodeURIComponent(yfSym)}&period1=${start}&period2=${end}&interval=30m&_=${cb}`,opts);
+if(r.ok){const d=await r.json();minData=d;}
+}catch(e){}
+if(!minData){
+try{
+const r=await fetch(`https://corsproxy.io/?url=${encodeURIComponent(minUrl+'&_='+cb)}`,opts);
+if(r.ok)minData=await r.json();
+}catch(e){}
+}
+if(minData?.chart?.result?.[0]){
+const closes=(minData.chart.result[0].indicators.quote[0].close||[]).filter(c=>c!=null);
+if(closes.length) return closes[closes.length-1];
+}
+}catch(e){}
+}
+return result.price;
 }
 
 async function updateAllPrices(){
@@ -652,6 +787,14 @@ document.getElementById('shP').textContent=isKR?last.close.toLocaleString()+'원
 const cEl=document.getElementById('shC');
 cEl.textContent=(chg>=0?'▲ +':'▼ ')+chg.toFixed(2)+'%';
 cEl.className='sh-chg '+(chg>=0?'up':'dn');
+// 마지막 봉 날짜 표시 (데이터 신선도 확인용)
+const lastDate=new Date(last.time*1000);
+const today=new Date();
+const dDiff=Math.floor((today-lastDate)/86400000);
+const dateStr=`${lastDate.getMonth()+1}/${lastDate.getDate()}`;
+const freshness=dDiff===0?'오늘':dDiff===1?'어제':dDiff+'일전';
+const freshColor=dDiff<=1?'#60a5fa':dDiff<=3?'#facc15':'#f87171';
+document.getElementById('shM').innerHTML=`${stock.yf} · ${stock.shares}주 · 📅 <span style="color:${freshColor};font-weight:600">${dateStr} (${freshness})</span>`;
 renderInfobar(data);
 renderDayInfo(data,data.length-1);
 
@@ -838,6 +981,79 @@ const r=await fetch('/api/ai',{method:'POST',headers:{'Content-Type':'applicatio
 return await r.json();
 }
 
+async function runMarketAnalysis(market){
+const btn=document.getElementById(market==='kr'?'krAnalBtn':'usAnalBtn');
+const box=document.getElementById('analBox');
+const ct=document.getElementById('analContent');
+const dt=document.getElementById('analDate');
+const bd=document.getElementById('analBadge');
+btn.disabled=true;
+const orig=btn.textContent;
+btn.textContent='⏳ 분석 중...';
+box.className='abox on';
+bd.textContent=market==='kr'?'🇰🇷 한국 종가 분석':'🇺🇸 미국 종가 분석';
+ct.innerHTML='<div class="lw"><div class="dots"><span></span><span></span><span></span></div> 시황 검색 중...</div>';
+const today=new Date().toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric',weekday:'short'});
+dt.textContent=today;
+
+const stocks=market==='kr'?KR:US;
+const stockList=stocks.map(s=>{
+const cur=s.cur!=null?(market==='kr'?Math.round(s.cur).toLocaleString()+'원':'$'+s.cur.toFixed(2)):'미수신';
+const ret=s.warn?'※무증':(s.ret>=0?'+':'')+s.ret.toFixed(2)+'%';
+return `- ${s.name}(${s.code}): ${s.shares}주, 평단 ${market==='kr'?s.avg.toLocaleString()+'원':'$'+s.avg}, 현재 ${cur}, 수익률 ${ret}`;
+}).join('\n');
+
+const marketName=market==='kr'?'한국 (KOSPI/KOSDAQ)':'미국 (NYSE/NASDAQ)';
+const prompt=`전문 시황 분석가로서 오늘(${today}) ${marketName} 시장 종가를 검색해서 분석해줘. 
+
+내 보유 종목:
+${stockList}
+
+다음 형식으로 답변:
+
+📊 시장 전반
+- 주요 지수 종가, 등락률
+- 주도 섹터, 핵심 이슈
+
+🔍 보유 종목 분석
+- 각 종목별 주요 등락 요인 (뉴스/실적/수급)
+- 핵심 종목 위주로 (수익률 큰 변동 / 주목할만한 이슈)
+
+⚡ 주목 종목
+- 오늘 가장 강했던/약했던 보유 종목
+- 그 이유
+
+🎯 내일 전망
+- 다음 거래일 주요 이벤트
+- 보유 종목 영향
+
+간결하게 핵심만. 정확한 종가 데이터 검색 필수.`;
+
+try{
+const data=await callAI({
+model:'claude-sonnet-4-5',max_tokens:1500,
+tools:[{type:'web_search_20250305',name:'web_search'}],
+messages:[{role:'user',content:prompt}]
+});
+if(data.error)throw new Error(typeof data.error==='string'?data.error:JSON.stringify(data.error));
+const text=data.content.filter(b=>b.type==='text').map(b=>b.text).join('\n');
+ct.innerHTML=text.replace(/^(📊|🔍|⚡|🎯|💰|📈|📉).+$/gm,m=>`<h3>${m}</h3>`).replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');
+}catch(e){ct.innerHTML=`<div style="color:var(--down)">오류: ${e.message}</div>`;}
+finally{btn.disabled=false;btn.textContent=orig;}
+}
+
+// 시간대 따라 추천 분석 표시
+function updateAnalysisHint(){
+const h=new Date().getHours();
+const hint=document.getElementById('analTimeHint');
+if(!hint)return;
+let msg='';
+if(h>=6&&h<15) msg='💡 추천: 어제 미국 종가 분석 (장 마감 후)';
+else if(h>=15&&h<22) msg='💡 추천: 오늘 한국 종가 분석 (방금 마감)';
+else msg='💡 추천: 한국 종가 + 미국 실시간 분석';
+hint.textContent=msg;
+}
+
 async function runHealth(){
 const btn=document.getElementById('healthBtn'),box=document.getElementById('healthBox');
 const ct=document.getElementById('healthContent'),dt=document.getElementById('healthDate');
@@ -916,6 +1132,7 @@ result.innerHTML=`<div class="abox on"><div class="ah"><div class="abadge">${nam
 }
 
 render();
+updateAnalysisHint();
 setTimeout(updateAllPrices,300);
 </script>
 </body>
