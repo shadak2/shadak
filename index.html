@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MyStock v34</title>
+<title>MyStock v35</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/lightweight-charts@4.1.1/dist/lightweight-charts.standalone.production.js"></script>
 <style>
@@ -140,7 +140,7 @@ html,body{height:100%}body{background:var(--bg);color:var(--text);font-family:'N
 </style>
 </head>
 <body>
-<div class="ver-tag">v34</div>
+<div class="ver-tag">v35</div>
 <nav class="nav"><div class="nav-logo">📈 <em>My</em>Stock</div><div class="nav-search" onclick="doSearch()">🔍 종목 검색</div><div class="nav-r"><a class="nb" href="https://simplystock.co.kr" target="_blank">심플리스톡</a><a class="nb p" href="https://kr.tradingview.com" target="_blank">TV</a></div></nav>
 <div class="tabs"><div class="tab on" data-p="portfolio">📊 포트</div><div class="tab" data-p="kr">🇰🇷 한국</div><div class="tab" data-p="us">🇺🇸 미국</div><div class="tab" data-p="health">🩺 건강</div><div class="tab" data-p="news">📰 뉴스</div><div class="tab" data-p="val">📐 밸류</div></div>
 <div class="main">
@@ -173,7 +173,7 @@ html,body{height:100%}body{background:var(--bg);color:var(--text);font-family:'N
 </div>
 </div>
 <div class="dbg-panel" id="dbgPanel">대기 중...</div>
-<div class="sh-foot"><div class="sh-info" id="shFoot">v34 · 카드=분석</div><button class="sh-close" onclick="closeSheet()">닫기</button></div>
+<div class="sh-foot"><div class="sh-info" id="shFoot">v35 · 버튼만 활성</div><button class="sh-close" onclick="closeSheet()">닫기</button></div>
 </div></div>
 <div class="ov" id="ovAnal" onclick="closeAnal(event)"><div class="anal-sheet" onclick="event.stopPropagation()">
 <div class="anal-head"><div style="flex:1;min-width:0"><div class="anal-h-name" id="analName">—</div><div class="anal-h-meta" id="analMeta">—</div></div><button class="anal-close" onclick="closeAnal()">닫기</button></div>
@@ -206,7 +206,7 @@ document.querySelectorAll('.tab,.bt').forEach(t=>t.addEventListener('click',()=>
 
 function renderSummary(){const tK=KR.reduce((s,x)=>s+x.val,0),tU=US.reduce((s,x)=>s+x.val,0);const kG=KR.filter(x=>!x.warn).reduce((s,x)=>s+(x.val-x.avg*x.shares),0);const uG=US.reduce((s,x)=>s+(x.val-x.avg*x.shares),0);document.getElementById('sK').textContent=fK(tK);const kg=document.getElementById('sKg');kg.textContent=(kG>=0?'▲ +':'▼ ')+fK(Math.abs(kG))+' 손익';kg.style.color=kG>=0?'var(--up)':'var(--down)';document.getElementById('sU').textContent=fU(tU);const ug=document.getElementById('sUg');ug.textContent=(uG>=0?'▲ +$':'▼ $')+Math.abs(uG).toFixed(0)+' 손익';ug.style.color=uG>=0?'var(--up)':'var(--down)';const best=[...KR,...US].filter(x=>!x.warn).reduce((a,b)=>a.ret>b.ret?a:b);document.getElementById('sBest').textContent=best.name;document.getElementById('sBestR').textContent='+'+best.ret.toFixed(2)+'%';}
 
-function row(s,isKR){const wc=s.warn?'w':'',rc=s.warn?'wt':(s.ret>=0?'up':'dn'),rs=s.warn?'※무증':(s.ret>=0?'+':'')+s.ret.toFixed(2)+'%';const avgStr=isKR?s.avg.toLocaleString()+'원':'$'+s.avg.toFixed(2);const curVal=s.cur!=null?s.cur:(s.val/s.shares);const curStr=isKR?Math.round(curVal).toLocaleString()+'원':'$'+curVal.toFixed(2);const prevP=prevPrices[s.code];let flashCls='';if(prevP&&s.cur&&Math.abs(prevP-s.cur)>(isKR?0.5:0.001)){flashCls=s.cur>prevP?' flash-up':' flash-dn';}let gainStr='';if(!s.warn){const gain=(curVal-s.avg)*s.shares,gC=gain>=0?'up':'dn',gAbs=Math.abs(gain);const gFmt=isKR?(gAbs>=1e8?(gAbs/1e8).toFixed(1)+'억':gAbs>=1e4?Math.round(gAbs/1e4)+'만':Math.round(gAbs).toLocaleString()+'원'):'$'+gAbs.toFixed(0);gainStr=`<div class="tr-rt-sub ${gC}">${gain>=0?'+':'-'}${gFmt}</div>`;}const j=JSON.stringify(s);return `<div class="tr ${wc}" onclick='openAnal(${j})'><div class="tr-top"><div class="tr-name"><div class="rn">${s.name}</div><div class="rc">${s.code} · ${s.shares}주</div>${s.note?`<div class="rno">⚡ ${s.note}</div>`:''}</div><div class="tr-rt-box"><div class="tr-rt ${rc}">${rs}</div>${gainStr}</div></div><div class="tr-prices"><div class="tp-grp"><span class="tp-l">평단</span><span class="tp-v">${avgStr}</span></div><span class="tp-arr">→</span><div class="tp-grp"><span class="tp-l">현재</span><span class="tp-v${flashCls}">${curStr}</span></div></div><div class="rbs"><button class="rb rb-c" onclick="event.stopPropagation();openSheet(${j})">📈 차트</button><button class="rb rb-a" onclick="event.stopPropagation();openAnal(${j})">🎯 분석</button><button class="rb rb-e" onclick="event.stopPropagation();goVal('${s.code}','${s.name}','${isKR?'kr':'us'}')">📐 밸류</button></div></div>`;}
+function row(s,isKR){const wc=s.warn?'w':'',rc=s.warn?'wt':(s.ret>=0?'up':'dn'),rs=s.warn?'※무증':(s.ret>=0?'+':'')+s.ret.toFixed(2)+'%';const avgStr=isKR?s.avg.toLocaleString()+'원':'$'+s.avg.toFixed(2);const curVal=s.cur!=null?s.cur:(s.val/s.shares);const curStr=isKR?Math.round(curVal).toLocaleString()+'원':'$'+curVal.toFixed(2);const prevP=prevPrices[s.code];let flashCls='';if(prevP&&s.cur&&Math.abs(prevP-s.cur)>(isKR?0.5:0.001)){flashCls=s.cur>prevP?' flash-up':' flash-dn';}let gainStr='';if(!s.warn){const gain=(curVal-s.avg)*s.shares,gC=gain>=0?'up':'dn',gAbs=Math.abs(gain);const gFmt=isKR?(gAbs>=1e8?(gAbs/1e8).toFixed(1)+'억':gAbs>=1e4?Math.round(gAbs/1e4)+'만':Math.round(gAbs).toLocaleString()+'원'):'$'+gAbs.toFixed(0);gainStr=`<div class="tr-rt-sub ${gC}">${gain>=0?'+':'-'}${gFmt}</div>`;}const j=JSON.stringify(s);return `<div class="tr ${wc}"><div class="tr-top"><div class="tr-name"><div class="rn">${s.name}</div><div class="rc">${s.code} · ${s.shares}주</div>${s.note?`<div class="rno">⚡ ${s.note}</div>`:''}</div><div class="tr-rt-box"><div class="tr-rt ${rc}">${rs}</div>${gainStr}</div></div><div class="tr-prices"><div class="tp-grp"><span class="tp-l">평단</span><span class="tp-v">${avgStr}</span></div><span class="tp-arr">→</span><div class="tp-grp"><span class="tp-l">현재</span><span class="tp-v${flashCls}">${curStr}</span></div></div><div class="rbs"><button class="rb rb-c" onclick="event.stopPropagation();openSheet(${j})">📈 차트</button><button class="rb rb-a" onclick="event.stopPropagation();openAnal(${j})">🎯 분석</button><button class="rb rb-e" onclick="event.stopPropagation();goVal('${s.code}','${s.name}','${isKR?'kr':'us'}')">📐 밸류</button></div></div>`;}
 
 function render(){renderSummary();const kH=KR.map(s=>row(s,true)).join(''),uH=US.map(s=>row(s,false)).join('');['kr1','kr2'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=kH;});['us1','us2'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=uH;});const qb=document.getElementById('valQuick');if(qb)qb.innerHTML=[...KR,...US].map(s=>{const isK=s.avg>1000;return `<button class="rb rb-e" onclick="goVal('${s.code}','${s.name}','${isK?'kr':'us'}')">${s.name}</button>`;}).join('');}
 function doSearch(){const q=prompt('종목명 또는 코드:');if(!q)return;const f=[...KR,...US].find(s=>s.name.includes(q)||s.code.toLowerCase()===q.toLowerCase());if(f)openSheet(f);else alert('종목 없음');}
@@ -348,7 +348,7 @@ document.getElementById('shP').textContent=isKR?last.close.toLocaleString()+'원
 const cE=document.getElementById('shC');cE.textContent=(ch>=0?'▲ +':'▼ ')+ch.toFixed(2)+'%';cE.className='sh-chg '+(ch>=0?'up':'dn');
 renderInfobarV2(data,hL,lastSrc,foreignData);renderDayInfo(data,data.length-1);
 const cT=Date.now()<yahooCooldownUntil?` · ⏸️Yahoo쿨다운`:'';const fT=foreignData?` · 외인기관 ${foreignData.length}일`:'';
-document.getElementById('shFoot').textContent=`v34 · ${lastSrc} · ${data.length}봉${fT}${cT}`;
+document.getElementById('shFoot').textContent=`v35 · ${lastSrc} · ${data.length}봉${fT}${cT}`;
 if(mainChart){mainChart.remove();mainChart=null;}if(volChart){volChart.remove();volChart=null;}if(flowChart){flowChart.remove();flowChart=null;}
 mEl.innerHTML='';vEl.innerHTML='';
 mainChart=LightweightCharts.createChart(mEl,{width:mEl.clientWidth,height:mEl.clientHeight,layout:{background:{color:'#1a1d24'},textColor:'#9ca3af'},grid:{vertLines:{color:'#252830'},horzLines:{color:'#252830'}},crosshair:{mode:LightweightCharts.CrosshairMode.Normal},rightPriceScale:{borderColor:'#374151',mode:showLog?LightweightCharts.PriceScaleMode.Logarithmic:0},timeScale:{borderColor:'#374151',timeVisible:true,rightOffset:5}});
@@ -504,7 +504,7 @@ async function runNews(){const btn=document.getElementById('newsBtn'),nl=documen
 function goVal(c,n,m){document.getElementById('valInput').value=n||c;window._valMarket=m||'kr';goPage('val');runVal();}
 async function runVal(){const inp=document.getElementById('valInput').value.trim();if(!inp)return;const r=document.getElementById('valResult');r.innerHTML=`<div class="lw"><div class="dots"><span></span><span></span><span></span></div> 분석 중...</div>`;let ys,nm,cd,mk;const fk=KR.find(s=>s.name.includes(inp)||s.code===inp),fu=US.find(s=>s.name.includes(inp)||s.code.toLowerCase()===inp.toLowerCase());if(fk){ys=fk.yf;nm=fk.name;cd=fk.code;mk='kr';}else if(fu){ys=fu.yf;nm=fu.name;cd=fu.code;mk='us';}else{ys=inp.includes('.')?inp:(window._valMarket==='us'?inp:inp+'.KS');nm=inp;cd=inp;mk=window._valMarket||'kr';}try{const data=await callAI({model:'claude-sonnet-4-5',max_tokens:2000,tools:[{type:'web_search_20250305',name:'web_search'}],messages:[{role:'user',content:`${nm}(${cd}) ${mk==='us'?'미국':'한국'} 종목 최신 밸류에이션을 검색해서 답변. PER, PBR, 목표주가, 평균 PER 등 포함.`}]});if(data.error)throw new Error(typeof data.error==='string'?data.error:JSON.stringify(data.error));const text=data.content.filter(b=>b.type==='text').map(b=>b.text).join('');r.innerHTML=`<div class="abox on"><div class="ah"><div class="abadge">${nm}</div><div class="adate">${cd}</div></div><div class="ac">${text.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')}</div></div>`;}catch(e){r.innerHTML=`<div style="color:var(--down);padding:12px">오류: ${e.message}</div>`;}}
 
-dbg(`━━━ v34 시작 ━━━`,'ok');
+dbg(`━━━ v35 시작 ━━━`,'ok');
 dbg(`외인/기관 차트 (합산/주체별) 추가`,'info');
 fetchTO('/api/proxy?url=https%3A%2F%2Fstooq.com%2Fq%2Fd%2Fl%2F%3Fs%3Daapl.us%26i%3Dd',8000)
 .then(r=>{if(r.ok){selfProxyAvailable=true;dbg(`✓ /api/proxy OK`,'ok');}else if(r.status===429){selfProxyAvailable=true;dbg(`⚠️ /api/proxy 429`,'warn');}else{selfProxyAvailable=false;dbg(`✗ /api/proxy HTTP ${r.status}`,'warn');}}).catch(e=>{selfProxyAvailable=false;});
