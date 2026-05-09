@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MyStock v36</title>
+<title>MyStock v38</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/lightweight-charts@4.1.1/dist/lightweight-charts.standalone.production.js"></script>
 <style>
@@ -140,7 +140,7 @@ html,body{height:100%}body{background:var(--bg);color:var(--text);font-family:'N
 </style>
 </head>
 <body>
-<div class="ver-tag">v36</div>
+<div class="ver-tag">v38</div>
 <nav class="nav"><div class="nav-logo">📈 <em>My</em>Stock</div><div class="nav-search" onclick="doSearch()">🔍 종목 검색</div><div class="nav-r"><a class="nb" href="https://simplystock.co.kr" target="_blank">심플리스톡</a><a class="nb p" href="https://kr.tradingview.com" target="_blank">TV</a></div></nav>
 <div class="tabs"><div class="tab on" data-p="portfolio">📊 포트</div><div class="tab" data-p="kr">🇰🇷 한국</div><div class="tab" data-p="us">🇺🇸 미국</div><div class="tab" data-p="health">🩺 건강</div><div class="tab" data-p="news">📰 뉴스</div><div class="tab" data-p="val">📐 밸류</div></div>
 <div class="main">
@@ -173,7 +173,7 @@ html,body{height:100%}body{background:var(--bg);color:var(--text);font-family:'N
 </div>
 </div>
 <div class="dbg-panel" id="dbgPanel">대기 중...</div>
-<div class="sh-foot"><div class="sh-info" id="shFoot">v36 · onclick버그 수정</div><button class="sh-close" onclick="closeSheet()">닫기</button></div>
+<div class="sh-foot"><div class="sh-info" id="shFoot">v38 · 외부proxy 다중폴백</div><button class="sh-close" onclick="closeSheet()">닫기</button></div>
 </div></div>
 <div class="ov" id="ovAnal" onclick="closeAnal(event)"><div class="anal-sheet" onclick="event.stopPropagation()">
 <div class="anal-head"><div style="flex:1;min-width:0"><div class="anal-h-name" id="analName">—</div><div class="anal-h-meta" id="analMeta">—</div></div><button class="anal-close" onclick="closeAnal()">닫기</button></div>
@@ -227,14 +227,14 @@ try{const r=await fetchTO(`https://corsproxy.io/?url=${encodeURIComponent(url)}`
 try{const r=await fetchTO(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`,timeout+2000);if(r.ok){const w=await r.json();if(w&&w.contents){try{const j=JSON.parse(w.contents);if(j&&j.chart)return j;}catch(e){}}}}catch(e){}
 return null;}
 
-async function fetchYahooDaily(s,d,iv){iv=iv||'1d';const e=Math.floor(Date.now()/1000),st=e-d*86400;const u=`https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(s)}?interval=${iv}&period1=${st}&period2=${e}&events=history`;const j=await yfFetch(u,8000);if(!j||!j.chart||!j.chart.result||!j.chart.result[0])return null;return parseYahoo(j);}
-async function fetchIntraday(s){const u=`https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(s)}?interval=1m&range=1d`;const j=await yfFetch(u,7000);if(!j||!j.chart||!j.chart.result||!j.chart.result[0])return null;return j.chart.result[0];}
+async function fetchYahooDaily(s,d,iv){iv=iv||'1d';const e=Math.floor(Date.now()/1000),st=e-d*86400;const u=`https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(s)}?interval=${iv}&period1=${st}&period2=${e}&events=history`;let j=await yfFetch(u,8000);if(!j||!j.chart){const ps=['https://corsproxy.io/?','https://api.allorigins.win/raw?url='];for(const p of ps){try{const r=await fetch(p+encodeURIComponent(u),{signal:AbortSignal.timeout(7000)});if(r.ok){j=await r.json();if(j&&j.chart&&j.chart.result){dbg(`✓ Yahoo via ${p.split('/')[2]}`,'ok');break;}}}catch(e){}}}if(!j||!j.chart||!j.chart.result||!j.chart.result[0])return null;return parseYahoo(j);}
+async function fetchIntraday(s){const u=`https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(s)}?interval=1m&range=1d`;let j=await yfFetch(u,7000);if(!j||!j.chart){const ps=['https://corsproxy.io/?','https://api.allorigins.win/raw?url='];for(const p of ps){try{const r=await fetch(p+encodeURIComponent(u),{signal:AbortSignal.timeout(6000)});if(r.ok){j=await r.json();if(j&&j.chart&&j.chart.result)break;}}catch(e){}}}if(!j||!j.chart||!j.chart.result||!j.chart.result[0])return null;return j.chart.result[0];}
 function parseYahoo(p){const r=p.chart.result[0],q=r.indicators.quote[0],ts=r.timestamp||[],v=q.volume||[],c=[];for(let i=0;i<ts.length;i++){if(q.open[i]==null||q.close[i]==null)continue;c.push({time:ts[i],open:+q.open[i].toFixed(4),high:+q.high[i].toFixed(4),low:+q.low[i].toFixed(4),close:+q.close[i].toFixed(4),volume:v[i]||0});}return c.sort((a,b)=>a.time-b.time);}
 function aggIntraday(I){if(!I)return null;const q=I.indicators.quote[0],ts=I.timestamp||[],m=I.meta||{};let o=null,h=-Infinity,l=Infinity,c=null,v=0;for(let i=0;i<ts.length;i++){if(q.open[i]==null||q.close[i]==null)continue;if(o===null)o=q.open[i];if(q.high[i]>h)h=q.high[i];if(q.low[i]<l)l=q.low[i];c=q.close[i];v+=q.volume[i]||0;}if(o===null)return null;const t=new Date();t.setHours(0,0,0,0);return{time:Math.floor(t.getTime()/1000),open:+o.toFixed(4),high:+h.toFixed(4),low:+l.toFixed(4),close:+c.toFixed(4),volume:v,regularMarketPrice:m.regularMarketPrice};}
 
 async function fetchForeign(code){if(!code||!/^\d{6}$/.test(code))return null;const cached=foreignCache.get(code);if(cached&&Date.now()-cached.ts<FOREIGN_TTL)return cached.data;try{dbg(`외인/기관 요청: ${code}`);const r=await fetchTO(`/api/foreign?code=${code}`,8000);if(r.ok){const j=await r.json();if(j.data&&j.data.length>0){foreignCache.set(code,{data:j.data,ts:Date.now()});dbg(`✓ 외인/기관 OK: ${code} (${j.data.length}일)`,'ok');return j.data;}else dbg(`외인/기관 빈응답: ${code}`,'warn');}else dbg(`외인/기관 HTTP ${r.status}: ${code}`,'warn');}catch(e){dbg(`외인/기관 fail: ${e.message}`,'err');}return null;}
 
-async function fetchOHLC(s,d,iv){iv=iv||'1d';dbg(`━━━ ${s} (${iv}, ${d}일) ━━━`);let data=null,src='';if(iv==='1d'){data=await fetchStooqDaily(s,d);if(data&&data.length>=5)src='Stooq';}if(!data||data.length<5){data=await fetchYahooDaily(s,d,iv);if(data&&data.length>=5)src='Yahoo';}if(!data||data.length<5){lastSrc='실패';return null;}lastSrc=src;
+async function fetchOHLC(s,d,iv){iv=iv||'1d';dbg(`━━━ ${s} (${iv}, ${d}일) ━━━`);let data=null,src='';if(iv==='1d'){data=await fetchStooqDaily(s,d);if(data&&data.length>=5)src='Stooq';}if(!data||data.length<5){data=await fetchYahooDaily(s,d,iv);if(data&&data.length>=5)src='Yahoo';}if((!data||data.length<5)&&iv==='1d'){const m=s.match(/^(\d{6})\.(KS|KQ)$/);if(m){try{const pgs=Math.min(30,Math.ceil(d/10)+1);const r=await fetch(`/api/naver?code=${m[1]}&pages=${pgs}`);if(r.ok){const j=await r.json();if(j.data&&j.data.length>=5){data=j.data.map(x=>({time:Math.floor(new Date(x.date).getTime()/1000),open:x.open,high:x.high,low:x.low,close:x.close,volume:x.volume}));if(d&&data.length>d)data=data.slice(-d);src='Naver';dbg(`✓ Naver 차트: ${data.length}일`,'ok');}}}catch(e){dbg(`Naver fail: ${e.message}`,'err');}}}if(!data||data.length<5){lastSrc='실패';return null;}lastSrc=src;
 if(iv==='1d'){const tm=new Date();tm.setHours(0,0,0,0);const tts=Math.floor(tm.getTime()/1000);const lts=data.length?data[data.length-1].time:0;if(lts<tts){const I=await fetchIntraday(s);const tb=aggIntraday(I);if(tb){data.push({time:tb.time,open:tb.open,high:tb.high,low:tb.low,close:tb.close,volume:tb.volume});lastSrc=src+'+1m';}}}
 return data;}
 
@@ -254,6 +254,8 @@ try{const d=await fetchStooqDaily(yf,7);if(d&&d.length)p=d[d.length-1].close;}ca
 if(p===null||marketOpen){try{const I=await fetchIntraday(yf);if(I){const m=I.meta||{};if(m.regularMarketPrice)p=m.regularMarketPrice;else{const q=I.indicators.quote[0],cs=(q.close||[]).filter(c=>c!=null);if(cs.length)p=cs[cs.length-1];}}}catch(e){}}
 // 3차: Yahoo 일봉 fallback
 if(p===null){try{const d=await fetchYahooDaily(yf,7,'1d');if(d&&d.length)p=d[d.length-1].close;}catch(e){}}
+// 4차: Naver fallback (한국 종목만)
+if(p===null&&isKR&&code&&/^\d{6}$/.test(code)){try{const r=await fetch(`/api/naver?code=${code}&pages=1`);if(r.ok){const j=await r.json();if(j.data&&j.data.length)p=j.data[j.data.length-1].close;}}catch(e){}}
 if(p!==null&&code)priceCache.set(code,{price:p,ts:Date.now()});return p;}
 
 async function batchFetch(items,bs){bs=bs||3;const r=[];for(let i=0;i<items.length;i+=bs){const b=items.slice(i,i+bs);const x=await Promise.allSettled(b.map(s=>fetchLatestPrice(s.yf,s.code,s.avg>1000)));r.push(...x);if(i+bs<items.length)await new Promise(rs=>setTimeout(rs,300));}return r;}
@@ -348,7 +350,7 @@ document.getElementById('shP').textContent=isKR?last.close.toLocaleString()+'원
 const cE=document.getElementById('shC');cE.textContent=(ch>=0?'▲ +':'▼ ')+ch.toFixed(2)+'%';cE.className='sh-chg '+(ch>=0?'up':'dn');
 renderInfobarV2(data,hL,lastSrc,foreignData);renderDayInfo(data,data.length-1);
 const cT=Date.now()<yahooCooldownUntil?` · ⏸️Yahoo쿨다운`:'';const fT=foreignData?` · 외인기관 ${foreignData.length}일`:'';
-document.getElementById('shFoot').textContent=`v36 · ${lastSrc} · ${data.length}봉${fT}${cT}`;
+document.getElementById('shFoot').textContent=`v38 · ${lastSrc} · ${data.length}봉${fT}${cT}`;
 if(mainChart){mainChart.remove();mainChart=null;}if(volChart){volChart.remove();volChart=null;}if(flowChart){flowChart.remove();flowChart=null;}
 mEl.innerHTML='';vEl.innerHTML='';
 mainChart=LightweightCharts.createChart(mEl,{width:mEl.clientWidth,height:mEl.clientHeight,layout:{background:{color:'#1a1d24'},textColor:'#9ca3af'},grid:{vertLines:{color:'#252830'},horzLines:{color:'#252830'}},crosshair:{mode:LightweightCharts.CrosshairMode.Normal},rightPriceScale:{borderColor:'#374151',mode:showLog?LightweightCharts.PriceScaleMode.Logarithmic:0},timeScale:{borderColor:'#374151',timeVisible:true,rightOffset:5}});
@@ -506,7 +508,7 @@ async function runNews(){const btn=document.getElementById('newsBtn'),nl=documen
 function goVal(c,n,m){document.getElementById('valInput').value=n||c;window._valMarket=m||'kr';goPage('val');runVal();}
 async function runVal(){const inp=document.getElementById('valInput').value.trim();if(!inp)return;const r=document.getElementById('valResult');r.innerHTML=`<div class="lw"><div class="dots"><span></span><span></span><span></span></div> 분석 중...</div>`;let ys,nm,cd,mk;const fk=KR.find(s=>s.name.includes(inp)||s.code===inp),fu=US.find(s=>s.name.includes(inp)||s.code.toLowerCase()===inp.toLowerCase());if(fk){ys=fk.yf;nm=fk.name;cd=fk.code;mk='kr';}else if(fu){ys=fu.yf;nm=fu.name;cd=fu.code;mk='us';}else{ys=inp.includes('.')?inp:(window._valMarket==='us'?inp:inp+'.KS');nm=inp;cd=inp;mk=window._valMarket||'kr';}try{const data=await callAI({model:'claude-sonnet-4-5',max_tokens:2000,tools:[{type:'web_search_20250305',name:'web_search'}],messages:[{role:'user',content:`${nm}(${cd}) ${mk==='us'?'미국':'한국'} 종목 최신 밸류에이션을 검색해서 답변. PER, PBR, 목표주가, 평균 PER 등 포함.`}]});if(data.error)throw new Error(typeof data.error==='string'?data.error:JSON.stringify(data.error));const text=data.content.filter(b=>b.type==='text').map(b=>b.text).join('');r.innerHTML=`<div class="abox on"><div class="ah"><div class="abadge">${nm}</div><div class="adate">${cd}</div></div><div class="ac">${text.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')}</div></div>`;}catch(e){r.innerHTML=`<div style="color:var(--down);padding:12px">오류: ${e.message}</div>`;}}
 
-dbg(`━━━ v36 시작 ━━━`,'ok');
+dbg(`━━━ v38 시작 ━━━`,'ok');
 dbg(`외인/기관 차트 (합산/주체별) 추가`,'info');
 fetchTO('/api/proxy?url=https%3A%2F%2Fstooq.com%2Fq%2Fd%2Fl%2F%3Fs%3Daapl.us%26i%3Dd',8000)
 .then(r=>{if(r.ok){selfProxyAvailable=true;dbg(`✓ /api/proxy OK`,'ok');}else if(r.status===429){selfProxyAvailable=true;dbg(`⚠️ /api/proxy 429`,'warn');}else{selfProxyAvailable=false;dbg(`✗ /api/proxy HTTP ${r.status}`,'warn');}}).catch(e=>{selfProxyAvailable=false;});
