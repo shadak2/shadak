@@ -1,10 +1,3 @@
-// =============================================================
-// 외국인/기관 매매 동향 API v2 (Vercel 서버리스 함수)
-// 위치: /api/foreign.js
-// 호출: /api/foreign?code=010120
-// 디버그: /api/foreign?code=010120&debug=1  ← HTML 미리보기 포함
-// =============================================================
-
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
 
